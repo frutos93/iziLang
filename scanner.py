@@ -31,15 +31,9 @@ keywords = {
     'en': 'KW_EN',
 }
 
-tokens = {
-    'KW_ARRIBA','KW_IZQUIERDA','KW_DERECHA', 'KW_BORRAR', 'KW_MIENTRAS', 'KW_REPETIR',
-    'KW_DIBUJASI', 'KW_DIBUJANO', 'KW_COLOR', 'KW_CUANDO', 'KW_FIN', 'KW_CIRCULO', 'KW_CUADRADO',
-    'KW_RECTANGULO', 'KW_TRIANGULO', 'KW_LINEA', 'KW_ENTERO', 'KW_PALABRA', 'KW_EN',
-    'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER',
-    'LPAREN', 'RPAREN', 'LT', 'LE', 'GT', 'GE', 'NE', 
-    'COMMA', 'SEMI', 'COLON', 'INTEGER', 'FLOAT', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET',
-    'ID', 'NEWLINE'
-}
+tokens = (
+    'KW_ARRIBA','KW_IZQUIERDA','KW_DERECHA', 'KW_BORRAR', 'KW_MIENTRAS', 'KW_REPETIR', 'KW_DIBUJASI', 'KW_DIBUJANO', 'KW_COLOR', 'KW_CUANDO', 'KW_FIN', 'KW_CIRCULO', 'KW_CUADRADO', 'KW_RECTANGULO', 'KW_TRIANGULO', 'KW_LINEA', 'KW_ENTERO', 'KW_PALABRA', 'KW_EN', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
+)
 
 t_EQUALS = r'[=]'
 t_PLUS = r'\+'
@@ -99,8 +93,6 @@ t_ignore = ' \t'
 
 lex.lex(debug=0)
 
-lexer = lex.lex()
-
 def p_programa(p):
     """
     programa : KW_PROGRAMA ID COLON programa_aux1 programa_aux2 bloque FIN
@@ -121,7 +113,7 @@ def p_programa_aux2(p):
 def p_variables(p):
     """
     variables : tipo variables_aux1 SEMI variables_aux2
-    """"
+    """
 
 def p_variables_aux1(p):
     """
@@ -314,3 +306,18 @@ def p_paratodos(p):
     """
     paratodos: KW_PARATODOS LPAREN ID KW_EN lista RPAREN bloque
     """
+
+lexer = lex.lex()
+
+data = '''
+3 + 4 * 10
+  + -20 *2
+'''
+
+lexer.input(data)
+
+while True:
+    tok = lexer.token()
+    if not tok: 
+        break      # No more input
+    print(tok)
