@@ -310,7 +310,7 @@ def p_paratodos(p):
 lexer = lex.lex()
 
 data = '''
-3 + 4 * 10
+( (3 + 4 ) * 10)
   + -20 *2
 '''
 
