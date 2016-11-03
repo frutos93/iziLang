@@ -71,7 +71,7 @@ def t_CTE_E(t):
     return t
 
 def t_ID(t):
-    r'[A-Z][A-Z0-9]*'
+    r'[a-z][a-zA-Z0-9]*'
     if t.value in tokens:
         t.type = t.value
     return t
@@ -308,7 +308,8 @@ def p_paratodos(p):
 lexer = lex.lex()
 
 data = '''
-MIENTRAS ( (3 + 4 ) * 10)
+PROGRAMA d43 :
+IZQUIERDA ( (3 + 4 ) * 10)
   + -20 *2
 '''
 
