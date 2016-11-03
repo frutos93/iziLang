@@ -71,7 +71,7 @@ def t_CTE_E(t):
     return t
 
 def t_ID(t):
-    r'[A-Z][A-Z0-9]*'
+    r'[a-z][a-zA-Z0-9]*'
     if t.value in tokens:
         t.type = t.value
     return t
