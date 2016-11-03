@@ -1,39 +1,37 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
-keywords = {
-    'arriba': 'KW_ARRIBA',
-    'izquierda': 'KW_IZQUIERDA',
-    'derecha': 'KW_DERECHA',
-    'borrarPantalla': 'KW_BOORAR',
-    'mientras': 'KW_MIENTRAS',
-    'repetir': 'KW_REPETIR',
-    'dibujaSi': 'KW_DIBUJASI',
-    'dibujaNo': 'KW_DIBUJANO',
-    'color': 'KW_COLOR',
-    'cuando': 'KW_CUANDO',
-    'fin': 'KW_FIN',
-    'circulo': 'KW_CIRCULO',
-    'cuadrado': 'KW_CUADRADO',
-    'rectangulo': 'KW_RECTANGULO',
-    'triangulo': 'KW_TRIANGULO',
-    'linea': 'KW_LINEA',
-    'entero': 'KW_ENTERO',
-    'palabra': 'KW_PALABRA',
-    'funcion': 'KW_FUNCION',
-    'paraTodos': 'KW_PARATODOS',
-    'programa': 'KW_PROGRAMA',
-    'siNo': 'KW_SINO',
-    'verdadero': 'KW_VERDADERO',
-    'falso': 'KW_FALSO',
-    'booleano': 'KW_BOOLEANO',
-    'lista': 'KW_LISTA',
-    'en': 'KW_EN',
-}
-
 tokens = (
-    'KW_ARRIBA','KW_IZQUIERDA','KW_DERECHA', 'KW_BORRAR', 'KW_MIENTRAS', 'KW_REPETIR', 'KW_DIBUJASI', 'KW_DIBUJANO', 'KW_COLOR', 'KW_CUANDO', 'KW_FIN', 'KW_CIRCULO', 'KW_CUADRADO', 'KW_RECTANGULO', 'KW_TRIANGULO', 'KW_LINEA', 'KW_ENTERO', 'KW_PALABRA', 'KW_EN', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
+    'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
 )
+
+t_ARRIBA = r'ARRIBA'
+t_IZQUIERDA = r'IZQUIERDA'
+t_DERECHA = r'DERECHA'
+t_BORRAR = r'BORRAR'
+t_MIENTRAS = r'MIENTRAS'
+t_REPETIR = r'REPETIR'
+t_DIBUJASI = r'DIBUJASI'
+t_DIBUJANO = r'DIBUJANO'
+t_COLOR = r'COLOR'
+t_CUANDO = r'CUANDO'
+t_FIN = r'FIN'
+t_CIRCULO = r'CIRCULO'
+t_CUADRADO = r'CUADRADO'
+t_RECTANGULO = r'RECTANGULO'
+t_TRIANGULO = r'TRIANGULO'
+t_LINEA = r'LINEA'
+t_ENTERO = r'ENTERO'
+t_PALABRA = r'PALABRA'
+t_FUNCION = r'FUNCION'
+t_PARATODOS = r'PARATODOS'
+t_PROGRAMA = r'PROGRAMA'
+t_SINO = r'SINO'
+t_VERDADERO = r'VERDADERO'
+t_FALSO = r'FALSO'
+t_BOOLEANO = r'BOOLEANO'
+t_LISTA = r'LISTA'
+t_EN= r'EN'
 
 t_EQUALS = r'[=]'
 t_PLUS = r'\+'
@@ -74,7 +72,7 @@ def t_CTE_E(t):
 
 def t_ID(t):
     r'[A-Z][A-Z0-9]*'
-    if t.value in keywords:
+    if t.value in tokens:
         t.type = t.value
     return t
 
@@ -130,7 +128,7 @@ def p_variables_aux3(p):
     """variables_aux3 : lista
                         |
     """
-    
+
 def p_variables_aux4(p):
     """variables_aux4 : COMMA variables_aux1
                         |
@@ -310,7 +308,7 @@ def p_paratodos(p):
 lexer = lex.lex()
 
 data = '''
-( (3 + 4 ) * 10)
+MIENTRAS ( (3 + 4 ) * 10)
   + -20 *2
 '''
 
@@ -318,6 +316,6 @@ lexer.input(data)
 
 while True:
     tok = lexer.token()
-    if not tok: 
+    if not tok:
         break      # No more input
     print(tok)
