@@ -93,7 +93,7 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : KW_PROGRAMA ID COLON programa_aux1 programa_aux2 bloque FIN
+    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 bloque FIN
     """
 
 def p_programa_aux1(p):
@@ -206,12 +206,12 @@ def p_asignacion_aux1(p):
 
 def p_condicion(p):
     """
-    condicion : KW_CUANDO LPAREN expresion RPAREN bloque condicion_aux1
+    condicion : CUANDO LPAREN expresion RPAREN bloque condicion_aux1
     """
 
 def p_condicion_aux1(p):
     """
-    condicion_aux1 : KW_SINO bloque
+    condicion_aux1 : SINO bloque
     |
     """
 def p_expresion(p):
@@ -297,12 +297,12 @@ def p_accion_aux1(p):
 
 def p_mientras(p):
     """
-    mientras : KW_MIENTRAS LPAREN expresion RPAREN bloque
+    mientras : MIENTRAS LPAREN expresion RPAREN bloque
     """
 
 def p_paratodos(p):
     """
-    paratodos: KW_PARATODOS LPAREN ID KW_EN lista RPAREN bloque
+    paratodos: PARATODOS LPAREN ID EN lista RPAREN bloque
     """
 
 lexer = lex.lex()
