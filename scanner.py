@@ -1,6 +1,7 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
+
 tokens = (
     'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
 )
@@ -58,6 +59,24 @@ t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_AND = r'[&][&]'
 t_OR = r'[|][|]'
+
+
+class LexerError(Exception):
+    def __init__(self, value):
+       self.value = value
+        
+    def __str__(self):
+        return repr(self.value)
+
+
+class SemanticError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
 
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
