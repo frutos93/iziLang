@@ -64,7 +64,7 @@ t_OR = r'[|][|]'
 class LexerError(Exception):
     def __init__(self, value):
        self.value = value
-        
+
     def __str__(self):
         return repr(self.value)
 
@@ -75,7 +75,6 @@ class SemanticError(Exception):
 
     def __str__(self):
         return repr(self.value)
-
 
 
 def t_CTE_F(t):
@@ -110,10 +109,12 @@ t_ignore = ' \t'
 
 lex.lex(debug=0)
 
+
 def p_programa(p):
     """
     programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 bloque FIN
     """
+
 
 def p_programa_aux1(p):
     """
@@ -121,21 +122,25 @@ def p_programa_aux1(p):
                     |
     """
 
+
 def p_programa_aux2(p):
     """
     programa_aux2 : funciones
                     |
     """
 
+
 def p_variables(p):
     """
     variables : tipo variables_aux1 SEMI variables_aux2
     """
 
+
 def p_variables_aux1(p):
     """
     variables_aux1 : ID variables_aux3 variables_aux4
     """
+
 
 def p_variables_aux2(p):
     """
@@ -143,40 +148,49 @@ def p_variables_aux2(p):
                      |
     """
 
+
 def p_variables_aux3(p):
     """variables_aux3 : lista
                         |
     """
+
 
 def p_variables_aux4(p):
     """variables_aux4 : COMMA variables_aux1
                         |
     """
 
+
 def p_funciones(p):
     """
     funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
     """
+
 
 def p_funciones_aux1(p):
     """
     funciones_aux1 : tipo ID funciones_aux3
     """
 
+
 def p_funciones_aux2(p):
     """funciones_aux2 : funciones
                         |
     """
+
 
 def p_funciones_aux3(p):
     """
     funciones_aux3 : COMMA funciones_aux1
                      |
     """
+
+
 def p_lista(p):
     """
     lista : LBRACKET cte RBRACKET
     """
+
 
 def p_tipo(p):
     """
@@ -186,10 +200,12 @@ def p_tipo(p):
            | booleano
     """
 
+
 def p_bloque(p):
     """
     bloque : LCURLY bloque_aux RCURLY
     """
+
 
 def p_bloque_aux1(p):
     """
@@ -197,11 +213,13 @@ def p_bloque_aux1(p):
                   |
     """
 
+
 def p_bloque_aux2(p):
     """
     bloque_aux2 : estatuto bloque_aux2
                   |
     """
+
 
 def p_estatuto(p):
     """
@@ -213,35 +231,43 @@ def p_estatuto(p):
                | paratodo
     """
 
+
 def p_asignacion(p):
     """
     asignacion : ID aignacion_aux1 EQUALS expresion SEMI
     """
+
 
 def p_asignacion_aux1(p):
     """
     asignacion_aux1 : LBRACKET exp RBRACKET
     """
 
+
 def p_condicion(p):
     """
     condicion : CUANDO LPAREN expresion RPAREN bloque condicion_aux1
     """
+
 
 def p_condicion_aux1(p):
     """
     condicion_aux1 : SINO bloque
     |
     """
+
+
 def p_expresion(p):
     """
     expresion : exp expresion_aux1
     """
 
+
 def p_expresion_aux1(p):
     """
     expresion_aux1 : expresion_aux2 exp
     """
+
 
 def p_expresion_aux2(p):
     """
@@ -249,15 +275,18 @@ def p_expresion_aux2(p):
                      | OR
     """
 
+
 def p_exp(p):
     """
     exp : termino exp_aux1
     """
 
+
 def p_exp_aux1(p):
     """
     exp_aux1 : exp_aux2 termino
     """
+
 
 def p_exp_aux2(p):
     """
@@ -265,14 +294,18 @@ def p_exp_aux2(p):
                | MINUS
     """
 
+
 def p_termino(p):
     """
     termino : factor termino_aux1
     """
+
+
 def p_termino_aux1(p):
     """
     termino_aux1 : termino_aux2 factor
     """
+
 
 def p_termino_aux2(p):
     """
@@ -280,11 +313,13 @@ def p_termino_aux2(p):
                    | DIVIDE
     """
 
+
 def p_factor(p):
     """
     factor : LPAREN expresion RPAREN
     | cte
     """
+
 
 def p_cte(p):
     """
@@ -293,6 +328,7 @@ def p_cte(p):
           | CTE_F
     """
 
+
 def p_cte_aux1(p):
     """
     cte_aux1 : LBRACKET exp RBRACKET
@@ -300,10 +336,12 @@ def p_cte_aux1(p):
                |
     """
 
+
 def p_accion(p):
     """
     accion : accion_aux1 LPAREN exp RPAREN
     """
+
 
 def p_accion_aux1(p):
     """
@@ -314,10 +352,12 @@ def p_accion_aux1(p):
                   | color
     """
 
+
 def p_mientras(p):
     """
     mientras : MIENTRAS LPAREN expresion RPAREN bloque
     """
+
 
 def p_paratodos(p):
     """
