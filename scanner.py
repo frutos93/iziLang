@@ -113,7 +113,7 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 main bloque FIN
+    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
     """
 
 
