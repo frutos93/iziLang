@@ -1,9 +1,8 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
-
 tokens = (
-    'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
+    'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
 )
 
 t_ARRIBA = r'ARRIBA'
@@ -25,6 +24,7 @@ t_LINEA = r'LINEA'
 t_ENTERO = r'ENTERO'
 t_PALABRA = r'PALABRA'
 t_FUNCION = r'FUNCION'
+t_MAIN = r'MAIN'
 t_PARATODOS = r'PARATODOS'
 t_PROGRAMA = r'PROGRAMA'
 t_SINO = r'SINO'
@@ -113,7 +113,7 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 bloque FIN
+    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 main bloque FIN
     """
 
 
@@ -161,6 +161,11 @@ def p_variables_aux4(p):
                         |
     """
 
+def p_main(p):
+    """
+    main: MAIN tipo LPAREN RPAREN bloque
+    """
+
 
 def p_funciones(p):
     """
@@ -185,7 +190,6 @@ def p_funciones_aux3(p):
     funciones_aux3 : COMMA funciones_aux1
                      |
     """
-
 
 def p_lista(p):
     """
@@ -371,6 +375,9 @@ data = '''
 PROGRAMA d43 :
 IZQUIERDA ( (3 + 4 ) * 10)
   + -20 *2
+MAIN ENTERO () {
+    a = 2;
+}
 '''
 
 lexer.input(data)
