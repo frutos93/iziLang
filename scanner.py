@@ -348,13 +348,12 @@ def p_accion(p):
 
 def p_accion_aux1(p):
     """
-    accion_aux1 : arriba
-                  | abajo
-                  | izquierda
-                  | derecha
-                  | color
+    accion_aux1 : ARRIBA
+                  | ABAJO
+                  | IZQUIERDA
+                  | DERECHA
+                  | COLOR
     """
-
 
 def p_mientras(p):
     """
