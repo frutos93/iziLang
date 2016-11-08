@@ -1,0 +1,5 @@
+PROGRAMA d43 :
+MAIN ENTERO () {
+
+}
+FIN
