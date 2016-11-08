@@ -355,7 +355,6 @@ def p_accion_aux1(p):
                   | COLOR
     """
 
-
 def p_mientras(p):
     """
     mientras : MIENTRAS LPAREN expresion RPAREN bloque
