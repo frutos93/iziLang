@@ -1,6 +1,21 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
+class LexerError(Exception):
+    def __init__(self, value):
+       self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class SemanticError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
 tokens = (
     'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
 )
@@ -62,22 +77,6 @@ t_AND = r'[&][&]'
 t_OR = r'[|][|]'
 
 
-class LexerError(Exception):
-    def __init__(self, value):
-       self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class SemanticError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
     t.value = float(t.value)
@@ -101,8 +100,7 @@ def t_NEWLINE(t):
     return t
 
 def t_error(t):
-    print("Illegal character %s" % t.value[0])
-    t.lexer.skip(1)
+    raise LexerError("Illegal character at '%s'" % t.value[0])
 
 t_CTE_S = r'\"[A-Za-z0-9_\(\)\{\}\[\]\<\>\! \t]*\"'
 
@@ -368,6 +366,13 @@ def p_paratodos(p):
     """
     paratodos: PARATODOS LPAREN ID EN lista RPAREN bloque
     """
+
+def p_error(p):
+    if p:
+        raise SyntaxError("Syntax error at '%s'" % p.value)
+    if not p:
+        print("EOF")
+
 
 lexer = lex.lex()
 
