@@ -17,7 +17,7 @@ class SemanticError(Exception):
         return repr(self.value)
 
 tokens = (
-    'ARRIBA','IZQUIERDA','DERECHA', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'NEWLINE', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
+    'ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
 )
 
 t_ARRIBA = r'ARRIBA'
@@ -37,6 +37,7 @@ t_RECTANGULO = r'RECTANGULO'
 t_TRIANGULO = r'TRIANGULO'
 t_LINEA = r'LINEA'
 t_ENTERO = r'ENTERO'
+t_DECIMAL = r'DECIMAL'
 t_PALABRA = r'PALABRA'
 t_FUNCION = r'FUNCION'
 t_MAIN = r'MAIN'
@@ -94,24 +95,24 @@ def t_ID(t):
         t.type = t.value
     return t
 
-def t_NEWLINE(t):
-    r'\n'
-    t.lexer.lineno += 1
-    return t
+#def t_NEWLINE(t):
+#    r'\n'
+#    t.lexer.lineno += 1
+#    return t
 
 def t_error(t):
     raise LexerError("Illegal character at '%s'" % t.value[0])
 
 t_CTE_S = r'\"[A-Za-z0-9_\(\)\{\}\[\]\<\>\! \t]*\"'
 
-t_ignore = ' \t'
+t_ignore = ' \n'
 
 lex.lex(debug=0)
 
 
 def p_programa(p):
     """
-    programa : _PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
+    programa : PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
     """
 
 
@@ -161,7 +162,7 @@ def p_variables_aux4(p):
 
 def p_main(p):
     """
-    main: MAIN tipo LPAREN RPAREN bloque
+    main : MAIN tipo LPAREN RPAREN bloque
     """
 
 
@@ -197,16 +198,16 @@ def p_lista(p):
 
 def p_tipo(p):
     """
-    tipo : entero
-           | decimal
-           | palabra
-           | booleano
+    tipo : ENTERO
+           | DECIMAL
+           | PALABRA
+           | BOOLEANO
     """
 
 
 def p_bloque(p):
     """
-    bloque : LCURLY bloque_aux RCURLY
+    bloque : LCURLY bloque_aux1 RCURLY
     """
 
 
@@ -229,15 +230,14 @@ def p_estatuto(p):
     estatuto : asignacion
                | condicion
                | accion
-               | dibujo
                | mientras
-               | paratodo
+               | paratodos
     """
 
 
 def p_asignacion(p):
     """
-    asignacion : ID aignacion_aux1 EQUALS expresion SEMI
+    asignacion : ID asignacion_aux1 EQUALS expresion SEMI
     """
 
 
@@ -348,11 +348,11 @@ def p_accion(p):
 
 def p_accion_aux1(p):
     """
-    accion_aux1 : arriba
-                  | abajo
-                  | izquierda
-                  | derecha
-                  | color
+    accion_aux1 : ARRIBA
+                  | ABAJO
+                  | IZQUIERDA
+                  | DERECHA
+                  | COLOR
     """
 
 
@@ -364,31 +364,31 @@ def p_mientras(p):
 
 def p_paratodos(p):
     """
-    paratodos: PARATODOS LPAREN ID EN lista RPAREN bloque
+    paratodos : PARATODOS LPAREN ID EN lista RPAREN bloque
     """
 
 def p_error(p):
     if p:
-        raise SyntaxError("Syntax error at '%s'" % p.value)
+        raise SyntaxError("Syntax error at) '%s'" % p.value)
     if not p:
         print("EOF")
 
 
 lexer = lex.lex()
 
-data = '''
-PROGRAMA d43 :
-IZQUIERDA ( (3 + 4 ) * 10)
-  + -20 *2
-MAIN ENTERO () {
-    a = 2;
-}
-'''
-
-lexer.input(data)
-
+parser = yacc.yacc()
 while True:
-    tok = lexer.token()
-    if not tok:
-        break      # No more input
-    print(tok)
+    try:
+        s = raw_input('iziLang > ')
+    except EOFError:
+        break
+    # Start the scanning and parsing
+    with open(s) as fp:
+        completeString = ""
+        for line in fp:
+            completeString += line
+        try:
+            parser.parse(completeString)
+            print("Correct program")
+        except EOFError:
+            break
