@@ -162,7 +162,7 @@ def p_variables_aux4(p):
 
 def p_main(p):
     """
-    main : MAIN tipo LPAREN RPAREN bloque
+    main : MAIN LPAREN RPAREN bloque
     """
 
 
@@ -378,7 +378,7 @@ lexer = lex.lex()
 parser = yacc.yacc()
 while True:
     try:
-        s = raw_input('iziLang > ')
+        s = input('iziLang > ')
     except EOFError:
         break
     # Start the scanning and parsing

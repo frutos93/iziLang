@@ -1,0 +1,1725 @@
+Created by PLY version 3.9 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    DIBUJASI
+    GT
+    DIBUJANO
+    FLOAT
+    GE
+    REPETIR
+    ERROR
+    LISTA
+    BORRAR
+    NE
+    LINEA
+    TRIANGULO
+    LE
+    CTE_S
+    CIRCULO
+    STRING
+    LT
+    CUADRADO
+    POWER
+    INTEGER
+    EQUALSC
+    RECTANGULO
+    VERDADERO
+    FALSO
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
+Rule 2     programa_aux1 -> variables
+Rule 3     programa_aux1 -> <empty>
+Rule 4     programa_aux2 -> funciones
+Rule 5     programa_aux2 -> <empty>
+Rule 6     variables -> tipo variables_aux1 SEMI variables_aux2
+Rule 7     variables_aux1 -> ID variables_aux3 variables_aux4
+Rule 8     variables_aux2 -> variables
+Rule 9     variables_aux2 -> <empty>
+Rule 10    variables_aux3 -> lista
+Rule 11    variables_aux3 -> <empty>
+Rule 12    variables_aux4 -> COMMA variables_aux1
+Rule 13    variables_aux4 -> <empty>
+Rule 14    main -> MAIN tipo LPAREN RPAREN bloque
+Rule 15    funciones -> FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+Rule 16    funciones_aux1 -> tipo ID funciones_aux3
+Rule 17    funciones_aux2 -> funciones
+Rule 18    funciones_aux2 -> <empty>
+Rule 19    funciones_aux3 -> COMMA funciones_aux1
+Rule 20    funciones_aux3 -> <empty>
+Rule 21    lista -> LBRACKET cte RBRACKET
+Rule 22    tipo -> ENTERO
+Rule 23    tipo -> DECIMAL
+Rule 24    tipo -> PALABRA
+Rule 25    tipo -> BOOLEANO
+Rule 26    bloque -> LCURLY bloque_aux1 RCURLY
+Rule 27    bloque_aux1 -> bloque_aux2
+Rule 28    bloque_aux1 -> <empty>
+Rule 29    bloque_aux2 -> estatuto bloque_aux2
+Rule 30    bloque_aux2 -> <empty>
+Rule 31    estatuto -> asignacion
+Rule 32    estatuto -> condicion
+Rule 33    estatuto -> accion
+Rule 34    estatuto -> mientras
+Rule 35    estatuto -> paratodos
+Rule 36    asignacion -> ID asignacion_aux1 EQUALS expresion SEMI
+Rule 37    asignacion_aux1 -> LBRACKET exp RBRACKET
+Rule 38    condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1
+Rule 39    condicion_aux1 -> SINO bloque
+Rule 40    condicion_aux1 -> <empty>
+Rule 41    expresion -> exp expresion_aux1
+Rule 42    expresion_aux1 -> expresion_aux2 exp
+Rule 43    expresion_aux2 -> AND
+Rule 44    expresion_aux2 -> OR
+Rule 45    exp -> termino exp_aux1
+Rule 46    exp_aux1 -> exp_aux2 termino
+Rule 47    exp_aux2 -> PLUS
+Rule 48    exp_aux2 -> MINUS
+Rule 49    termino -> factor termino_aux1
+Rule 50    termino_aux1 -> termino_aux2 factor
+Rule 51    termino_aux2 -> TIMES
+Rule 52    termino_aux2 -> DIVIDE
+Rule 53    factor -> LPAREN expresion RPAREN
+Rule 54    factor -> cte
+Rule 55    cte -> ID cte_aux1
+Rule 56    cte -> CTE_E
+Rule 57    cte -> CTE_F
+Rule 58    cte_aux1 -> LBRACKET exp RBRACKET
+Rule 59    cte_aux1 -> LPAREN exp RPAREN
+Rule 60    cte_aux1 -> <empty>
+Rule 61    accion -> accion_aux1 LPAREN exp RPAREN
+Rule 62    accion_aux1 -> ARRIBA
+Rule 63    accion_aux1 -> ABAJO
+Rule 64    accion_aux1 -> IZQUIERDA
+Rule 65    accion_aux1 -> DERECHA
+Rule 66    accion_aux1 -> COLOR
+Rule 67    mientras -> MIENTRAS LPAREN expresion RPAREN bloque
+Rule 68    paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque
+
+Terminals, with rules where they appear
+
+ABAJO                : 63
+AND                  : 43
+ARRIBA               : 62
+BOOLEANO             : 25
+BORRAR               : 
+CIRCULO              : 
+COLON                : 1
+COLOR                : 66
+COMMA                : 12 19
+CTE_E                : 56
+CTE_F                : 57
+CTE_S                : 
+CUADRADO             : 
+CUANDO               : 38
+DECIMAL              : 23
+DERECHA              : 65
+DIBUJANO             : 
+DIBUJASI             : 
+DIVIDE               : 52
+EN                   : 68
+ENTERO               : 22
+EQUALS               : 36
+EQUALSC              : 
+ERROR                : 
+FALSO                : 
+FIN                  : 1
+FLOAT                : 
+FUNCION              : 15
+GE                   : 
+GT                   : 
+ID                   : 1 7 15 16 36 55 68
+INTEGER              : 
+IZQUIERDA            : 64
+LBRACKET             : 21 37 58
+LCURLY               : 26
+LE                   : 
+LINEA                : 
+LISTA                : 
+LPAREN               : 14 15 38 53 59 61 67 68
+LT                   : 
+MAIN                 : 14
+MIENTRAS             : 67
+MINUS                : 48
+NE                   : 
+OR                   : 44
+PALABRA              : 24
+PARATODOS            : 68
+PLUS                 : 47
+POWER                : 
+PROGRAMA             : 1
+RBRACKET             : 21 37 58
+RCURLY               : 26
+RECTANGULO           : 
+REPETIR              : 
+RPAREN               : 14 15 38 53 59 61 67 68
+SEMI                 : 6 36
+SINO                 : 39
+STRING               : 
+TIMES                : 51
+TRIANGULO            : 
+VERDADERO            : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+accion               : 33
+accion_aux1          : 61
+asignacion           : 31
+asignacion_aux1      : 36
+bloque               : 14 15 38 39 67 68
+bloque_aux1          : 26
+bloque_aux2          : 27 29
+condicion            : 32
+condicion_aux1       : 38
+cte                  : 21 54
+cte_aux1             : 55
+estatuto             : 29
+exp                  : 37 41 42 58 59 61
+exp_aux1             : 45
+exp_aux2             : 46
+expresion            : 36 38 53 67
+expresion_aux1       : 41
+expresion_aux2       : 42
+factor               : 49 50
+funciones            : 4 17
+funciones_aux1       : 15 19
+funciones_aux2       : 15
+funciones_aux3       : 16
+lista                : 10 68
+main                 : 1
+mientras             : 34
+paratodos            : 35
+programa             : 0
+programa_aux1        : 1
+programa_aux2        : 1
+termino              : 45 46
+termino_aux1         : 49
+termino_aux2         : 50
+tipo                 : 6 14 15 16
+variables            : 2 8
+variables_aux1       : 6 12
+variables_aux2       : 6
+variables_aux3       : 7
+variables_aux4       : 7
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
+
+    PROGRAMA        shift and go to state 2
+
+    programa                       shift and go to state 1
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> PROGRAMA . ID COLON programa_aux1 programa_aux2 main FIN
+
+    ID              shift and go to state 3
+
+
+state 3
+
+    (1) programa -> PROGRAMA ID . COLON programa_aux1 programa_aux2 main FIN
+
+    COLON           shift and go to state 4
+
+
+state 4
+
+    (1) programa -> PROGRAMA ID COLON . programa_aux1 programa_aux2 main FIN
+    (2) programa_aux1 -> . variables
+    (3) programa_aux1 -> .
+    (6) variables -> . tipo variables_aux1 SEMI variables_aux2
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    FUNCION         reduce using rule 3 (programa_aux1 -> .)
+    MAIN            reduce using rule 3 (programa_aux1 -> .)
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    programa_aux1                  shift and go to state 6
+    tipo                           shift and go to state 11
+    variables                      shift and go to state 9
+
+state 5
+
+    (24) tipo -> PALABRA .
+
+    ID              reduce using rule 24 (tipo -> PALABRA .)
+    LPAREN          reduce using rule 24 (tipo -> PALABRA .)
+
+
+state 6
+
+    (1) programa -> PROGRAMA ID COLON programa_aux1 . programa_aux2 main FIN
+    (4) programa_aux2 -> . funciones
+    (5) programa_aux2 -> .
+    (15) funciones -> . FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+
+    MAIN            reduce using rule 5 (programa_aux2 -> .)
+    FUNCION         shift and go to state 13
+
+    funciones                      shift and go to state 12
+    programa_aux2                  shift and go to state 14
+
+state 7
+
+    (25) tipo -> BOOLEANO .
+
+    ID              reduce using rule 25 (tipo -> BOOLEANO .)
+    LPAREN          reduce using rule 25 (tipo -> BOOLEANO .)
+
+
+state 8
+
+    (22) tipo -> ENTERO .
+
+    ID              reduce using rule 22 (tipo -> ENTERO .)
+    LPAREN          reduce using rule 22 (tipo -> ENTERO .)
+
+
+state 9
+
+    (2) programa_aux1 -> variables .
+
+    FUNCION         reduce using rule 2 (programa_aux1 -> variables .)
+    MAIN            reduce using rule 2 (programa_aux1 -> variables .)
+
+
+state 10
+
+    (23) tipo -> DECIMAL .
+
+    ID              reduce using rule 23 (tipo -> DECIMAL .)
+    LPAREN          reduce using rule 23 (tipo -> DECIMAL .)
+
+
+state 11
+
+    (6) variables -> tipo . variables_aux1 SEMI variables_aux2
+    (7) variables_aux1 -> . ID variables_aux3 variables_aux4
+
+    ID              shift and go to state 15
+
+    variables_aux1                 shift and go to state 16
+
+state 12
+
+    (4) programa_aux2 -> funciones .
+
+    MAIN            reduce using rule 4 (programa_aux2 -> funciones .)
+
+
+state 13
+
+    (15) funciones -> FUNCION . tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    tipo                           shift and go to state 17
+
+state 14
+
+    (1) programa -> PROGRAMA ID COLON programa_aux1 programa_aux2 . main FIN
+    (14) main -> . MAIN tipo LPAREN RPAREN bloque
+
+    MAIN            shift and go to state 19
+
+    main                           shift and go to state 18
+
+state 15
+
+    (7) variables_aux1 -> ID . variables_aux3 variables_aux4
+    (10) variables_aux3 -> . lista
+    (11) variables_aux3 -> .
+    (21) lista -> . LBRACKET cte RBRACKET
+
+    COMMA           reduce using rule 11 (variables_aux3 -> .)
+    SEMI            reduce using rule 11 (variables_aux3 -> .)
+    LBRACKET        shift and go to state 20
+
+    variables_aux3                 shift and go to state 21
+    lista                          shift and go to state 22
+
+state 16
+
+    (6) variables -> tipo variables_aux1 . SEMI variables_aux2
+
+    SEMI            shift and go to state 23
+
+
+state 17
+
+    (15) funciones -> FUNCION tipo . ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+
+    ID              shift and go to state 24
+
+
+state 18
+
+    (1) programa -> PROGRAMA ID COLON programa_aux1 programa_aux2 main . FIN
+
+    FIN             shift and go to state 25
+
+
+state 19
+
+    (14) main -> MAIN . tipo LPAREN RPAREN bloque
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    tipo                           shift and go to state 26
+
+state 20
+
+    (21) lista -> LBRACKET . cte RBRACKET
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    cte                            shift and go to state 30
+
+state 21
+
+    (7) variables_aux1 -> ID variables_aux3 . variables_aux4
+    (12) variables_aux4 -> . COMMA variables_aux1
+    (13) variables_aux4 -> .
+
+    COMMA           shift and go to state 31
+    SEMI            reduce using rule 13 (variables_aux4 -> .)
+
+    variables_aux4                 shift and go to state 32
+
+state 22
+
+    (10) variables_aux3 -> lista .
+
+    COMMA           reduce using rule 10 (variables_aux3 -> lista .)
+    SEMI            reduce using rule 10 (variables_aux3 -> lista .)
+
+
+state 23
+
+    (6) variables -> tipo variables_aux1 SEMI . variables_aux2
+    (8) variables_aux2 -> . variables
+    (9) variables_aux2 -> .
+    (6) variables -> . tipo variables_aux1 SEMI variables_aux2
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    FUNCION         reduce using rule 9 (variables_aux2 -> .)
+    MAIN            reduce using rule 9 (variables_aux2 -> .)
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    tipo                           shift and go to state 11
+    variables_aux2                 shift and go to state 33
+    variables                      shift and go to state 34
+
+state 24
+
+    (15) funciones -> FUNCION tipo ID . LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+
+    LPAREN          shift and go to state 35
+
+
+state 25
+
+    (1) programa -> PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN .
+
+    $end            reduce using rule 1 (programa -> PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN .)
+
+
+state 26
+
+    (14) main -> MAIN tipo . LPAREN RPAREN bloque
+
+    LPAREN          shift and go to state 36
+
+
+state 27
+
+    (55) cte -> ID . cte_aux1
+    (58) cte_aux1 -> . LBRACKET exp RBRACKET
+    (59) cte_aux1 -> . LPAREN exp RPAREN
+    (60) cte_aux1 -> .
+
+    LBRACKET        shift and go to state 38
+    LPAREN          shift and go to state 37
+    RBRACKET        reduce using rule 60 (cte_aux1 -> .)
+    TIMES           reduce using rule 60 (cte_aux1 -> .)
+    DIVIDE          reduce using rule 60 (cte_aux1 -> .)
+    PLUS            reduce using rule 60 (cte_aux1 -> .)
+    MINUS           reduce using rule 60 (cte_aux1 -> .)
+    RPAREN          reduce using rule 60 (cte_aux1 -> .)
+    AND             reduce using rule 60 (cte_aux1 -> .)
+    OR              reduce using rule 60 (cte_aux1 -> .)
+    SEMI            reduce using rule 60 (cte_aux1 -> .)
+
+    cte_aux1                       shift and go to state 39
+
+state 28
+
+    (56) cte -> CTE_E .
+
+    TIMES           reduce using rule 56 (cte -> CTE_E .)
+    DIVIDE          reduce using rule 56 (cte -> CTE_E .)
+    PLUS            reduce using rule 56 (cte -> CTE_E .)
+    MINUS           reduce using rule 56 (cte -> CTE_E .)
+    RPAREN          reduce using rule 56 (cte -> CTE_E .)
+    RBRACKET        reduce using rule 56 (cte -> CTE_E .)
+    AND             reduce using rule 56 (cte -> CTE_E .)
+    OR              reduce using rule 56 (cte -> CTE_E .)
+    SEMI            reduce using rule 56 (cte -> CTE_E .)
+
+
+state 29
+
+    (57) cte -> CTE_F .
+
+    TIMES           reduce using rule 57 (cte -> CTE_F .)
+    DIVIDE          reduce using rule 57 (cte -> CTE_F .)
+    PLUS            reduce using rule 57 (cte -> CTE_F .)
+    MINUS           reduce using rule 57 (cte -> CTE_F .)
+    RPAREN          reduce using rule 57 (cte -> CTE_F .)
+    RBRACKET        reduce using rule 57 (cte -> CTE_F .)
+    AND             reduce using rule 57 (cte -> CTE_F .)
+    OR              reduce using rule 57 (cte -> CTE_F .)
+    SEMI            reduce using rule 57 (cte -> CTE_F .)
+
+
+state 30
+
+    (21) lista -> LBRACKET cte . RBRACKET
+
+    RBRACKET        shift and go to state 40
+
+
+state 31
+
+    (12) variables_aux4 -> COMMA . variables_aux1
+    (7) variables_aux1 -> . ID variables_aux3 variables_aux4
+
+    ID              shift and go to state 15
+
+    variables_aux1                 shift and go to state 41
+
+state 32
+
+    (7) variables_aux1 -> ID variables_aux3 variables_aux4 .
+
+    SEMI            reduce using rule 7 (variables_aux1 -> ID variables_aux3 variables_aux4 .)
+
+
+state 33
+
+    (6) variables -> tipo variables_aux1 SEMI variables_aux2 .
+
+    FUNCION         reduce using rule 6 (variables -> tipo variables_aux1 SEMI variables_aux2 .)
+    MAIN            reduce using rule 6 (variables -> tipo variables_aux1 SEMI variables_aux2 .)
+
+
+state 34
+
+    (8) variables_aux2 -> variables .
+
+    FUNCION         reduce using rule 8 (variables_aux2 -> variables .)
+    MAIN            reduce using rule 8 (variables_aux2 -> variables .)
+
+
+state 35
+
+    (15) funciones -> FUNCION tipo ID LPAREN . funciones_aux1 RPAREN bloque funciones_aux2
+    (16) funciones_aux1 -> . tipo ID funciones_aux3
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    tipo                           shift and go to state 43
+    funciones_aux1                 shift and go to state 42
+
+state 36
+
+    (14) main -> MAIN tipo LPAREN . RPAREN bloque
+
+    RPAREN          shift and go to state 44
+
+
+state 37
+
+    (59) cte_aux1 -> LPAREN . exp RPAREN
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 48
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 38
+
+    (58) cte_aux1 -> LBRACKET . exp RBRACKET
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 50
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 39
+
+    (55) cte -> ID cte_aux1 .
+
+    TIMES           reduce using rule 55 (cte -> ID cte_aux1 .)
+    DIVIDE          reduce using rule 55 (cte -> ID cte_aux1 .)
+    PLUS            reduce using rule 55 (cte -> ID cte_aux1 .)
+    MINUS           reduce using rule 55 (cte -> ID cte_aux1 .)
+    RPAREN          reduce using rule 55 (cte -> ID cte_aux1 .)
+    RBRACKET        reduce using rule 55 (cte -> ID cte_aux1 .)
+    AND             reduce using rule 55 (cte -> ID cte_aux1 .)
+    OR              reduce using rule 55 (cte -> ID cte_aux1 .)
+    SEMI            reduce using rule 55 (cte -> ID cte_aux1 .)
+
+
+state 40
+
+    (21) lista -> LBRACKET cte RBRACKET .
+
+    COMMA           reduce using rule 21 (lista -> LBRACKET cte RBRACKET .)
+    SEMI            reduce using rule 21 (lista -> LBRACKET cte RBRACKET .)
+    RPAREN          reduce using rule 21 (lista -> LBRACKET cte RBRACKET .)
+
+
+state 41
+
+    (12) variables_aux4 -> COMMA variables_aux1 .
+
+    SEMI            reduce using rule 12 (variables_aux4 -> COMMA variables_aux1 .)
+
+
+state 42
+
+    (15) funciones -> FUNCION tipo ID LPAREN funciones_aux1 . RPAREN bloque funciones_aux2
+
+    RPAREN          shift and go to state 51
+
+
+state 43
+
+    (16) funciones_aux1 -> tipo . ID funciones_aux3
+
+    ID              shift and go to state 52
+
+
+state 44
+
+    (14) main -> MAIN tipo LPAREN RPAREN . bloque
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 53
+
+state 45
+
+    (49) termino -> factor . termino_aux1
+    (50) termino_aux1 -> . termino_aux2 factor
+    (51) termino_aux2 -> . TIMES
+    (52) termino_aux2 -> . DIVIDE
+
+    TIMES           shift and go to state 55
+    DIVIDE          shift and go to state 57
+
+    termino_aux1                   shift and go to state 56
+    termino_aux2                   shift and go to state 58
+
+state 46
+
+    (45) exp -> termino . exp_aux1
+    (46) exp_aux1 -> . exp_aux2 termino
+    (47) exp_aux2 -> . PLUS
+    (48) exp_aux2 -> . MINUS
+
+    PLUS            shift and go to state 62
+    MINUS           shift and go to state 59
+
+    exp_aux2                       shift and go to state 60
+    exp_aux1                       shift and go to state 61
+
+state 47
+
+    (53) factor -> LPAREN . expresion RPAREN
+    (41) expresion -> . exp expresion_aux1
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 64
+    expresion                      shift and go to state 63
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 48
+
+    (59) cte_aux1 -> LPAREN exp . RPAREN
+
+    RPAREN          shift and go to state 65
+
+
+state 49
+
+    (54) factor -> cte .
+
+    TIMES           reduce using rule 54 (factor -> cte .)
+    DIVIDE          reduce using rule 54 (factor -> cte .)
+    PLUS            reduce using rule 54 (factor -> cte .)
+    MINUS           reduce using rule 54 (factor -> cte .)
+    RPAREN          reduce using rule 54 (factor -> cte .)
+    RBRACKET        reduce using rule 54 (factor -> cte .)
+    AND             reduce using rule 54 (factor -> cte .)
+    OR              reduce using rule 54 (factor -> cte .)
+    SEMI            reduce using rule 54 (factor -> cte .)
+
+
+state 50
+
+    (58) cte_aux1 -> LBRACKET exp . RBRACKET
+
+    RBRACKET        shift and go to state 66
+
+
+state 51
+
+    (15) funciones -> FUNCION tipo ID LPAREN funciones_aux1 RPAREN . bloque funciones_aux2
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 67
+
+state 52
+
+    (16) funciones_aux1 -> tipo ID . funciones_aux3
+    (19) funciones_aux3 -> . COMMA funciones_aux1
+    (20) funciones_aux3 -> .
+
+    COMMA           shift and go to state 68
+    RPAREN          reduce using rule 20 (funciones_aux3 -> .)
+
+    funciones_aux3                 shift and go to state 69
+
+state 53
+
+    (14) main -> MAIN tipo LPAREN RPAREN bloque .
+
+    FIN             reduce using rule 14 (main -> MAIN tipo LPAREN RPAREN bloque .)
+
+
+state 54
+
+    (26) bloque -> LCURLY . bloque_aux1 RCURLY
+    (27) bloque_aux1 -> . bloque_aux2
+    (28) bloque_aux1 -> .
+    (29) bloque_aux2 -> . estatuto bloque_aux2
+    (30) bloque_aux2 -> .
+    (31) estatuto -> . asignacion
+    (32) estatuto -> . condicion
+    (33) estatuto -> . accion
+    (34) estatuto -> . mientras
+    (35) estatuto -> . paratodos
+    (36) asignacion -> . ID asignacion_aux1 EQUALS expresion SEMI
+    (38) condicion -> . CUANDO LPAREN expresion RPAREN bloque condicion_aux1
+    (61) accion -> . accion_aux1 LPAREN exp RPAREN
+    (67) mientras -> . MIENTRAS LPAREN expresion RPAREN bloque
+    (68) paratodos -> . PARATODOS LPAREN ID EN lista RPAREN bloque
+    (62) accion_aux1 -> . ARRIBA
+    (63) accion_aux1 -> . ABAJO
+    (64) accion_aux1 -> . IZQUIERDA
+    (65) accion_aux1 -> . DERECHA
+    (66) accion_aux1 -> . COLOR
+
+  ! reduce/reduce conflict for RCURLY resolved using rule 28 (bloque_aux1 -> .)
+    RCURLY          reduce using rule 28 (bloque_aux1 -> .)
+    ID              shift and go to state 83
+    CUANDO          shift and go to state 77
+    MIENTRAS        shift and go to state 86
+    PARATODOS       shift and go to state 72
+    ARRIBA          shift and go to state 81
+    ABAJO           shift and go to state 80
+    IZQUIERDA       shift and go to state 76
+    DERECHA         shift and go to state 70
+    COLOR           shift and go to state 87
+
+  ! RCURLY          [ reduce using rule 30 (bloque_aux2 -> .) ]
+
+    asignacion                     shift and go to state 78
+    paratodos                      shift and go to state 71
+    accion_aux1                    shift and go to state 73
+    condicion                      shift and go to state 84
+    mientras                       shift and go to state 75
+    accion                         shift and go to state 74
+    bloque_aux2                    shift and go to state 82
+    bloque_aux1                    shift and go to state 79
+    estatuto                       shift and go to state 85
+
+state 55
+
+    (51) termino_aux2 -> TIMES .
+
+    LPAREN          reduce using rule 51 (termino_aux2 -> TIMES .)
+    ID              reduce using rule 51 (termino_aux2 -> TIMES .)
+    CTE_E           reduce using rule 51 (termino_aux2 -> TIMES .)
+    CTE_F           reduce using rule 51 (termino_aux2 -> TIMES .)
+
+
+state 56
+
+    (49) termino -> factor termino_aux1 .
+
+    PLUS            reduce using rule 49 (termino -> factor termino_aux1 .)
+    MINUS           reduce using rule 49 (termino -> factor termino_aux1 .)
+    RPAREN          reduce using rule 49 (termino -> factor termino_aux1 .)
+    RBRACKET        reduce using rule 49 (termino -> factor termino_aux1 .)
+    AND             reduce using rule 49 (termino -> factor termino_aux1 .)
+    OR              reduce using rule 49 (termino -> factor termino_aux1 .)
+    SEMI            reduce using rule 49 (termino -> factor termino_aux1 .)
+
+
+state 57
+
+    (52) termino_aux2 -> DIVIDE .
+
+    LPAREN          reduce using rule 52 (termino_aux2 -> DIVIDE .)
+    ID              reduce using rule 52 (termino_aux2 -> DIVIDE .)
+    CTE_E           reduce using rule 52 (termino_aux2 -> DIVIDE .)
+    CTE_F           reduce using rule 52 (termino_aux2 -> DIVIDE .)
+
+
+state 58
+
+    (50) termino_aux1 -> termino_aux2 . factor
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 88
+    cte                            shift and go to state 49
+
+state 59
+
+    (48) exp_aux2 -> MINUS .
+
+    LPAREN          reduce using rule 48 (exp_aux2 -> MINUS .)
+    ID              reduce using rule 48 (exp_aux2 -> MINUS .)
+    CTE_E           reduce using rule 48 (exp_aux2 -> MINUS .)
+    CTE_F           reduce using rule 48 (exp_aux2 -> MINUS .)
+
+
+state 60
+
+    (46) exp_aux1 -> exp_aux2 . termino
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    termino                        shift and go to state 89
+    cte                            shift and go to state 49
+
+state 61
+
+    (45) exp -> termino exp_aux1 .
+
+    RPAREN          reduce using rule 45 (exp -> termino exp_aux1 .)
+    SEMI            reduce using rule 45 (exp -> termino exp_aux1 .)
+    AND             reduce using rule 45 (exp -> termino exp_aux1 .)
+    OR              reduce using rule 45 (exp -> termino exp_aux1 .)
+    RBRACKET        reduce using rule 45 (exp -> termino exp_aux1 .)
+
+
+state 62
+
+    (47) exp_aux2 -> PLUS .
+
+    LPAREN          reduce using rule 47 (exp_aux2 -> PLUS .)
+    ID              reduce using rule 47 (exp_aux2 -> PLUS .)
+    CTE_E           reduce using rule 47 (exp_aux2 -> PLUS .)
+    CTE_F           reduce using rule 47 (exp_aux2 -> PLUS .)
+
+
+state 63
+
+    (53) factor -> LPAREN expresion . RPAREN
+
+    RPAREN          shift and go to state 90
+
+
+state 64
+
+    (41) expresion -> exp . expresion_aux1
+    (42) expresion_aux1 -> . expresion_aux2 exp
+    (43) expresion_aux2 -> . AND
+    (44) expresion_aux2 -> . OR
+
+    AND             shift and go to state 94
+    OR              shift and go to state 93
+
+    expresion_aux2                 shift and go to state 91
+    expresion_aux1                 shift and go to state 92
+
+state 65
+
+    (59) cte_aux1 -> LPAREN exp RPAREN .
+
+    RBRACKET        reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    TIMES           reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    DIVIDE          reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    PLUS            reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    MINUS           reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    RPAREN          reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    AND             reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    OR              reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+    SEMI            reduce using rule 59 (cte_aux1 -> LPAREN exp RPAREN .)
+
+
+state 66
+
+    (58) cte_aux1 -> LBRACKET exp RBRACKET .
+
+    RBRACKET        reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    TIMES           reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    DIVIDE          reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    PLUS            reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    MINUS           reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    RPAREN          reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    AND             reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    OR              reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+    SEMI            reduce using rule 58 (cte_aux1 -> LBRACKET exp RBRACKET .)
+
+
+state 67
+
+    (15) funciones -> FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque . funciones_aux2
+    (17) funciones_aux2 -> . funciones
+    (18) funciones_aux2 -> .
+    (15) funciones -> . FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+
+    MAIN            reduce using rule 18 (funciones_aux2 -> .)
+    FUNCION         shift and go to state 13
+
+    funciones                      shift and go to state 95
+    funciones_aux2                 shift and go to state 96
+
+state 68
+
+    (19) funciones_aux3 -> COMMA . funciones_aux1
+    (16) funciones_aux1 -> . tipo ID funciones_aux3
+    (22) tipo -> . ENTERO
+    (23) tipo -> . DECIMAL
+    (24) tipo -> . PALABRA
+    (25) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 8
+    DECIMAL         shift and go to state 10
+    PALABRA         shift and go to state 5
+    BOOLEANO        shift and go to state 7
+
+    tipo                           shift and go to state 43
+    funciones_aux1                 shift and go to state 97
+
+state 69
+
+    (16) funciones_aux1 -> tipo ID funciones_aux3 .
+
+    RPAREN          reduce using rule 16 (funciones_aux1 -> tipo ID funciones_aux3 .)
+
+
+state 70
+
+    (65) accion_aux1 -> DERECHA .
+
+    LPAREN          reduce using rule 65 (accion_aux1 -> DERECHA .)
+
+
+state 71
+
+    (35) estatuto -> paratodos .
+
+    ID              reduce using rule 35 (estatuto -> paratodos .)
+    CUANDO          reduce using rule 35 (estatuto -> paratodos .)
+    MIENTRAS        reduce using rule 35 (estatuto -> paratodos .)
+    PARATODOS       reduce using rule 35 (estatuto -> paratodos .)
+    ARRIBA          reduce using rule 35 (estatuto -> paratodos .)
+    ABAJO           reduce using rule 35 (estatuto -> paratodos .)
+    IZQUIERDA       reduce using rule 35 (estatuto -> paratodos .)
+    DERECHA         reduce using rule 35 (estatuto -> paratodos .)
+    COLOR           reduce using rule 35 (estatuto -> paratodos .)
+    RCURLY          reduce using rule 35 (estatuto -> paratodos .)
+
+
+state 72
+
+    (68) paratodos -> PARATODOS . LPAREN ID EN lista RPAREN bloque
+
+    LPAREN          shift and go to state 98
+
+
+state 73
+
+    (61) accion -> accion_aux1 . LPAREN exp RPAREN
+
+    LPAREN          shift and go to state 99
+
+
+state 74
+
+    (33) estatuto -> accion .
+
+    ID              reduce using rule 33 (estatuto -> accion .)
+    CUANDO          reduce using rule 33 (estatuto -> accion .)
+    MIENTRAS        reduce using rule 33 (estatuto -> accion .)
+    PARATODOS       reduce using rule 33 (estatuto -> accion .)
+    ARRIBA          reduce using rule 33 (estatuto -> accion .)
+    ABAJO           reduce using rule 33 (estatuto -> accion .)
+    IZQUIERDA       reduce using rule 33 (estatuto -> accion .)
+    DERECHA         reduce using rule 33 (estatuto -> accion .)
+    COLOR           reduce using rule 33 (estatuto -> accion .)
+    RCURLY          reduce using rule 33 (estatuto -> accion .)
+
+
+state 75
+
+    (34) estatuto -> mientras .
+
+    ID              reduce using rule 34 (estatuto -> mientras .)
+    CUANDO          reduce using rule 34 (estatuto -> mientras .)
+    MIENTRAS        reduce using rule 34 (estatuto -> mientras .)
+    PARATODOS       reduce using rule 34 (estatuto -> mientras .)
+    ARRIBA          reduce using rule 34 (estatuto -> mientras .)
+    ABAJO           reduce using rule 34 (estatuto -> mientras .)
+    IZQUIERDA       reduce using rule 34 (estatuto -> mientras .)
+    DERECHA         reduce using rule 34 (estatuto -> mientras .)
+    COLOR           reduce using rule 34 (estatuto -> mientras .)
+    RCURLY          reduce using rule 34 (estatuto -> mientras .)
+
+
+state 76
+
+    (64) accion_aux1 -> IZQUIERDA .
+
+    LPAREN          reduce using rule 64 (accion_aux1 -> IZQUIERDA .)
+
+
+state 77
+
+    (38) condicion -> CUANDO . LPAREN expresion RPAREN bloque condicion_aux1
+
+    LPAREN          shift and go to state 100
+
+
+state 78
+
+    (31) estatuto -> asignacion .
+
+    ID              reduce using rule 31 (estatuto -> asignacion .)
+    CUANDO          reduce using rule 31 (estatuto -> asignacion .)
+    MIENTRAS        reduce using rule 31 (estatuto -> asignacion .)
+    PARATODOS       reduce using rule 31 (estatuto -> asignacion .)
+    ARRIBA          reduce using rule 31 (estatuto -> asignacion .)
+    ABAJO           reduce using rule 31 (estatuto -> asignacion .)
+    IZQUIERDA       reduce using rule 31 (estatuto -> asignacion .)
+    DERECHA         reduce using rule 31 (estatuto -> asignacion .)
+    COLOR           reduce using rule 31 (estatuto -> asignacion .)
+    RCURLY          reduce using rule 31 (estatuto -> asignacion .)
+
+
+state 79
+
+    (26) bloque -> LCURLY bloque_aux1 . RCURLY
+
+    RCURLY          shift and go to state 101
+
+
+state 80
+
+    (63) accion_aux1 -> ABAJO .
+
+    LPAREN          reduce using rule 63 (accion_aux1 -> ABAJO .)
+
+
+state 81
+
+    (62) accion_aux1 -> ARRIBA .
+
+    LPAREN          reduce using rule 62 (accion_aux1 -> ARRIBA .)
+
+
+state 82
+
+    (27) bloque_aux1 -> bloque_aux2 .
+
+    RCURLY          reduce using rule 27 (bloque_aux1 -> bloque_aux2 .)
+
+
+state 83
+
+    (36) asignacion -> ID . asignacion_aux1 EQUALS expresion SEMI
+    (37) asignacion_aux1 -> . LBRACKET exp RBRACKET
+
+    LBRACKET        shift and go to state 102
+
+    asignacion_aux1                shift and go to state 103
+
+state 84
+
+    (32) estatuto -> condicion .
+
+    ID              reduce using rule 32 (estatuto -> condicion .)
+    CUANDO          reduce using rule 32 (estatuto -> condicion .)
+    MIENTRAS        reduce using rule 32 (estatuto -> condicion .)
+    PARATODOS       reduce using rule 32 (estatuto -> condicion .)
+    ARRIBA          reduce using rule 32 (estatuto -> condicion .)
+    ABAJO           reduce using rule 32 (estatuto -> condicion .)
+    IZQUIERDA       reduce using rule 32 (estatuto -> condicion .)
+    DERECHA         reduce using rule 32 (estatuto -> condicion .)
+    COLOR           reduce using rule 32 (estatuto -> condicion .)
+    RCURLY          reduce using rule 32 (estatuto -> condicion .)
+
+
+state 85
+
+    (29) bloque_aux2 -> estatuto . bloque_aux2
+    (29) bloque_aux2 -> . estatuto bloque_aux2
+    (30) bloque_aux2 -> .
+    (31) estatuto -> . asignacion
+    (32) estatuto -> . condicion
+    (33) estatuto -> . accion
+    (34) estatuto -> . mientras
+    (35) estatuto -> . paratodos
+    (36) asignacion -> . ID asignacion_aux1 EQUALS expresion SEMI
+    (38) condicion -> . CUANDO LPAREN expresion RPAREN bloque condicion_aux1
+    (61) accion -> . accion_aux1 LPAREN exp RPAREN
+    (67) mientras -> . MIENTRAS LPAREN expresion RPAREN bloque
+    (68) paratodos -> . PARATODOS LPAREN ID EN lista RPAREN bloque
+    (62) accion_aux1 -> . ARRIBA
+    (63) accion_aux1 -> . ABAJO
+    (64) accion_aux1 -> . IZQUIERDA
+    (65) accion_aux1 -> . DERECHA
+    (66) accion_aux1 -> . COLOR
+
+    RCURLY          reduce using rule 30 (bloque_aux2 -> .)
+    ID              shift and go to state 83
+    CUANDO          shift and go to state 77
+    MIENTRAS        shift and go to state 86
+    PARATODOS       shift and go to state 72
+    ARRIBA          shift and go to state 81
+    ABAJO           shift and go to state 80
+    IZQUIERDA       shift and go to state 76
+    DERECHA         shift and go to state 70
+    COLOR           shift and go to state 87
+
+    asignacion                     shift and go to state 78
+    paratodos                      shift and go to state 71
+    accion_aux1                    shift and go to state 73
+    estatuto                       shift and go to state 85
+    accion                         shift and go to state 74
+    bloque_aux2                    shift and go to state 104
+    mientras                       shift and go to state 75
+    condicion                      shift and go to state 84
+
+state 86
+
+    (67) mientras -> MIENTRAS . LPAREN expresion RPAREN bloque
+
+    LPAREN          shift and go to state 105
+
+
+state 87
+
+    (66) accion_aux1 -> COLOR .
+
+    LPAREN          reduce using rule 66 (accion_aux1 -> COLOR .)
+
+
+state 88
+
+    (50) termino_aux1 -> termino_aux2 factor .
+
+    PLUS            reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    MINUS           reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    RPAREN          reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    RBRACKET        reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    AND             reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    OR              reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+    SEMI            reduce using rule 50 (termino_aux1 -> termino_aux2 factor .)
+
+
+state 89
+
+    (46) exp_aux1 -> exp_aux2 termino .
+
+    RPAREN          reduce using rule 46 (exp_aux1 -> exp_aux2 termino .)
+    RBRACKET        reduce using rule 46 (exp_aux1 -> exp_aux2 termino .)
+    AND             reduce using rule 46 (exp_aux1 -> exp_aux2 termino .)
+    OR              reduce using rule 46 (exp_aux1 -> exp_aux2 termino .)
+    SEMI            reduce using rule 46 (exp_aux1 -> exp_aux2 termino .)
+
+
+state 90
+
+    (53) factor -> LPAREN expresion RPAREN .
+
+    TIMES           reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    DIVIDE          reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    PLUS            reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    MINUS           reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    RPAREN          reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    RBRACKET        reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    AND             reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    OR              reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+    SEMI            reduce using rule 53 (factor -> LPAREN expresion RPAREN .)
+
+
+state 91
+
+    (42) expresion_aux1 -> expresion_aux2 . exp
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 106
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 92
+
+    (41) expresion -> exp expresion_aux1 .
+
+    SEMI            reduce using rule 41 (expresion -> exp expresion_aux1 .)
+    RPAREN          reduce using rule 41 (expresion -> exp expresion_aux1 .)
+
+
+state 93
+
+    (44) expresion_aux2 -> OR .
+
+    LPAREN          reduce using rule 44 (expresion_aux2 -> OR .)
+    ID              reduce using rule 44 (expresion_aux2 -> OR .)
+    CTE_E           reduce using rule 44 (expresion_aux2 -> OR .)
+    CTE_F           reduce using rule 44 (expresion_aux2 -> OR .)
+
+
+state 94
+
+    (43) expresion_aux2 -> AND .
+
+    LPAREN          reduce using rule 43 (expresion_aux2 -> AND .)
+    ID              reduce using rule 43 (expresion_aux2 -> AND .)
+    CTE_E           reduce using rule 43 (expresion_aux2 -> AND .)
+    CTE_F           reduce using rule 43 (expresion_aux2 -> AND .)
+
+
+state 95
+
+    (17) funciones_aux2 -> funciones .
+
+    MAIN            reduce using rule 17 (funciones_aux2 -> funciones .)
+
+
+state 96
+
+    (15) funciones -> FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2 .
+
+    MAIN            reduce using rule 15 (funciones -> FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2 .)
+
+
+state 97
+
+    (19) funciones_aux3 -> COMMA funciones_aux1 .
+
+    RPAREN          reduce using rule 19 (funciones_aux3 -> COMMA funciones_aux1 .)
+
+
+state 98
+
+    (68) paratodos -> PARATODOS LPAREN . ID EN lista RPAREN bloque
+
+    ID              shift and go to state 107
+
+
+state 99
+
+    (61) accion -> accion_aux1 LPAREN . exp RPAREN
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 108
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 100
+
+    (38) condicion -> CUANDO LPAREN . expresion RPAREN bloque condicion_aux1
+    (41) expresion -> . exp expresion_aux1
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    exp                            shift and go to state 64
+    factor                         shift and go to state 45
+    expresion                      shift and go to state 109
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 101
+
+    (26) bloque -> LCURLY bloque_aux1 RCURLY .
+
+    FUNCION         reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    MAIN            reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    ID              reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    CUANDO          reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    MIENTRAS        reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    PARATODOS       reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    ARRIBA          reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    ABAJO           reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    IZQUIERDA       reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    DERECHA         reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    COLOR           reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    RCURLY          reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    FIN             reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+    SINO            reduce using rule 26 (bloque -> LCURLY bloque_aux1 RCURLY .)
+
+
+state 102
+
+    (37) asignacion_aux1 -> LBRACKET . exp RBRACKET
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 110
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 103
+
+    (36) asignacion -> ID asignacion_aux1 . EQUALS expresion SEMI
+
+    EQUALS          shift and go to state 111
+
+
+state 104
+
+    (29) bloque_aux2 -> estatuto bloque_aux2 .
+
+    RCURLY          reduce using rule 29 (bloque_aux2 -> estatuto bloque_aux2 .)
+
+
+state 105
+
+    (67) mientras -> MIENTRAS LPAREN . expresion RPAREN bloque
+    (41) expresion -> . exp expresion_aux1
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    exp                            shift and go to state 64
+    factor                         shift and go to state 45
+    expresion                      shift and go to state 112
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 106
+
+    (42) expresion_aux1 -> expresion_aux2 exp .
+
+    RPAREN          reduce using rule 42 (expresion_aux1 -> expresion_aux2 exp .)
+    SEMI            reduce using rule 42 (expresion_aux1 -> expresion_aux2 exp .)
+
+
+state 107
+
+    (68) paratodos -> PARATODOS LPAREN ID . EN lista RPAREN bloque
+
+    EN              shift and go to state 113
+
+
+state 108
+
+    (61) accion -> accion_aux1 LPAREN exp . RPAREN
+
+    RPAREN          shift and go to state 114
+
+
+state 109
+
+    (38) condicion -> CUANDO LPAREN expresion . RPAREN bloque condicion_aux1
+
+    RPAREN          shift and go to state 115
+
+
+state 110
+
+    (37) asignacion_aux1 -> LBRACKET exp . RBRACKET
+
+    RBRACKET        shift and go to state 116
+
+
+state 111
+
+    (36) asignacion -> ID asignacion_aux1 EQUALS . expresion SEMI
+    (41) expresion -> . exp expresion_aux1
+    (45) exp -> . termino exp_aux1
+    (49) termino -> . factor termino_aux1
+    (53) factor -> . LPAREN expresion RPAREN
+    (54) factor -> . cte
+    (55) cte -> . ID cte_aux1
+    (56) cte -> . CTE_E
+    (57) cte -> . CTE_F
+
+    LPAREN          shift and go to state 47
+    ID              shift and go to state 27
+    CTE_E           shift and go to state 28
+    CTE_F           shift and go to state 29
+
+    factor                         shift and go to state 45
+    exp                            shift and go to state 64
+    expresion                      shift and go to state 117
+    termino                        shift and go to state 46
+    cte                            shift and go to state 49
+
+state 112
+
+    (67) mientras -> MIENTRAS LPAREN expresion . RPAREN bloque
+
+    RPAREN          shift and go to state 118
+
+
+state 113
+
+    (68) paratodos -> PARATODOS LPAREN ID EN . lista RPAREN bloque
+    (21) lista -> . LBRACKET cte RBRACKET
+
+    LBRACKET        shift and go to state 20
+
+    lista                          shift and go to state 119
+
+state 114
+
+    (61) accion -> accion_aux1 LPAREN exp RPAREN .
+
+    ID              reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    CUANDO          reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    MIENTRAS        reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    PARATODOS       reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    ARRIBA          reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    ABAJO           reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    IZQUIERDA       reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    DERECHA         reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    COLOR           reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+    RCURLY          reduce using rule 61 (accion -> accion_aux1 LPAREN exp RPAREN .)
+
+
+state 115
+
+    (38) condicion -> CUANDO LPAREN expresion RPAREN . bloque condicion_aux1
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 120
+
+state 116
+
+    (37) asignacion_aux1 -> LBRACKET exp RBRACKET .
+
+    EQUALS          reduce using rule 37 (asignacion_aux1 -> LBRACKET exp RBRACKET .)
+
+
+state 117
+
+    (36) asignacion -> ID asignacion_aux1 EQUALS expresion . SEMI
+
+    SEMI            shift and go to state 121
+
+
+state 118
+
+    (67) mientras -> MIENTRAS LPAREN expresion RPAREN . bloque
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 122
+
+state 119
+
+    (68) paratodos -> PARATODOS LPAREN ID EN lista . RPAREN bloque
+
+    RPAREN          shift and go to state 123
+
+
+state 120
+
+    (38) condicion -> CUANDO LPAREN expresion RPAREN bloque . condicion_aux1
+    (39) condicion_aux1 -> . SINO bloque
+    (40) condicion_aux1 -> .
+
+    SINO            shift and go to state 124
+    ID              reduce using rule 40 (condicion_aux1 -> .)
+    CUANDO          reduce using rule 40 (condicion_aux1 -> .)
+    MIENTRAS        reduce using rule 40 (condicion_aux1 -> .)
+    PARATODOS       reduce using rule 40 (condicion_aux1 -> .)
+    ARRIBA          reduce using rule 40 (condicion_aux1 -> .)
+    ABAJO           reduce using rule 40 (condicion_aux1 -> .)
+    IZQUIERDA       reduce using rule 40 (condicion_aux1 -> .)
+    DERECHA         reduce using rule 40 (condicion_aux1 -> .)
+    COLOR           reduce using rule 40 (condicion_aux1 -> .)
+    RCURLY          reduce using rule 40 (condicion_aux1 -> .)
+
+    condicion_aux1                 shift and go to state 125
+
+state 121
+
+    (36) asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .
+
+    ID              reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    CUANDO          reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    MIENTRAS        reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    PARATODOS       reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    ARRIBA          reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    ABAJO           reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    IZQUIERDA       reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    DERECHA         reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    COLOR           reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+    RCURLY          reduce using rule 36 (asignacion -> ID asignacion_aux1 EQUALS expresion SEMI .)
+
+
+state 122
+
+    (67) mientras -> MIENTRAS LPAREN expresion RPAREN bloque .
+
+    ID              reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    CUANDO          reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    MIENTRAS        reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    PARATODOS       reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    ARRIBA          reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    ABAJO           reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    IZQUIERDA       reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    DERECHA         reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    COLOR           reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+    RCURLY          reduce using rule 67 (mientras -> MIENTRAS LPAREN expresion RPAREN bloque .)
+
+
+state 123
+
+    (68) paratodos -> PARATODOS LPAREN ID EN lista RPAREN . bloque
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 126
+
+state 124
+
+    (39) condicion_aux1 -> SINO . bloque
+    (26) bloque -> . LCURLY bloque_aux1 RCURLY
+
+    LCURLY          shift and go to state 54
+
+    bloque                         shift and go to state 127
+
+state 125
+
+    (38) condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .
+
+    ID              reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    CUANDO          reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    MIENTRAS        reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    PARATODOS       reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    ARRIBA          reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    ABAJO           reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    IZQUIERDA       reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    DERECHA         reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    COLOR           reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+    RCURLY          reduce using rule 38 (condicion -> CUANDO LPAREN expresion RPAREN bloque condicion_aux1 .)
+
+
+state 126
+
+    (68) paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .
+
+    ID              reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    CUANDO          reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    MIENTRAS        reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    PARATODOS       reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    ARRIBA          reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    ABAJO           reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    IZQUIERDA       reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    DERECHA         reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    COLOR           reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+    RCURLY          reduce using rule 68 (paratodos -> PARATODOS LPAREN ID EN lista RPAREN bloque .)
+
+
+state 127
+
+    (39) condicion_aux1 -> SINO bloque .
+
+    ID              reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    CUANDO          reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    MIENTRAS        reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    PARATODOS       reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    ARRIBA          reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    ABAJO           reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    IZQUIERDA       reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    DERECHA         reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    COLOR           reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+    RCURLY          reduce using rule 39 (condicion_aux1 -> SINO bloque .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: reduce/reduce conflict in state 54 resolved using rule (bloque_aux1 -> <empty>)
+WARNING: rejected rule (bloque_aux2 -> <empty>) in state 54
