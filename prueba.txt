@@ -1,7 +1,15 @@
 PROGRAMA d43 :
+BOOLEANO variable2;
+variable2 = VERDADERO;
+
 FUNCION PALABRA hola ()
 {
+ENTERO variable;
 
+}
+
+FUNCION ENTERO hola2 ()
+{
 }
 MAIN () {
 

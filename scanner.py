@@ -1,6 +1,20 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
+# + = 0
+# - = 1
+# * = 2
+# / = 3
+# && = 4
+# || = 5
+# = = 6
+# >= = 7
+# <= = 8
+# > = 9
+# < = 10
+# <> = 11
+# == = 12
+
 # ENTERO = 101
 # DECIMAL = 102
 # PALABRA = 103
@@ -10,6 +24,53 @@ funciones = {}
 variables = {}
 variablesGlobales = {}
 tipoDeVariable = ""
+stackTipos = []
+stackOper = []
+stackOp = []
+
+def oper2Code (oper):
+    if (oper == '+'):
+        return 0
+    if (oper == '-'):
+        return 1
+    if (oper == '*'):
+        return 2
+    if (oper == '/'):
+        return 3
+    if (oper == '&&'):
+        return 4
+    if (oper == '||'):
+        return 5
+    if (oper == '='):
+        return 6
+    if (oper == '>='):
+        return 7
+    if (oper == '<='):
+        return 8
+    if (oper == '>'):
+        return 9
+    if (oper == '<'):
+        return 10
+    if (oper == '<>'):
+        return 11
+    if (oper == '=='):
+        return 12
+
+cuboSemantico = [
+                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1,104]],
+                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1,104]],
+                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1,104, -1], [ -1, -1, -1,104]],
+                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1,104, -1], [ -1, -1, -1,104]]
+		        ]
 
 def Type2Code(tipo):
     if (tipo == "ENTERO"):
@@ -39,9 +100,7 @@ class SemanticError(Exception):
     def __str__(self):
         return repr(self.value)
 
-tokens = (
-    'ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND'
-)
+tokens = ('ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
 
 t_ARRIBA = r'ARRIBA'
 t_IZQUIERDA = r'IZQUIERDA'
@@ -71,12 +130,12 @@ t_VERDADERO = r'VERDADERO'
 t_FALSO = r'FALSO'
 t_BOOLEANO = r'BOOLEANO'
 t_LISTA = r'LISTA'
-t_EN= r'EN'
+t_EN = r'EN'
 
+t_QM = r'\"'
 t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_TIMES = r'\*'
-t_POWER = r'\^'
 t_DIVIDE = r'\/'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
@@ -135,7 +194,7 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
+    programa : PROGRAMA ID COLON programa_aux1 programa_aux1_1 programa_aux2 main FIN
     """
 
 def p_programa_aux1(p):
@@ -146,6 +205,12 @@ def p_programa_aux1(p):
     global variablesGlobales, variables
     variablesGlobales = variables
     variables = {}
+
+def p_programa_aux1_1(p):
+    """
+    programa_aux1_1 : asignacion
+                    |
+    """
 
 def p_programa_aux2(p):
     """
@@ -254,13 +319,13 @@ def p_tipo(p):
 
 def p_bloque(p):
     """
-    bloque : LCURLY bloque_aux1 RCURLY
+    bloque : LCURLY bloque_aux1 bloque_aux2 RCURLY
     """
 
 
 def p_bloque_aux1(p):
     """
-    bloque_aux1 : bloque_aux2
+    bloque_aux1 : variables
                   |
     """
 
@@ -291,6 +356,7 @@ def p_asignacion(p):
 def p_asignacion_aux1(p):
     """
     asignacion_aux1 : LBRACKET exp RBRACKET
+                      |
     """
 
 
@@ -316,6 +382,7 @@ def p_expresion(p):
 def p_expresion_aux1(p):
     """
     expresion_aux1 : expresion_aux2 exp
+                     |
     """
 
 
@@ -335,6 +402,7 @@ def p_exp(p):
 def p_exp_aux1(p):
     """
     exp_aux1 : exp_aux2 termino
+               |
     """
 
 
@@ -354,6 +422,7 @@ def p_termino(p):
 def p_termino_aux1(p):
     """
     termino_aux1 : termino_aux2 factor
+                   |
     """
 
 
@@ -376,6 +445,9 @@ def p_cte(p):
     cte : ID cte_aux1
           | CTE_E
           | CTE_F
+          | VERDADERO
+          | FALSO
+          | QM CTE_S QM
     """
 
 
@@ -438,7 +510,7 @@ while True:
             completeString += line
         try:
             parser.parse(completeString)
-            print funciones
+            print(funciones)
             print("Correct program")
         except EOFError:
             break
