@@ -197,14 +197,15 @@ def p_funciones(p):
     funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
     """
     global funciones, variables
-    if(funciones.has_key(p[2])):
-        raise SemanticError("Ya existe esa funcion: " + p[2])
-    funciones[p[2]] = {"variables": variables}
+    if(funciones.has_key(p[3])):
+        raise SemanticError("Ya existe esa funcion: " + p[3])
+    funciones[p[3]] = {"variables": variables}
     variables = {}
 
 def p_funciones_aux1(p):
     """
     funciones_aux1 : tipo arg funciones_aux3
+    |
     """
 
 def p_arg(p):

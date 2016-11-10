@@ -1,4 +1,8 @@
 PROGRAMA d43 :
+FUNCION PALABRA hola ()
+{
+
+}
 MAIN () {
 
 }
