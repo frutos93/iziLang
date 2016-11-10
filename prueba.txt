@@ -1,5 +1,5 @@
 PROGRAMA d43 :
-MAIN ENTERO () {
+MAIN () {
 
 }
 FIN

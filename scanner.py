@@ -1,23 +1,46 @@
 import ply.lex as lex
 import ply.yacc as yacc
 
+# ENTERO = 101
+# DECIMAL = 102
+# PALABRA = 103
+# BOOLEANO = 104
+
+funciones = {}
+variables = {}
+variablesGlobales = {}
+tipoDeVariable = ""
+
+def Type2Code(tipo):
+    if (tipo == "ENTERO"):
+        return 101
+    elif (tipo == "DECIMAL"):
+        return 102
+    elif (tipo == "PALABRA"):
+        return 103
+    elif (tipo == "BOOLEANO"):
+        return 104
+
 class LexerError(Exception):
     def __init__(self, value):
-       self.value = value
-
+        self.value = value
     def __str__(self):
         return repr(self.value)
 
+class SyntaxError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 class SemanticError(Exception):
     def __init__(self, value):
         self.value = value
-
     def __str__(self):
         return repr(self.value)
 
 tokens = (
-    'ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT'
+    'ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND'
 )
 
 t_ARRIBA = r'ARRIBA'
@@ -76,7 +99,7 @@ t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_AND = r'[&][&]'
 t_OR = r'[|][|]'
-
+t_AMPERSAND = r'\&'
 
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
@@ -115,13 +138,14 @@ def p_programa(p):
     programa : PROGRAMA ID COLON programa_aux1 programa_aux2 main FIN
     """
 
-
 def p_programa_aux1(p):
     """
     programa_aux1 : variables
                     |
     """
-
+    global variablesGlobales, variables
+    variablesGlobales = variables
+    variables = {}
 
 def p_programa_aux2(p):
     """
@@ -132,14 +156,18 @@ def p_programa_aux2(p):
 
 def p_variables(p):
     """
-    variables : tipo variables_aux1 SEMI variables_aux2
+    variables : variables_aux1 SEMI variables_aux2
     """
 
 
 def p_variables_aux1(p):
     """
-    variables_aux1 : ID variables_aux3 variables_aux4
+    variables_aux1 : tipo ID variables_aux3
     """
+    global variables, tipo
+    if (variables.has_key(p[2])):
+        raise SemanticError("Ya existe esa variable: " + p[2])
+    variables[p[2]] = {"tipo": Type2Code(tipo)}
 
 
 def p_variables_aux2(p):
@@ -154,29 +182,45 @@ def p_variables_aux3(p):
                         |
     """
 
-
-def p_variables_aux4(p):
-    """variables_aux4 : COMMA variables_aux1
-                        |
-    """
-
 def p_main(p):
     """
-    main : MAIN tipo LPAREN RPAREN bloque
+    main : MAIN LPAREN RPAREN bloque
     """
-
+    global funciones, variables
+    if (funciones.has_key(p[1])):
+        raise SemanticError("Solo puede haber una funcion main")
+    funciones[p[1]] = {"variables": variables}
+    variables = {}
 
 def p_funciones(p):
     """
     funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
     """
-
+    global funciones, variables
+    if(funciones.has_key(p[2])):
+        raise SemanticError("Ya existe esa funcion: " + p[2])
+    funciones[p[2]] = {"variables": variables}
+    variables = {}
 
 def p_funciones_aux1(p):
     """
-    funciones_aux1 : tipo ID funciones_aux3
+    funciones_aux1 : tipo arg funciones_aux3
     """
 
+def p_arg(p):
+    """
+    arg : AMPERSAND ID
+         | ID
+    """
+    global variables, tipo
+    if (p[1] == '&'):
+        if(variables.has_key(p[2])):
+            raise SemanticError("Ya existe esa variable: " + p[2])
+        variables[p[2]] = {"tipo": Type2Code(tipo), "porReferencia": True}
+    else:
+        if (variables.has_key(p[1])):
+            raise SemanticError("Ya existe esa variable: " + p[1])
+        variables[p[1]] = {"tipo": Type2Code(tipo), "porReferencia": False}
 
 def p_funciones_aux2(p):
     """funciones_aux2 : funciones
@@ -203,6 +247,8 @@ def p_tipo(p):
            | PALABRA
            | BOOLEANO
     """
+    global tipo
+    tipo = p[1]
 
 
 def p_bloque(p):
@@ -378,9 +424,12 @@ lexer = lex.lex()
 parser = yacc.yacc()
 while True:
     try:
-        s = raw_input('iziLang > ')
+        s = input('iziLang > ')
     except EOFError:
         break
+    funciones = {"global": {}}
+    variables = {}
+    variablesGlobales = {}
     # Start the scanning and parsing
     with open(s) as fp:
         completeString = ""
@@ -388,6 +437,7 @@ while True:
             completeString += line
         try:
             parser.parse(completeString)
+            print funciones
             print("Correct program")
         except EOFError:
             break
