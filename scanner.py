@@ -27,6 +27,9 @@ tipoDeVariable = ""
 stackTipos = []
 stackOper = []
 stackOp = []
+avail = {}
+cuadruplos = []
+parametros = []
 
 def oper2Code (oper):
     if (oper == '+'):
@@ -100,7 +103,7 @@ class SemanticError(Exception):
     def __str__(self):
         return repr(self.value)
 
-tokens = ('ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
+tokens = ('ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'CTE_B', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
 
 t_ARRIBA = r'ARRIBA'
 t_IZQUIERDA = r'IZQUIERDA'
@@ -177,6 +180,10 @@ def t_ID(t):
         t.type = t.value
     return t
 
+def t_CTE_B(t):
+    r'VERDADERO|FALSO'
+    return t
+
 #def t_NEWLINE(t):
 #    r'\n'
 #    t.lexer.lineno += 1
@@ -194,17 +201,28 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : PROGRAMA ID COLON programa_aux1 programa_aux1_1 programa_aux2 main FIN
+    programa : PROGRAMA ID COLON programa_aux1 guarda_variables_global programa_aux1_1 programa_aux2 main FIN
     """
+    global variablesGlobales
+    variablesGlobales = {}
 
+def p_guarda_variables_global(p):
+    """
+    guarda_variables_global :
+    """
+    global funciones, variablesGlobales, variables, avail
+    for key in variables.keys():
+        variables[key]["memoria"] = avail[0][variables[key]["tipo"]]
+        avail[0][variables[key]["tipo"]]+= 1
+    variablesGlobales = variables
+    variables = {}
+    funciones["global"] = variablesGlobales
 def p_programa_aux1(p):
     """
     programa_aux1 : variables
                     |
     """
-    global variablesGlobales, variables
-    variablesGlobales = variables
-    variables = {}
+
 
 def p_programa_aux1_1(p):
     """
@@ -251,7 +269,7 @@ def p_main(p):
     """
     main : MAIN LPAREN RPAREN bloque
     """
-    global funciones, variables
+    global funciones, variables, avail
     if (funciones.has_key(p[1])):
         raise SemanticError("Solo puede haber una funcion main")
     funciones[p[1]] = {"variables": variables}
@@ -261,10 +279,10 @@ def p_funciones(p):
     """
     funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
     """
-    global funciones, variables
+    global funciones, variables, parametros
     if(funciones.has_key(p[3])):
         raise SemanticError("Ya existe esa funcion: " + p[3])
-    funciones[p[3]] = {"variables": variables}
+    funciones[p[3]] = {"variables": variables,"parametros": parametros}
     variables = {}
 
 def p_funciones_aux1(p):
@@ -278,15 +296,18 @@ def p_arg(p):
     arg : AMPERSAND ID
          | ID
     """
-    global variables, tipo
+    global variables, tipo, parametros
     if (p[1] == '&'):
         if(variables.has_key(p[2])):
             raise SemanticError("Ya existe esa variable: " + p[2])
         variables[p[2]] = {"tipo": Type2Code(tipo), "porReferencia": True}
+        parametros.append(Type2Code(tipo))
     else:
         if (variables.has_key(p[1])):
             raise SemanticError("Ya existe esa variable: " + p[1])
         variables[p[1]] = {"tipo": Type2Code(tipo), "porReferencia": False}
+        parametros.append(Type2Code(tipo))
+
 
 def p_funciones_aux2(p):
     """funciones_aux2 : funciones
@@ -319,9 +340,19 @@ def p_tipo(p):
 
 def p_bloque(p):
     """
-    bloque : LCURLY bloque_aux1 bloque_aux2 RCURLY
+    bloque : LCURLY bloque_aux1 guarda_variables_local bloque_aux2 RCURLY
     """
 
+def p_guarda_variables_local(p):
+    """
+    guarda_variables_local :
+    """
+    global variables, avail
+    for key in variables.keys():
+        tipoNumero = variables[key]["tipo"]
+        if tipoNumero < 1000:
+            variables[key]["memoria"] = avail[1][tipoNumero]
+            avail[1][tipoNumero] += 1
 
 def p_bloque_aux1(p):
     """
@@ -339,19 +370,37 @@ def p_bloque_aux2(p):
 
 def p_estatuto(p):
     """
-    estatuto : asignacion
+    estatuto : asignacion checa_stack_a
                | condicion
                | accion
                | mientras
                | paratodos
     """
 
+def p_checa_stack_a(p):
+     '''checa_stack_a : '''
+     global stackOper, stackTipos, stackOp, cuadruplos
+     if (stackOper):
+         if (stackOper[-1] == '='):
+             operador = oper2Code(stackOper.pop())
+             op2 = stackOp.pop()
+             op1 = stackOp.pop()
+             op2Tipo = stackTipos.pop()
+             op1Tipo = stackTipos.pop()
+             if (op1Tipo != op2Tipo):
+                 raise SemanticError("Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
+             cuadruplos.append((operador, op2, 'null', op1))
+
 
 def p_asignacion(p):
     """
-    asignacion : ID asignacion_aux1 EQUALS expresion SEMI
+    asignacion : ID asignacion_aux1 push_a expresion SEMI
     """
 
+def p_push_a(p):
+    """push_a : EQUALS"""
+    global stackOper
+    stackOper.append(p[1])
 
 def p_asignacion_aux1(p):
     """
@@ -375,95 +424,239 @@ def p_condicion_aux1(p):
 
 def p_expresion(p):
     """
-    expresion : exp expresion_aux1
+    expresion : exp_and checa_stack_or expresion_aux1
     """
 
+def p_checa_stack_or(p):
+    """
+    checa_stack_or :
+    """
+    global stackOper
+    if (stackOper):
+        if (stackOper[-1] == '||'):
+            generateArithmeticCode()
 
 def p_expresion_aux1(p):
     """
-    expresion_aux1 : expresion_aux2 exp
+    expresion_aux1 : OR exp_and
                      |
     """
+    global stackOper
+    try:
+        if(p[1] == '||'):
+            stackOper.append(p[1])
+    except IndexError:
+        return
 
-
-def p_expresion_aux2(p):
+def p_exp_and(p):
     """
-    expresion_aux2 : AND
-                     | OR
+    exp_and : exp_comp checa_stack_and exp_and_aux1
     """
 
+def p_checa_stack_and(p):
+    """
+    checa_stack_and :
+    """
+    global stackOper
+    if (stackOper):
+        if (stackOper[-1] == '&&'):
+            generateArithmeticCode()
+
+def p_exp_and_aux1(p):
+    """
+    exp_and_aux1 : AND exp_comp
+                  |
+    """
+    global stackOper
+    try:
+        if (p[1] == '&&'):
+            stackOper.append(p[1])
+    except IndexError:
+        return
+
+def p_exp_comp(p):
+    """
+    exp_comp : exp exp_comp_aux1 checa_stack_comp
+    """
+
+def p_checa_stack_comp(p):
+    """
+    checa_stack_comp :
+    """
+    global stackOper
+    if (stackOper):
+        if (stackOper[-1] == '>' or stackOper[-1] == '>=' or stackOper[-1] == '<' or stackOper[-1] == '<=' or stackOper[-1] == '<>' or stackOper[-1] == '=='):
+            generateArithmeticCode()
+
+def p_exp_comp_aux1(p):
+    """
+    exp_comp_aux1 : GT
+                  | GE
+                  | LT
+                  | LE
+                  | NE
+                  | EQUALSC
+                  |
+    """
+    global stackOper
+    try:
+        if (p[1] == '>' or p[1] == '>=' or p[1] == '<' or p[1] == '<=' or p[1] == '<>' or p[1] == '=='):
+            stackOper.append(p[1])
+    except IndexError:
+        return
 
 def p_exp(p):
     """
-    exp : termino exp_aux1
+    exp : termino checa_stack_pm exp_aux1
     """
 
+def p_checa_stack_pm(p):
+     """
+     checa_stack_pm :
+     """
+     global stackOper
+     if (stackOper):
+         if (stackOper[-1] == '+' or stackOper[-1] == '-'):
+             generateArithmeticCode()
 
 def p_exp_aux1(p):
     """
-    exp_aux1 : exp_aux2 termino
+    exp_aux1 : push_pm exp
                |
     """
 
-
-def p_exp_aux2(p):
+def p_push_pm(p):
     """
-    exp_aux2 : PLUS
-               | MINUS
+    push_pm : PLUS
+            | MINUS
     """
-
+    global stackOper
+    stackOper.append(p[1])
 
 def p_termino(p):
     """
-    termino : factor termino_aux1
+    termino : factor checa_stack_td termino_aux1
     """
 
+def p_checa_stack_td(p):
+    """
+    checa_stack_td :
+    """
+    global stackOper
+    print stackOper
+    if (stackOper):
+        if (stackOper[-1] == '*' or stackOper[-1] == '/'):
+            generateArithmeticCode()
 
 def p_termino_aux1(p):
     """
-    termino_aux1 : termino_aux2 factor
+    termino_aux1 : push_td termino
                    |
     """
 
-
-def p_termino_aux2(p):
+def p_push_td(p):
     """
-    termino_aux2 : TIMES
-                   | DIVIDE
+    push_td : TIMES
+            | DIVIDE
     """
-
+    global stackOper
+    stackOper.append(p[1])
 
 def p_factor(p):
     """
-    factor : LPAREN expresion RPAREN
+    factor : push_lparen expresion pop_rparen
     | cte
     """
 
+def p_push_lparen(p):
+    """
+    push_lparen : LPAREN
+    """
+    global stackOper
+    stackOper.append(p[1])
+
+# Helper function in sintaxis for semantic (operators)
+def p_pop_rparen(p):
+    """
+    pop_rparen : RPAREN
+    """
+    global stackOper
+    stackOper.pop()
 
 def p_cte(p):
     """
-    cte : ID cte_aux1
-          | CTE_E
-          | CTE_F
-          | VERDADERO
-          | FALSO
-          | QM CTE_S QM
+    cte : id_aux lista_aux
+        | cte_e_aux
+        | cte_f_aux
+        | cte_b_aux
+        | cte_s_aux
     """
 
-
-def p_cte_aux1(p):
+def p_id_aux(p):
     """
-    cte_aux1 : LBRACKET exp RBRACKET
-               | LPAREN exp RPAREN
-               |
+    id_aux : ID
     """
+    global stackTipos, stackOp, variables
+    if (not variables.has_key(p[1])):
+        raise SemanticError("No se ha declarado variable: " + p[1])
+    stackOp.append(variables[p[1]]["memoria"])
+    stackTypes.append(variables[p[1]]["tipo"])
 
+def p_cte_e_aux(p):
+    """
+    cte_e_aux : CTE_E
+    """
+    global variables, avail, stackOp, stackTipos
+    if (not variables.has_key(p[1])):
+        variables[p[1]] = {"tipo": 101, "memoria": avail[3][101]}
+        avail[3][101] += 1
+    stackOp.append(variables[p[1]]["memoria"])
+    stackTipos.append(variables[p[1]]["tipo"])
+
+def p_cte_f_aux(p):
+    """
+    cte_f_aux : CTE_F
+    """
+    global variables, avail, stackOp, stackTipos
+    if (not variables.has_key(p[1])):
+        variables[p[1]] = {"tipo": 102, "memoria": avail[3][102]}
+        avail[3][102] += 1
+    stackOp.append(variables[p[1]]["memoria"])
+    stackTipos.append(variables[p[1]]["tipo"])
+
+def p_cte_s_aux(p):
+    """
+    cte_s_aux : CTE_S
+    """
+    global variables, avail, stackOp, stackTipos
+    if (not variables.has_key(p[1])):
+        variables[p[1]] = {"tipo": 103, "memoria": avail[3][103]}
+        avail[3][103] += 1
+    stackOp.append(variables[p[1]]["memoria"])
+    stackTipos.append(variables[p[1]]["tipo"])
+
+def p_cte_b_aux(p):
+    """
+    cte_b_aux : CTE_B
+    """
+    global variables, avail, stackOp, stackTipos
+    if (not variables.has_key(p[1])):
+        variables[p[1]] = {"tipo": 104, "memoria": avail[3][104]}
+        avail[3][104] += 1
+    stackOp.append(variables[p[1]]["memoria"])
+    stackTipos.append(variables[p[1]]["tipo"])
+
+def p_lista_aux(p):
+    """
+    lista_aux : LBRACKET exp RBRACKET
+                | LPAREN exp RPAREN
+                |
+    """
 
 def p_accion(p):
     """
     accion : accion_aux1 LPAREN exp RPAREN
     """
-
 
 def p_accion_aux1(p):
     """
@@ -479,7 +672,6 @@ def p_mientras(p):
     mientras : MIENTRAS LPAREN expresion RPAREN bloque
     """
 
-
 def p_paratodos(p):
     """
     paratodos : PARATODOS LPAREN ID EN lista RPAREN bloque
@@ -492,6 +684,28 @@ def p_error(p):
         print("EOF")
 
 
+def generateArithmeticCode():
+    global stackOper, stackTipos, stackOp, avail, cuadruplos
+#    if (debug):
+    print "stack operadores: ", stackOperators
+    print "stack operandos: ", stackOp
+    print "stack tipos: ", stackTypes
+
+    operador = oper2Code(stackOper.pop())
+    op2 = stackOp.pop()
+    op1 = stackOp.pop()
+    op2Tipo = stackTipos.pop()
+    op1Tipo = stackTipos.pop()
+    nuevoTipo = cuboSemantico[op1Tipo-100][op2Tipo-100][operador]
+    if (nuevoTipo == -1):
+        raise SemanticError("Tipos incompatibles: " + str(op1Tipo) + str(operador) + str(op2tipo))
+    resultado = avail[2][nuevoTipo]
+    avail[2][nuevoTipo] += 1
+    cuadruplos.append((operador, op1, op2, resultado))
+    stackOp.append(resultado)
+    stackTipos.append(nuevoTipo)
+
+
 lexer = lex.lex()
 
 parser = yacc.yacc()
@@ -501,8 +715,15 @@ while True:
     except EOFError:
         break
     funciones = {"global": {}}
+    avail = {0: {101: 2000, 102:3000, 103:4000, 104:5000}, 1: {101: 8000, 102:9000, 103:10000, 104:11000}, 2: {101: 14000, 102:15000, 103:16000, 104:17000}, 3: {101: 20000, 102:21000, 103:22000, 104:23000}}
     variables = {}
     variablesGlobales = {}
+    parametros = []
+    cuadruplos = []
+    stackTipos = []
+    stackOper = []
+    stackOp = []
+
     # Start the scanning and parsing
     with open(s) as fp:
         completeString = ""
@@ -511,6 +732,7 @@ while True:
         try:
             parser.parse(completeString)
             print(funciones)
-            print("Correct program")
+            print (cuadruplos)
+            print("El programa se ejecuto con exito")
         except EOFError:
             break
