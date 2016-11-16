@@ -1,9 +1,9 @@
 PROGRAMA d43 :
-BOOLEANO variable3;
-variable3 = VERDADERO;
+ENTERO pruebabool;
+pruebabool = 3;
 FUNCION PALABRA hola ()
 {
-ENTERO variable;
+ENTERO numero;
 
 }
 

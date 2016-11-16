@@ -103,7 +103,7 @@ class SemanticError(Exception):
     def __str__(self):
         return repr(self.value)
 
-tokens = ('ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'VERDADERO', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'CTE_B', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
+tokens = ('ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'CTE_B', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
 
 t_ARRIBA = r'ARRIBA'
 t_IZQUIERDA = r'IZQUIERDA'
@@ -129,8 +129,6 @@ t_MAIN = r'MAIN'
 t_PARATODOS = r'PARATODOS'
 t_PROGRAMA = r'PROGRAMA'
 t_SINO = r'SINO'
-t_VERDADERO = r'VERDADERO'
-t_FALSO = r'FALSO'
 t_BOOLEANO = r'BOOLEANO'
 t_LISTA = r'LISTA'
 t_EN = r'EN'
@@ -596,11 +594,16 @@ def p_id_aux(p):
     """
     id_aux : ID
     """
-    global stackTipos, stackOp, variables
+    global stackTipos, stackOp, variables, variablesGlobales
     if (not variables.has_key(p[1])):
-        raise SemanticError("No se ha declarado variable: " + p[1])
-    stackOp.append(variables[p[1]]["memoria"])
-    stackTypes.append(variables[p[1]]["tipo"])
+        if (not globalVariables.has_key(p[1])):
+            raise SemanticError("No se ha declarado variable: " + p[1])
+        else:
+            stackOp.append(variablesGlobales[p[1]]["memoria"])
+            stackTypes.append(variablesGlobales[p[1]]["tipo"])
+    else:
+        stackOp.append(variables[p[1]]["memoria"])
+        stackTypes.append(variables[p[1]]["tipo"])
 
 def p_cte_e_aux(p):
     """
@@ -649,8 +652,7 @@ def p_cte_b_aux(p):
 def p_lista_aux(p):
     """
     lista_aux : LBRACKET exp RBRACKET
-                | LPAREN exp RPAREN
-                |
+              |
     """
 
 def p_accion(p):
@@ -661,10 +663,10 @@ def p_accion(p):
 def p_accion_aux1(p):
     """
     accion_aux1 : ARRIBA
-                  | ABAJO
-                  | IZQUIERDA
-                  | DERECHA
-                  | COLOR
+                | ABAJO
+                | IZQUIERDA
+                | DERECHA
+                | COLOR
     """
 
 def p_mientras(p):
