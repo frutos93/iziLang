@@ -1,15 +1,14 @@
 PROGRAMA d43 :
-ENTERO pruebabool;
-pruebabool = 3;
-FUNCION PALABRA hola ()
-{
-ENTERO numero;
+    DECIMAL floatGlobal;
 
-}
+    FUNCION ENTERO prueba1()
+    {
+        ENTERO intPrueba1;
+        intPrueba1 = 3;
+    }
 
-FUNCION ENTERO hola2 ()
-{
-}
-MAIN () {
-}
+    MAIN ()
+    {
+        floatGlobal = 5.6 + 7;
+    }
 FIN
