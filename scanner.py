@@ -33,6 +33,10 @@ stackOpVisible = []
 avail = {}
 cuadruplos = []
 parametros = []
+funcionId = ""
+contParams = ""
+goSub = ""
+temporalStamp = ""
 
 def oper2Code (oper):
     if (oper == '+'):
@@ -64,17 +68,17 @@ def oper2Code (oper):
     if (oper == 'goto'):
        return 13
     if (oper == 'gotoF'):
-         return 14
+        return 14
     if (oper == 'print'):
-         return 15
-    if (oper == 'getValue'):
-         return 16
-    if (oper == 'getLine'):
-         return 17
-    if (oper == 'getBoolean'):
-         return 16
-    if (oper == 'getString'):
-         return 18
+        return 15
+    if (oper == 'finFuncion'):
+        return 16
+    if (oper == 'era'):
+        return 17
+    if (oper == 'gosub'):
+        return 18
+    if (oper == 'param'):
+        return 19
 
 cuboSemantico = [
                 [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
@@ -218,11 +222,19 @@ lex.lex(debug=0)
 
 def p_programa(p):
     """
-    programa : PROGRAMA ID COLON programa_aux1 guarda_variables_global programa_aux1_1 programa_aux2 main FIN
+    programa : PROGRAMA genera_goto_main ID COLON programa_aux1 guarda_variables_global programa_aux1_1 programa_aux2 main FIN
     """
     global variablesGlobales, constants
     variablesGlobales = {}
     funciones["constants"] = constants
+
+def p_genera_goto_main(p):
+    """
+    genera_goto_main :
+    """
+    global cuadruplos, stackJumps
+    cuadruplos.append([oper2Code('goto'),-1,-1,'espera'])
+    stackJumps.append(len(cuadruplos))
 
 def p_guarda_variables_global(p):
     """
@@ -254,54 +266,88 @@ def p_programa_aux2(p):
                     |
     """
 
-
 def p_variables(p):
     """
-    variables : variables_aux1 SEMI variables_aux2
+    variables : tipo ID SEMI programa_aux1
+              | tipo ID LBRACKET CTE_E RBRACKET SEMI programa_aux1
     """
-
-
-def p_variables_aux1(p):
-    """
-    variables_aux1 : tipo ID variables_aux3
-    """
-    global variables, tipo
+    global variables, tipo, funciones
     if (variables.has_key(p[2])):
         raise SemanticError("Ya existe esa variable: " + p[2])
-    variables[p[2]] = {"tipo": Type2Code(tipo)}
-
-
-def p_variables_aux2(p):
-    """
-    variables_aux2 : variables
-                     |
-    """
-
-
-def p_variables_aux3(p):
-    """variables_aux3 : lista
-                        |
-    """
+    if (funciones.has_key("variables")):
+            if (funciones["variables"].has_value(p[2])):
+                raise SemanticError("La variable tiene el mismo nombre que una funcion: " + p[2])
+    if(p[3] != ';'):
+        variables[p[2]] = {"tipo": Type2Code(tipo), "dimension": {"inferior": 0, "superior": int(p[4]), "-K": 0}}
+    else:
+        tipoNumero = Type2Code(tipo)
+        variables[p[2]] = {"tipo": tipoNumero}
 
 def p_main(p):
     """
-    main : MAIN LPAREN RPAREN bloque
+    main : MAIN set_funcion_main LPAREN RPAREN bloque
     """
     global funciones, variables, avail
     if (funciones.has_key(p[1])):
         raise SemanticError("Solo puede haber una funcion main")
-    funciones[p[1]] = {"variables": variables}
+    funciones[p[1]]["variables"] = variables
     variables = {}
+
+def p_set_funcion_main(p):
+    """
+    set_funcion_main :
+    """
+    global funciones, funcionId, cuadruplos, stackJumps, avail
+    funcionId = "main"
+    funciones[funcionId] = {"variables" : {}}
+    firstJump = stackJumps.pop();
+    cuadruplos[firstJump - 1][3] = len(cuadruplos) + 1
+    avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000}
+
+
 
 def p_funciones(p):
     """
-    funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
+    funciones : FUNCION tipo guarda_funcion_id LPAREN funciones_aux1 RPAREN guarda_funcion bloque genera_fin_funcion funciones_aux2
     """
     global funciones, variables, parametros
     if(funciones.has_key(p[3])):
         raise SemanticError("Ya existe esa funcion: " + p[3])
     funciones[p[3]] = {"variables": variables,"parametros": parametros}
     variables = {}
+
+def p_guarda_funcion(p):
+    """
+    guarda_funcion :
+    """
+    global funciones, variables, parametros, funcionId, tipo, avail, cuadruplos
+    if (funciones.has_key(funcionId)):
+        raise SemanticError("Ya existe esta funcion: " + funcionId)
+        funciones[funcionId] = {"variables": variables, "parametros": parameters, "return": Type2Code(tipo), "memoria": avail[0][Type2Code(tipo)], "inicia cuadruplo": len(listCode) + 1}
+    avail[0][Type2Code(tipo)] += 1
+    variables = {}
+
+def p_genera_fin_funcion(p):
+    """
+    genera_fin_funcion :
+    """
+    global cuadruplos, temporalStamp, funciones, funcionId, avail
+    cuadruplos.append([oper2Code('finFuncion'),-1,-1,-1])
+    temporalAux = {}
+    print (temporalStamp)
+    for key in avail[2]:
+        temporalAux[key] = avail[2][key] - temporalStamp[key]
+        funciones[funcionId]["temporales"] = temporalAux
+
+def p_guarda_funcion_id(p):
+    """
+    guarda_funcion_id : ID
+    """
+    global funcionId, temporalStamp, avail
+    funcionId = p[1]
+    avail[2] = {101: 14000, 102:1500, 103: 16000, 104:17000}
+    temporalStamp = avail[2].copy()
+
 
 def p_funciones_aux1(p):
     """
@@ -314,17 +360,18 @@ def p_arg(p):
     arg : AMPERSAND ID
          | ID
     """
-    global variables, tipo, parametros
+    global variables, tipo, parametros, avail
     if (p[1] == '&'):
         if(variables.has_key(p[2])):
             raise SemanticError("Ya existe esa variable: " + p[2])
-        variables[p[2]] = {"tipo": Type2Code(tipo), "porReferencia": True}
+        variables[p[2]] = {"tipo": Type2Code(tipo), "porReferencia": True, "memoria": avail[1][Type2Code(tipo)]}
         parametros.append(Type2Code(tipo))
     else:
         if (variables.has_key(p[1])):
             raise SemanticError("Ya existe esa variable: " + p[1])
-        variables[p[1]] = {"tipo": Type2Code(tipo), "porReferencia": False}
+        variables[p[1]] = {"tipo": Type2Code(tipo), "porReferencia": False, "memoria": avail[1][Type2Code(tipo)]}
         parametros.append(Type2Code(tipo))
+    avail[1][Type2Code(tipo)] += 1
 
 def p_funciones_aux2(p):
     """funciones_aux2 : funciones
@@ -335,11 +382,6 @@ def p_funciones_aux3(p):
     """
     funciones_aux3 : COMMA funciones_aux1
                      |
-    """
-
-def p_lista(p):
-    """
-    lista : LBRACKET cte RBRACKET
     """
 
 def p_tipo(p):
@@ -386,10 +428,58 @@ def p_estatuto(p):
              | condicion
              | accion
              | mientras
-             | paratodos
              | print
              | return
+             | llamada_funcion
     """
+
+def p_llamada_funcion(p):
+    """
+    llamada_funcion : valida_funcion_id LPAREN agrega_param RPAREN valida_params
+    """
+
+def p_valida_funcion_id(p):
+    """
+    valida_funcion_id : ID
+    """
+    global cuadruplos, funciones, parametros, contParams, goSub
+    if (not funciones.has_key(p[1])):
+        raise SemanticError("No se ha declarado esa funcion: " + p[1])
+    cuadruplos.append([oper2Code('era'), -1, -1, p[1]])
+    parametros = funciones[p[1]]["parametros"]
+    contParams = 0
+    goSub = p[1]
+
+def p_agrega_param(p):
+    """
+    agrega_param : expresion agrega_param_aux
+    """
+    global stackOp, stackTipos, parametros, contParams, cuadruplos
+    tipoParam = stackTipos.pop()
+    operando = stackOp.pop()
+    try:
+        if (parametros[contParams] != tipoParam):
+            raise SemanticError("Se esperaba otro tipo de parametro: " + parametros[contParams] + " Se recibio: " + tipoParam)
+    except IndexError:
+        raise SemanticError("Mas parametros de lo esperado")
+    contParams += 1
+    cuadruplos.append([oper2Code('param'), operand, -1, contParams])
+
+def p_agrega_param_aux(p):
+    """
+    agrega_param_aux : COMMA agrega_param
+                     |
+    """
+
+def p_valida_params(p):
+    """
+    valida_params :
+    """
+    global funciones, cuadruplos, goSub, parametros, contParams
+    cuadruplos.append([oper2Code('gosub'), -1, -1, goSub])
+    goSub = ""
+    parametros = []
+    contParams = 0
 
 def p_print(p):
     """
@@ -410,7 +500,7 @@ def p_print_aux2(p):
     expresion = stackOp.pop()
     stackTipos.pop()
     stackOpVisible.pop()
-    cuadruplos.append([oper2Code('print'), 'null', 'null', expression])
+    cuadruplos.append([oper2Code('print'), -1, -1, expression])
 
 def p_checa_stack_a(p):
      """
@@ -427,7 +517,7 @@ def p_checa_stack_a(p):
              op1Tipo = stackTipos.pop()
              if (op1Tipo != op2Tipo):
                  raise SemanticError("Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
-             cuadruplos.append([operador, op2, 'null', op1])
+             cuadruplos.append([operador, op2, -1, op1])
 
 def p_asignacion(p):
     """
@@ -470,13 +560,13 @@ def p_genera_gotoF_if(p):
     """
     genera_gotoF_if :
     """
-    global stackOp, stackTipos, stackOpVisible, stackJumps, cuadruplos
+    global stackOp, stackTipos, stackOpVisible, stackJumps, cuadruplos, stackOper
     tipoActual = stackTipos.pop()
     if (tipoActual != Type2Code("boolean")):
         raise SemanticError("Se espera un booleano en la condicion. Se recibio un: " + str(tipoActual))
     condicion = stackOp.pop()
     stackOpVisible.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, 'null', 'espera'])
+    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
     stackJumps.append(len(cuadruplos) - 1)
 
 def p_genera_fin_if(p):
@@ -489,7 +579,7 @@ def p_genera_fin_if(p):
 
 def p_expresion(p):
     """
-    expresion : exp_and checa_stack_or expresion_aux1
+    expresion : exp_and expresion_aux1 checa_stack_or
     """
 
 def p_checa_stack_or(p):
@@ -515,7 +605,7 @@ def p_expresion_aux1(p):
 
 def p_exp_and(p):
     """
-    exp_and : exp_comp checa_stack_and exp_and_aux1
+    exp_and : exp_comp exp_and_aux1 checa_stack_and
     """
 
 def p_checa_stack_and(p):
@@ -660,8 +750,9 @@ def p_id_aux(p):
     """
     id_aux : ID
     """
-    global stackTipos, stackOp, variables, variablesGlobales, stackOpVisible
-    if (not variables.has_key(p[1])):
+    global stackTipos, stackOp, variables, variablesGlobales, stackOpVisible, funciones, funcionId
+    print (variables, funciones, p[1], funcionId)
+    if (not variables.has_key(p[1]) and not funciones[funcionId]["variables"].has_key(p[1])):
         if (not variablesGlobales.has_key(p[1])):
             raise SemanticError("No se ha declarado variable: " + p[1])
         else:
@@ -669,9 +760,14 @@ def p_id_aux(p):
             stackOpVisible.append(p[1])
             stackTipos.append(variablesGlobales[p[1]]["tipo"])
     else:
-        stackOp.append(variables[p[1]]["memoria"])
-        stackOpVisible.append(p[1])
-        stackTipos.append(variables[p[1]]["tipo"])
+        if (variables.has_key(p[1])):
+            stackOp.append(variables[p[1]]["memoria"])
+            stackOpVisible.append(p[1])
+            stackTipos.append(variables[p[1]]["tipo"])
+        else:
+            stackOp.append(funciones[funcionId]["variables"][p[1]]["memoria"])
+            stackOpVisible.append(p[1])
+            stackTipos.append(funciones[funcionId]["variables"][p[1]]["tipo"])
 
 def p_cte_e_aux(p):
     """
@@ -697,7 +793,6 @@ def p_cte_f_aux(p):
     stackOpVisible.append(p[1])
     stackTipos.append(constants[p[1]]["tipo"])
 
-
 def p_cte_s_aux(p):
     """
     cte_s_aux : CTE_S
@@ -710,7 +805,6 @@ def p_cte_s_aux(p):
     stackOpVisible.append(p[1])
     stackTipos.append(constants[p[1]]["tipo"])
 
-
 def p_cte_b_aux(p):
     """
     cte_b_aux : CTE_B
@@ -722,7 +816,6 @@ def p_cte_b_aux(p):
     stackOp.append(constants[p[1]]["memoria"])
     stackOpVisible.append(p[1])
     stackTipos.append(constants[p[1]]["tipo"])
-
 
 def p_lista_aux(p):
     """
@@ -765,7 +858,7 @@ def p_genera_gotoF_mientras(p):
         raise SemanticError("Se esperaba un booleano en la condicion. Se recibio: " + str(tipoActual))
     condicion = stackOp.pop()
     stackOpVisible.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, 'null', 'espera'])
+    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
     stackJumps.append(len(cuadruplos) - 1)
 
 def p_genera_fin_mientras(p):
@@ -775,7 +868,7 @@ def p_genera_fin_mientras(p):
     global stackJumps, cuadruplos
     falseJump = stackJumps.pop()
     returnJump = stackJumps.pop()
-    cuadruplos.append([oper2Code("goto"), 'null', 'null', returnJump])
+    cuadruplos.append([oper2Code("goto"), -1, -1, returnJump])
     cuadruplos[falseJump][3] = len(cuadruplos) + 1
 
 def p_return(p):
@@ -783,7 +876,7 @@ def p_return(p):
 
 def p_paratodos(p):
     """
-    paratodos : PARATODOS LPAREN ID EN lista RPAREN bloque
+    paratodos : PARATODOS LPAREN ID EN LBRACKET exp RBRACKET RPAREN bloque
     """
 
 def p_error(p):
@@ -791,7 +884,6 @@ def p_error(p):
         raise SyntaxError("Syntax error at '%s'" % p.value)
     if not p:
         print("EOF")
-
 
 def generateArithmeticCode():
     global stackOper, stackTipos, stackOp, avail, cuadruplos
@@ -817,10 +909,9 @@ def generateArithmeticCode():
     stackOpVisible.append(resultado)
     stackTipos.append(nuevoTipo)
 
-
 lexer = lex.lex()
-
 parser = yacc.yacc()
+
 while True:
     try:
         s = input('iziLang > ')
