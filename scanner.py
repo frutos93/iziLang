@@ -1,98 +1,91 @@
-import ply.lex as lex
-import ply.yacc as yacc
-
 # + = 0
-# - = 1
-# * = 2
+# * = 1
+# - = 2
 # / = 3
 # && = 4
 # || = 5
-# = = 6
-# >= = 7
-# <= = 8
-# > = 9
-# < = 10
-# <> = 11
-# == = 12
+# < = 6
+# > = 7
+# != = 8
+# == = 9
+# = = 10
 
-# ENTERO = 101
-# DECIMAL = 102
-# PALABRA = 103
-# BOOLEANO = 104
+# int = 101
+# float = 102
+# palabra = 103
+# booleano = 105
+# list = 1000
 
-funciones = {}
-variables = {}
-variablesGlobales = {}
-constants = {}
-tipoDeVariable = ""
+import sys
+
+sys.path.insert(0, "../..")
+
+if sys.version_info[0] >= 3:
+    raw_input = input
+
+debug = True
+
+avail = {}
+stackJumps = []
 stackTipos = []
 stackOper = []
 stackOp = []
-stackJumps = []
 stackOpVisible = []
-avail = {}
 cuadruplos = []
+dirFunciones = {}
+variables = {}
+constantes = {}
 parametros = []
+globalVariables = {}
+tipoVariable = ""
+funcionId = ""
+contParams = 0
+goSubFuncion = ""
+temporalStamp = {}
 
-def oper2Code (oper):
-    if (oper == '+'):
-        return 0
-    if (oper == '-'):
-        return 1
-    if (oper == '*'):
-        return 2
-    if (oper == '/'):
-        return 3
-    if (oper == '&&'):
-        return 4
-    if (oper == '||'):
-        return 5
-    if (oper == '='):
-        return 6
-    if (oper == '>='):
-        return 7
-    if (oper == '<='):
-        return 8
-    if (oper == '>'):
-        return 9
-    if (oper == '<'):
-        return 10
-    if (oper == '<>'):
-        return 11
-    if (oper == '=='):
-        return 12
-    if (oper == 'goto'):
-       return 13
-    if (oper == 'gotoF'):
-         return 14
-    if (oper == 'print'):
-         return 15
-    if (oper == 'getValue'):
-         return 16
-    if (oper == 'getLine'):
-         return 17
-    if (oper == 'getBoolean'):
-         return 16
-    if (oper == 'getString'):
-         return 18
 
-cuboSemantico = [
-                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[101,102, -1, -1], [102,102, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1,104]],
-                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1,104]],
-                [[ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1, -1, -1], [ -1, -1, -1, -1]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1,104, -1], [ -1, -1, -1,104]],
-                [[104,104, -1, -1], [104,104, -1, -1], [ -1, -1,104, -1], [ -1, -1, -1,104]]
-		        ]
+class LexerError(Exception):
+    def __init__(self, value):
+        self.value = value
 
-def Type2Code(tipo):
+    def __str__(self):
+        return repr(self.value)
+
+
+class SyntaxError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class SemanticError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+semanticCube = [
+    [[101, 102, -1, -1], [102, 102, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[101, 102, -1, -1], [102, 102, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[101, 102, -1, -1], [102, 102, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[101, 102, -1, -1], [102, 102, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, 105]],
+    [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, 105]],
+    [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, 105, -1], [-1, -1, -1, 105]],
+    [[105, 105, -1, -1], [105, 105, -1, -1], [-1, -1, 105, -1], [-1, -1, -1, 105]]
+]
+
+
+def convertAtomicTypeToCode(tipo):
     if (tipo == "ENTERO"):
         return 101
     elif (tipo == "DECIMAL"):
@@ -100,738 +93,1115 @@ def Type2Code(tipo):
     elif (tipo == "PALABRA"):
         return 103
     elif (tipo == "BOOLEANO"):
-        return 104
+        return 105
 
-class LexerError(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-class SyntaxError(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+def convertOperatorToCode(oper):
+    if (oper == '+'):
+        return 0
+    elif (oper == '*'):
+        return 1
+    elif (oper == '-'):
+        return 2
+    elif (oper == '/'):
+        return 3
+    elif (oper == '&&'):
+        return 4
+    elif (oper == '||'):
+        return 5
+    elif (oper == '<'):
+        return 6
+    elif (oper == '>'):
+        return 7
+    elif (oper == '!='):
+        return 8
+    elif (oper == '=='):
+        return 9
+    elif (oper == '='):
+        return 10
+    elif (oper == 'goto'):
+        return 11
+    elif (oper == 'gotoF'):
+        return 12
+    elif (oper == 'print'):
+        return 13
+    elif (oper == 'endFunc'):
+        return 18
+    elif (oper == 'era'):
+        return 19
+    elif (oper == 'gosub'):
+        return 20
+    elif (oper == 'param'):
+        return 21
+    elif (oper == 'return'):
+        return 22
 
-class SemanticError(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-tokens = ('PRINT', 'RETURN', 'ARRIBA', 'ABAJO', 'IZQUIERDA','DERECHA', 'DECIMAL', 'BORRAR', 'MIENTRAS', 'REPETIR', 'DIBUJASI', 'DIBUJANO', 'COLOR', 'CUANDO', 'FIN', 'CIRCULO', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'LINEA', 'ENTERO', 'PALABRA', 'EN', 'PARATODOS', 'BOOLEANO', 'PROGRAMA', 'FUNCION', 'MAIN', 'LISTA', 'FALSO', 'SINO', 'EQUALS', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN', 'EQUALSC' , 'LT', 'LE', 'GT', 'GE', 'NE', 'COMMA', 'SEMI', 'COLON', 'INTEGER', 'CTE_F', 'STRING', 'LCURLY', 'RCURLY', 'LBRACKET', 'RBRACKET', 'CTE_E', 'CTE_B', 'ID', 'ERROR', 'AND', 'OR', 'CTE_S', 'FLOAT', 'AMPERSAND', 'QM')
+tokens = (
+    'PROGRAMA', 'FUNCION', 'ENTERO', 'DECIMAL', 'PALABRA', 'BOOLEANO', 'MAIN', 'IMPRIME', 'SI', 'SINO', 'MIENTRAS',
+    'FIN', 'RETURN', 'COLON', 'SEMI', 'COMMA', 'LPAREN', 'RPAREN', 'AMPERSAND', 'LCURLY', 'RCURLY', 'EQUAL', 'PLUS',
+    'MINUS', 'TIMES', 'DIVIDE', 'LT', 'GT', 'LE', 'GE', 'NE', 'EQUALC', 'AND', 'OR', 'LBRACKET', 'RBRACKET', 'ID',
+    'CTE_E', 'CTE_F', 'CTE_S', 'CTE_B'
+)
 
-t_PRINT = r'PRINT'
-t_RETURN = r'RETURN'
-t_ARRIBA = r'ARRIBA'
-t_IZQUIERDA = r'IZQUIERDA'
-t_DERECHA = r'DERECHA'
-t_BORRAR = r'BORRAR'
-t_MIENTRAS = r'MIENTRAS'
-t_REPETIR = r'REPETIR'
-t_DIBUJASI = r'DIBUJASI'
-t_DIBUJANO = r'DIBUJANO'
-t_COLOR = r'COLOR'
-t_CUANDO = r'CUANDO'
-t_FIN = r'FIN'
-t_CIRCULO = r'CIRCULO'
-t_CUADRADO = r'CUADRADO'
-t_RECTANGULO = r'RECTANGULO'
-t_TRIANGULO = r'TRIANGULO'
-t_LINEA = r'LINEA'
-t_ENTERO = r'ENTERO'
-t_DECIMAL = r'DECIMAL'
-t_PALABRA = r'PALABRA'
-t_FUNCION = r'FUNCION'
-t_MAIN = r'MAIN'
-t_PARATODOS = r'PARATODOS'
-t_PROGRAMA = r'PROGRAMA'
-t_SINO = r'SINO'
-t_BOOLEANO = r'BOOLEANO'
-t_LISTA = r'LISTA'
-t_EN = r'EN'
 
-t_QM = r'\"'
-t_PLUS = r'\+'
-t_MINUS = r'\-'
-t_TIMES = r'\*'
-t_DIVIDE = r'\/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
-t_EQUALS = r'\='
-t_EQUALSC = r'\=\='
-t_LT = r'[<]'
-t_LE = r'\<\='
-t_GT = r'[>]'
-t_GE = r'\>\='
-t_NE = r'\<\>'
-t_COMMA = r'\,'
-t_SEMI = r';'
-t_COLON = r':'
-t_INTEGER = r'\d+'
-t_FLOAT = r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
-t_STRING = r'\".*?\"'
-t_LCURLY = r'\{'
-t_RCURLY = r'\}'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
-t_AND = r'[&][&]'
-t_OR = r'[|][|]'
-t_AMPERSAND = r'\&'
+# Define regular expressions of tokens
+
+def t_PROGRAMA(t):
+    'PROGRAMA'
+    return t
+
+
+def t_FUNCION(t):
+    'FUNCION'
+    return t
+
+
+def t_ENTERO(t):
+    'ENTERO'
+    return t
+
+
+def t_DECIMAL(t):
+    'DECIMAL'
+    return t
+
+
+def t_PALABRA(t):
+    'PALABRA'
+    return t
+
+
+def t_CHAR(t):
+    'CHAR'
+    return t
+
+
+def t_BOOLEANO(t):
+    'BOOLEANO'
+    return t
+
+
+def t_MAIN(t):
+    'MAIN'
+    return t
+
+
+def t_IMPRIME(t):
+    'IMPRIME'
+    return t
+
+
+def t_SI(t):
+    'SI'
+    return t
+
+
+def t_SINO(t):
+    'SINO'
+    return t
+
+
+def t_MIENTRAS(t):
+    'MIENTRAS'
+    return t
+
+
+def t_FIN(t):
+    'FIN'
+    return t
+
+
+def t_RETURN(t):
+    'RETURN'
+    return t
+
+
+def t_COLON(t):
+    ':'
+    return t
+
+
+def t_SEMI(t):
+    ';'
+    return t
+
+
+def t_COMMA(t):
+    ','
+    return t
+
+
+def t_LPAREN(t):
+    '\('
+    return t
+
+
+def t_RPAREN(t):
+    '\)'
+    return t
+
+
+def t_LCURLY(t):
+    '\{'
+    return t
+
+
+def t_RCURLY(t):
+    '\}'
+    return t
+
+
+def t_EQUALC(t):
+    '=='
+    return t
+
+
+def t_EQUAL(t):
+    '='
+    return t
+
+
+def t_PLUS(t):
+    '\+'
+    return t
+
+
+def t_MINUS(t):
+    '-'
+    return t
+
+
+def t_TIMES(t):
+    '\*'
+    return t
+
+
+def t_DIVIDE(t):
+    '/'
+    return t
+
+
+def t_LT(t):
+    '<'
+    return t
+
+
+def t_GT(t):
+    '>'
+    return t
+
+
+def t_LE(t):
+    '<='
+    return t
+
+
+def t_GE(t):
+    '>='
+    return t
+
+
+def t_NE(t):
+    '!='
+    return t
+
+
+def t_AND(t):
+    '&&'
+    return t
+
+
+def t_AMPERSAND(t):
+    '&'
+    return t
+
+
+def t_OR(t):
+    '\|\|'
+    return t
+
+
+def t_LBRACKET(t):
+    '\['
+    return t
+
+
+def t_RBRACKET(t):
+    '\]'
+    return t
+
 
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
-    t.value = float(t.value)
     return t
 
 
 def t_CTE_E(t):
-    r'\d+'
-    t.value = int(t.value)
+    r'[0-9]+'
     return t
+
+
+def t_CT_B(t):
+    r'true|false'
+    return t
+
+
+def t_CTE_S(t):
+    r'\"([a-zA-Z]|[0-9]|[ \*\[\]\\\^\-\.\?\+\|\(\)\$\/\{\}\%\<\>=&;,_:\[\]\'!$#@])*\"'
+    return t
+
 
 def t_ID(t):
-    r'[a-z][a-zA-Z0-9]*'
-    if t.value in tokens:
-        t.type = t.value
+    r'[a-zA-Z]([a-zA-Z]|[0-9])*(_([a-zA-z]|[0-9])+)*'
     return t
 
-def t_CTE_B(t):
-    r'VERDADERO|FALSO'
-    return t
 
-#def t_NEWLINE(t):
-#    r'\n'
-#    t.lexer.lineno += 1
-#    return t
+t_ignore = " \t"
+
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += t.value.count("\n")
+
 
 def t_error(t):
-    raise LexerError("Illegal character at '%s'" % t.value[0])
+    raise LexerError("Caracter ilegal en '%s'" % t.value[0])
 
-t_CTE_S = r'\"[A-Za-z0-9_\(\)\{\}\[\]\<\>\! \t]*\"'
 
-t_ignore = ' \n'
+# Build the lexer
+import ply.lex as lex
 
-lex.lex(debug=0)
+lex.lex()
+
+start = 'programa'
 
 
 def p_programa(p):
     """
-    programa : PROGRAMA ID COLON programa_aux1 guarda_variables_global programa_aux1_1 programa_aux2 main FIN
-    """
-    global variablesGlobales, constants
-    variablesGlobales = {}
-    funciones["constants"] = constants
+	programa : PROGRAMA generate_initial_goto ID COLON bloque FIN
+	"""
 
-def p_guarda_variables_global(p):
-    """
-    guarda_variables_global :
-    """
-    global funciones, variablesGlobales, variables, avail
-    for key in variables.keys():
-        variables[key]["memoria"] = avail[0][variables[key]["tipo"]]
-        avail[0][variables[key]["tipo"]]+= 1
-    variablesGlobales = variables
-    variables = {}
-    funciones["global"] = variablesGlobales
-def p_programa_aux1(p):
-    """
-    programa_aux1 : variables
-                    |
-    """
+    global dirFunciones, gameSections, constantes
+    if (debug):
+        dirFunciones["constantes"] = constantes
 
 
-def p_programa_aux1_1(p):
+def p_generate_initial_goto(p):
     """
-    programa_aux1_1 : asignacion
-                    |
-    """
+	generate_initial_goto :
+	"""
 
-def p_programa_aux2(p):
-    """
-    programa_aux2 : funciones
-                    |
-    """
+    global cuadruplos, stackJumps
+    cuadruplos.append([convertOperatorToCode('goto'), -1, -1, 'pending'])
+    stackJumps.append(len(cuadruplos))
 
-
-def p_variables(p):
-    """
-    variables : variables_aux1 SEMI variables_aux2
-    """
-
-
-def p_variables_aux1(p):
-    """
-    variables_aux1 : tipo ID variables_aux3
-    """
-    global variables, tipo
-    if (variables.has_key(p[2])):
-        raise SemanticError("Ya existe esa variable: " + p[2])
-    variables[p[2]] = {"tipo": Type2Code(tipo)}
-
-
-def p_variables_aux2(p):
-    """
-    variables_aux2 : variables
-                     |
-    """
-
-
-def p_variables_aux3(p):
-    """variables_aux3 : lista
-                        |
-    """
-
-def p_main(p):
-    """
-    main : MAIN LPAREN RPAREN bloque
-    """
-    global funciones, variables, avail
-    if (funciones.has_key(p[1])):
-        raise SemanticError("Solo puede haber una funcion main")
-    funciones[p[1]] = {"variables": variables}
-    variables = {}
-
-def p_funciones(p):
-    """
-    funciones : FUNCION tipo ID LPAREN funciones_aux1 RPAREN bloque funciones_aux2
-    """
-    global funciones, variables, parametros
-    if(funciones.has_key(p[3])):
-        raise SemanticError("Ya existe esa funcion: " + p[3])
-    funciones[p[3]] = {"variables": variables,"parametros": parametros}
-    variables = {}
-
-def p_funciones_aux1(p):
-    """
-    funciones_aux1 : tipo arg funciones_aux3
-    |
-    """
-
-def p_arg(p):
-    """
-    arg : AMPERSAND ID
-         | ID
-    """
-    global variables, tipo, parametros
-    if (p[1] == '&'):
-        if(variables.has_key(p[2])):
-            raise SemanticError("Ya existe esa variable: " + p[2])
-        variables[p[2]] = {"tipo": Type2Code(tipo), "porReferencia": True}
-        parametros.append(Type2Code(tipo))
-    else:
-        if (variables.has_key(p[1])):
-            raise SemanticError("Ya existe esa variable: " + p[1])
-        variables[p[1]] = {"tipo": Type2Code(tipo), "porReferencia": False}
-        parametros.append(Type2Code(tipo))
-
-def p_funciones_aux2(p):
-    """funciones_aux2 : funciones
-                        |
-    """
-
-def p_funciones_aux3(p):
-    """
-    funciones_aux3 : COMMA funciones_aux1
-                     |
-    """
-
-def p_lista(p):
-    """
-    lista : LBRACKET cte RBRACKET
-    """
-
-def p_tipo(p):
-    """
-    tipo : ENTERO
-           | DECIMAL
-           | PALABRA
-           | BOOLEANO
-    """
-    global tipo
-    tipo = p[1]
 
 def p_bloque(p):
     """
-    bloque : LCURLY bloque_aux1 guarda_variables_local bloque_aux2 RCURLY
-    """
+	bloque : vars save_vars_in_global_memory funciones bloque_main
+	"""
 
-def p_guarda_variables_local(p):
+    global globalVariables
+    globalVariables = {}
+
+
+# Helper function in sintaxis for semantic and compilation (virtual memory)
+def p_save_vars_in_global_memory(p):
     """
-    guarda_variables_local :
-    """
-    global variables, avail
+	save_vars_in_global_memory :
+	"""
+
+    global dirFunciones, globalVariables, variables, avail
+    # Assign virtual memory to variables in global scope
     for key in variables.keys():
-        tipoNumero = variables[key]["tipo"]
-        if tipoNumero < 1000:
-            variables[key]["memoria"] = avail[1][tipoNumero]
-            avail[1][tipoNumero] += 1
+        variables[key]["memory"] = avail[0][variables[key]["tipo"]]
+        avail[0][variables[key]["tipo"]] += 1
 
-def p_bloque_aux1(p):
+    # Save global variables with its attributes.
+    globalVariables = variables
+    variables = {}
+    if (debug):
+        dirFunciones["global"] = globalVariables
+
+
+def p_vars(p):
     """
-    bloque_aux1 : variables
+	vars : var SEMI vars
+            |
+	"""
+
+
+def p_var(p):
+    """
+	var : tipo ID
+        | tipo ID RBRACKET CTE_E RBRACKET
+    """
+
+    global variables, tipo, dirFunciones
+    if (variables.has_key(p[2])):
+        raise SemanticError("Repeated identifier for variable: " + p[2])
+    if (dirFunciones.has_key("variables")):
+        if (dirFunciones["variables"].has_value(p[2])):
+            raise SemanticError("Var identifier has the same name as a function: " + p[2])
+    tipoInNumber = convertAtomicTypeToCode(tipo)
+    try:
+        if (p[3] != '['):
+            variables[p[2]] = {"tipo": tipoInNumber + 1000}
+    except IndexError:
+        variables[p[2]] = {"tipo": tipoInNumber}
+
+
+def p_tipo(p):
+    """
+	tipo : ENTERO
+         | DECIMAL
+         | PALABRA
+         | BOOLEANO
+    """
+
+    global tipo
+    tipo = p[1]
+
+
+def p_funciones(p):
+    """
+	funciones : funcion funciones
+                 |
+	"""
+
+
+def p_guarda_funcion(p):
+    """
+	guarda_funcion : """
+
+    global dirFunciones, variables, parametros, funcionId, tipo, avail, cuadruplos
+    # Save the function with its variables
+    if (dirFunciones.has_key(funcionId)):
+        raise SemanticError("Repeated identifier for function: " + funcionId)
+    if (debug):
+        dirFunciones[funcionId] = {"variables": variables, "parametros": parametros,
+                                   "return": convertAtomicTypeToCode(tipo),
+                                   "memory": avail[0][convertAtomicTypeToCode(tipo)],
+                                   "start_cuadruplet": len(cuadruplos) + 1}
+    avail[0][convertAtomicTypeToCode(tipo)] += 1
+    variables = {}
+
+
+def p_funcion(p):
+    """
+	funcion : FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque generate_end_func"""
+
+
+def p_generate_end_func(p):
+    """
+	generate_end_func : """
+
+    global cuadruplos, temporalStamp, dirFunciones, funcionId, avail
+    cuadruplos.append([convertOperatorToCode('endFunc'), -1, -1, -1])
+    temporalAuxDictionary = {}
+    print temporalStamp
+    for key in avail[2]:
+        temporalAuxDictionary[key] = avail[2][key] - temporalStamp[key]
+    dirFunciones[funcionId]["temporals"] = temporalAuxDictionary
+
+
+def p_guarda_funcion_id(p):
+    """
+	guarda_funcion_id : ID"""
+
+    global funcionId, temporalStamp, avail
+    funcionId = p[1]
+    avail[1] = {101: 8000, 102: 9000, 103: 10000, 104: 11000, 105: 12000, 106: 13000}
+    avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000, 105: 18000, 106: 19000}
+    temporalStamp = avail[2].copy()
+
+
+def p_parametros(p):
+    """
+	parametros : parametro mas_parametros
                   |
+	"""
+
+
+def p_parametro(p):
+    """
+	parametro : tipo tipo_parametro"""
+
+
+def p_tipo_parametro(p):
+    """
+	tipo_parametro : AMPERSAND ID
+                      | ID"""
+
+    global variables, tipo, parametros, avail
+    # Get parametro attributes and save it.
+    if (p[1] == '&'):
+        if (variables.has_key(p[2])):
+            raise SemanticError("Repeated identifier for variable: " + p[2])
+        variables[p[2]] = {"tipo": convertAtomicTypeToCode(tipo), "reference_parametro": True,
+                           "memory": avail[1][convertAtomicTypeToCode(tipo)]}
+        parametros.append(convertAtomicTypeToCode(tipo))
+    else:
+        if (variables.has_key(p[1])):
+            raise SemanticError("Repeated identifier for variable: " + p[1])
+        variables[p[1]] = {"tipo": convertAtomicTypeToCode(tipo), "reference_parametro": False,
+                           "memory": avail[1][convertAtomicTypeToCode(tipo)]}
+        parametros.append(convertAtomicTypeToCode(tipo))
+    avail[1][convertAtomicTypeToCode(tipo)] += 1
+
+
+def p_mas_parametros(p):
+    """
+	mas_parametros : COMMA parametro mas_parametros
+                       |
+	"""
+
+
+def p_bloque_main(p):
+    """
+	bloque_main : MAIN LPAREN RPAREN set_function_id_main codigo_bloque
+	"""
+
+    global dirFunciones, variables, avail
+    if (dirFunciones.has_key(p[1])):
+        raise SemanticError("Repeated identifier for function: " + p[1])
+    if (debug):
+        dirFunciones["main"]["variables"] = variables
+    variables = {}
+
+
+def p_set_function_id_main(p):
+    """
+	set_function_id_main : """
+
+    global dirFunciones, funcionId, cuadruplos, stackJumps, avail
+    funcionId = "main"
+    dirFunciones[funcionId] = {"variables": {}}
+    firstJump = stackJumps.pop()
+    cuadruplos[firstJump - 1][3] = len(cuadruplos) + 1
+    avail[1] = {101: 8000, 102: 9000, 103: 10000, 104: 11000, 105: 12000, 106: 13000}
+    avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000, 105: 18000, 106: 19000}
+
+
+def p_codigo_bloque(p):
+    """
+	codigo_bloque : LCURLY vars save_vars_in_local_memory mini_bloque RCURLY
+	"""
+
+
+# Helper function in sintaxis for semantic and compilation (virtual memory)
+def p_save_vars_in_local_memory(p):
+    """
+	save_vars_in_local_memory :
+	"""
+
+    global variables, avail
+    # TODO: - Virtual memory for a list
+
+    # Assign virtual memory to variables in local scope
+    for key in variables.keys():
+        tipoInNumber = variables[key]["tipo"]
+        if tipoInNumber < 1000:
+            variables[key]["memory"] = avail[1][tipoInNumber]
+            avail[1][tipoInNumber] += 1
+
+
+def p_statute(p):
+    """
+	statute : assignation check_stack_equal
+               | condition
+               | printing
+               | mientras
+               | function_use
+               | return
     """
 
-def p_bloque_aux2(p):
+
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_equal(p):
     """
-    bloque_aux2 : estatuto bloque_aux2
-                  |
+	check_stack_equal : """
+
+    global stackOper, stackTipos, stackOp, cuadruplos
+    if (stackOper):
+        if (stackOper[-1] == '='):
+            # Different way to generate cuadruplet arithmetic != assignation
+            operator = convertOperatorToCode(stackOper.pop())
+            op2 = stackOp.pop()
+            op1 = stackOp.pop()
+            op2Tipo = stackTipos.pop()
+            op1Tipo = stackTipos.pop()
+            if (op1Tipo != op2Tipo):
+                raise SemanticError(
+                    "Tipo Mismatch: Trying to assign " + str(op2Tipo) + " to a " + str(op1Tipo) + " var!")
+            cuadruplos.append([operator, op2, -1, op1])
+
+
+def p_function_use(p):
+    """
+	function_use : validate_function_id_do_era LPAREN add_parametro more_ids RPAREN validate_params_generate_gosub
+                    | validate_function_id_do_era LPAREN RPAREN validate_params_generate_gosub
     """
 
-def p_estatuto(p):
-    """
-    estatuto : asignacion checa_stack_a
-             | condicion
-             | accion
-             | mientras
-             | paratodos
-             | print
-             | return
-    """
 
-def p_print(p):
+def p_validate_function_id_do_era(p):
     """
-    print : PRINT LPAREN print_aux RPAREN
-    """
+	validate_function_id_do_era : ID"""
 
-def p_print_aux(p):
-    """
-    print_aux : expresion print_aux2
-    """
+    global cuadruplos, dirFunciones, parametros, contParams, goSubFuncion
+    if (not dirFunciones.has_key(p[1])):
+        raise SemanticError("Use of undeclared function identifier: " + p[1])
+    cuadruplos.append([convertOperatorToCode('era'), -1, -1, p[1]])
+    parametros = dirFunciones[p[1]]["parametros"]
+    contParams = 0
+    goSubFuncion = p[1]
 
-def p_print_aux2(p):
-    """
-    print_aux2 : COMMA print_aux
-               |
-    """
-    global stackOp, stackTipos, stackOpVisible, cuadruplos
-    expresion = stackOp.pop()
-    stackTipos.pop()
-    stackOpVisible.pop()
-    cuadruplos.append([oper2Code('print'), 'null', 'null', expression])
 
-def p_checa_stack_a(p):
-     """
-     checa_stack_a :
-     """
-     global stackOper, stackTipos, stackOp, cuadruplos
-     print (stackOp)
-     if (stackOper):
-         if (stackOper[-1] == '='):
-             operador = oper2Code(stackOper.pop())
-             op2 = stackOp.pop()
-             op1 = stackOp.pop()
-             op2Tipo = stackTipos.pop()
-             op1Tipo = stackTipos.pop()
-             if (op1Tipo != op2Tipo):
-                 raise SemanticError("Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
-             cuadruplos.append([operador, op2, 'null', op1])
-
-def p_asignacion(p):
+def p_add_parametro(p):
     """
-    asignacion : id_aux asignacion_aux1 push_a expresion SEMI
-    """
+	add_parametro : expression"""
 
-def p_push_a(p):
-    """push_a : EQUALS"""
+    global stackOp, stackTipos, parametros, contParams, cuadruplos
+    paramTipo = stackTipos.pop()
+    operand = stackOp.pop()
+    try:
+        if (parametros[contParams] != paramTipo):
+            raise SemanticError("Diferent tipo of parametro in function. Expected: " + parametros[
+                contParams] + " received: " + paramTipo)
+    except IndexError:
+        raise SemanticError("Use of more parametros than function declaration.")
+    contParams += 1
+    cuadruplos.append([convertOperatorToCode('param'), operand, -1, contParams])
+
+
+def p_validate_params_generate_gosub(p):
+    """
+	validate_params_generate_gosub : """
+
+    global dirFunciones, cuadruplos, goSubFuncion, parametros, contParams, funcionId, avail, stackOp, stackTipos
+    if (contParams != len(parametros)):
+        raise SemanticError("Use of less parametros than expected in function declaration.")
+    cuadruplos.append([convertOperatorToCode('gosub'), -1, -1, goSubFuncion])
+    if (funcionId != 'main'):
+        cuadruplos.append([convertOperatorToCode('='), dirFunciones[funcionId]['memory'], -1,
+                           avail[2][dirFunciones[funcionId]['return']]])
+        stackOp.append(avail[2][dirFunciones[funcionId]['return']])
+        stackTipos.append(dirFunciones[funcionId]['return'])
+        avail[2][dirFunciones[funcionId]['return']] += 1
+    goSubFuncion = ""
+    parametros = []
+    contParams = 0
+
+
+def p_more_ids(p):
+    """
+	more_ids : COMMA add_parametro more_ids
+                |
+	"""
+
+
+def p_assignation(p):
+    """
+	assignation : id_aux value_list push_equal expression"""
+
+
+# Helper function in sintaxis for semantic (operators)
+def p_push_equal(p):
+    """
+	push_equal : EQUAL"""
+
     global stackOper
     stackOper.append(p[1])
 
-def p_asignacion_aux1(p):
+
+def p_value_list(p):
     """
-    asignacion_aux1 : LBRACKET exp RBRACKET
+	value_list : LBRACKET expression RBRACKET
+                  |
+	"""
+
+
+def p_printing(p):
+    """
+	printing : IMPRIME LPAREN printable RPAREN"""
+
+
+def p_printable(p):
+    """
+	printable : expression more_printable"""
+
+
+def p_more_printable(p):
+    """
+	more_printable : COMMA printable
                       |
-    """
+	"""
 
-def p_condicion(p):
-    """
-    condicion : CUANDO LPAREN expresion RPAREN genera_gotoF_if bloque condicion_aux1 genera_fin_if
-    """
+    global stackOp, stackTipos, stackOpVisible, cuadruplos
+    expression = stackOp.pop()
+    stackTipos.pop()
+    stackOpVisible.pop()
+    cuadruplos.append([convertOperatorToCode("print"), -1, -1, expression])
 
-def p_condicion_aux1(p):
-    """
-    condicion_aux1 : SINO genera_goto_sino bloque
-    |
-    """
 
-def p_genera_goto_sino(p):
+def p_condition(p):
     """
-    genera_goto_sino :
+	condition : SI LPAREN expression RPAREN generate_gotoF_if COLON mini_bloque else_condition generate_end_if
+	"""
+
+
+def p_generate_gotoF_if(p):
     """
+	generate_gotoF_if : """
+
+    global stackOp, stackTipos, stackOper, stackOpVisible, stackJumps, cuadruplos
+    condtionTipo = stackTipos.pop()
+    if (condtionTipo != convertAtomicTypeToCode("boolean")):
+        raise SemanticError("Expected boolean in if condition. Received: " + str(condtionType))
+    condition = stackOp.pop()
+    stackOpVisible.pop()
+    cuadruplos.append([convertOperatorToCode("gotoF"), condition, -1, 'pending'])
+    stackJumps.append(len(cuadruplos) - 1)  # Make it as a list that starts in 0.
+
+
+def p_generate_end_if(p):
+    """
+	generate_end_if : """
+
     global stackJumps, cuadruplos
-    cuadruplos.append([oper2Code("goto"),'null','null','espera'])
+    endJump = stackJumps.pop()
+    cuadruplos[endJump][3] = len(cuadruplos) + 1  # Because it needs to point to the next one
+
+
+def p_else_condition(p):
+    """
+	else_condition : SINO generate_goto_else COLON mini_bloque
+                      |"""
+
+
+def p_generate_goto_else(p):
+    """
+	generate_goto_else : """
+    global stackJumps, cuadruplos
+    cuadruplos.append([convertOperatorToCode("goto"), 'null', 'null', 'pending'])
     falseJump = stackJumps.pop()
     cuadruplos[falseJump][3] = len(cuadruplos) + 1
     stackJumps.append(len(cuadruplos) - 1)
 
-def p_genera_gotoF_if(p):
-    """
-    genera_gotoF_if :
-    """
-    global stackOp, stackTipos, stackOpVisible, stackJumps, cuadruplos
-    tipoActual = stackTipos.pop()
-    if (tipoActual != Type2Code("boolean")):
-        raise SemanticError("Se espera un booleano en la condicion. Se recibio un: " + str(tipoActual))
-    condicion = stackOp.pop()
-    stackOpVisible.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, 'null', 'espera'])
-    stackJumps.append(len(cuadruplos) - 1)
 
-def p_genera_fin_if(p):
+def p_mientras(p):
     """
-    genera_fin_if :
+	mientras : MIENTRAS push_cont_in_stackJumps LPAREN expression RPAREN generate_gotoF_while COLON mini_bloque generate_end_while
+	"""
+
+
+def p_push_cont_in_stackJumps(p):
     """
+	push_cont_in_stackJumps :
+	"""
+
     global stackJumps, cuadruplos
-    finJump = stackJumps.pop()
-    cuadruplos[finJump][3] = len(cuadruplos) + 1
+    stackJumps.append(len(cuadruplos) + 1)
 
-def p_expresion(p):
-    """
-    expresion : exp_and checa_stack_or expresion_aux1
-    """
 
-def p_checa_stack_or(p):
+def p_generate_gotoF_while(p):
     """
-    checa_stack_or :
+	generate_gotoF_while :
+	"""
+
+    global stackOp, stackTipos, stackOpVisible, stackJumps, cuadruplos
+    condtionTipo = stackTipos.pop()
+    if (condtionTipo != convertAtomicTypeToCode("boolean")):
+        raise SemanticError("Expected boolean in if condition. Received: " + str(condtionTipo))
+    condition = stackOp.pop()
+    stackOpVisible.pop()
+    cuadruplos.append([convertOperatorToCode("gotoF"), condition, -1, 'pending'])
+    stackJumps.append(len(cuadruplos) - 1)  # Make it as a list that starts in 0.
+
+
+def p_generate_end_while(p):
     """
+	generate_end_while :
+	"""
+
+    global stackJumps, cuadruplos
+    falseJump = stackJumps.pop()
+    returnJump = stackJumps.pop()
+    cuadruplos.append([convertOperatorToCode("goto"), -1, -1, returnJump])
+    cuadruplos[falseJump][3] = len(cuadruplos) + 1
+
+
+def p_return(p):
+    """
+	return : RETURN expression"""
+
+    global cuadruplos, dirFunciones, funcionId, stackOp, stackTipos
+    if (funcionId == 'main'):
+        raise SemanticError("Trying to return something inside Main.")
+    op = stackOp.pop()
+    opTipo = stackTipos.pop()
+    if (opTipo != dirFunciones[funcionId]['return']):
+        raise SemanticError("Returning a value of tipo: " + opTipo + ", expected: " + dirFunciones[funcionId]['return'])
+    cuadruplos.append([convertOperatorToCode('return'), -1, -1, op])
+
+
+def p_mini_bloque(p):
+    """
+	mini_bloque : statute SEMI mini_bloque
+                  |
+	"""
+
+
+def p_expression(p):
+    """
+	expression : big_exp or_exp check_stack_or
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_or(p):
+    """
+	check_stack_or :
+	"""
+
     global stackOper
     if (stackOper):
         if (stackOper[-1] == '||'):
             generateArithmeticCode()
 
-def p_expresion_aux1(p):
+
+def p_or_exp(p):
     """
-    expresion_aux1 : OR exp_and
-                     |
-    """
+	or_exp : OR expression
+              |
+	"""
+
     global stackOper
     try:
-        if(p[1] == '||'):
+        # Add operator to the stack
+        if (p[1] == '||'):
             stackOper.append(p[1])
     except IndexError:
         return
 
-def p_exp_and(p):
-    """
-    exp_and : exp_comp checa_stack_and exp_and_aux1
-    """
 
-def p_checa_stack_and(p):
+def p_big_exp(p):
     """
-    checa_stack_and :
+	big_exp : medium_exp and_exp check_stack_and
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_and(p):
     """
+	check_stack_and :
+	"""
+
     global stackOper
     if (stackOper):
         if (stackOper[-1] == '&&'):
             generateArithmeticCode()
 
-def p_exp_and_aux1(p):
+
+def p_and_exp(p):
     """
-    exp_and_aux1 : AND exp_comp
-                  |
-    """
+	and_exp : AND big_exp
+               |
+	"""
+
     global stackOper
     try:
+        # Add operator to the stack
         if (p[1] == '&&'):
             stackOper.append(p[1])
     except IndexError:
         return
 
-def p_exp_comp(p):
-    """
-    exp_comp : exp exp_comp_aux1 checa_stack_comp
-    """
 
-def p_checa_stack_comp(p):
+def p_medium_exp(p):
     """
-    checa_stack_comp :
+	medium_exp : exp relational_exp check_stack_mmdi
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_mmdi(p):
     """
+	check_stack_mmdi :
+	"""
+
     global stackOper
     if (stackOper):
-        if (stackOper[-1] == '>' or stackOper[-1] == '>=' or stackOper[-1] == '<' or stackOper[-1] == '<=' or stackOper[-1] == '<>' or stackOper[-1] == '=='):
+        if (stackOper[-1] == '>' or stackOper[-1] == '<' or stackOper[-1] == '!=' or stackOper[-1] == '=='):
             generateArithmeticCode()
 
-def p_exp_comp_aux1(p):
+
+def p_relational_exp(p):
     """
-    exp_comp_aux1 : GT
-                  | GE
-                  | LT
-                  | LE
-                  | NE
-                  | EQUALSC
-                  |
-    """
+	relational_exp : GT exp
+                   | LT exp
+                   | GE exp
+                   | LE exp
+                   | NE exp
+                   | EQUALC exp
+                   |
+	"""
+
     global stackOper
     try:
-        if (p[1] == '>' or p[1] == '>=' or p[1] == '<' or p[1] == '<=' or p[1] == '<>' or p[1] == '=='):
+        # Add operator to the stack
+        if (p[1] == '>' or p[1] == '<' or p[1] == '!=' or p[1] == '=='):
             stackOper.append(p[1])
     except IndexError:
         return
 
+
 def p_exp(p):
     """
-    exp : termino checa_stack_pm exp_aux1
-    """
+	exp : term check_stack_pm add_term
+	"""
 
-def p_checa_stack_pm(p):
-     """
-     checa_stack_pm :
-     """
-     global stackOper
-     if (stackOper):
-         if (stackOper[-1] == '+' or stackOper[-1] == '-'):
-             generateArithmeticCode()
 
-def p_exp_aux1(p):
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_pm(p):
     """
-    exp_aux1 : push_pm exp
-               |
-    """
+	check_stack_pm :
+	"""
 
+    global stackOper
+    if (stackOper):
+        if (stackOper[-1] == '+' or stackOper[-1] == '-'):
+            generateArithmeticCode()
+
+
+def p_add_term(p):
+    """
+	add_term : push_pm exp
+                |
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
 def p_push_pm(p):
     """
-    push_pm : PLUS
-            | MINUS
+	push_pm : PLUS
+               | MINUS
     """
+
     global stackOper
     stackOper.append(p[1])
 
-def p_termino(p):
-    """
-    termino : factor checa_stack_td termino_aux1
-    """
 
-def p_checa_stack_td(p):
+def p_term(p):
     """
-    checa_stack_td :
+	term : factor check_stack_td times_factor
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
+def p_check_stack_td(p):
     """
+	check_stack_td :
+	"""
+
     global stackOper
-    print stackOper
     if (stackOper):
         if (stackOper[-1] == '*' or stackOper[-1] == '/'):
             generateArithmeticCode()
 
-def p_termino_aux1(p):
-    """
-    termino_aux1 : push_td termino
-                 |
-    """
 
+def p_times_factor(p):
+    """
+	times_factor : push_td term
+                    |
+	"""
+
+
+# Helper function in sintaxis for semantic (operators)
 def p_push_td(p):
     """
-    push_td : TIMES
-            | DIVIDE
-    """
+	push_td : TIMES
+               | DIVIDE"""
+
     global stackOper
     stackOper.append(p[1])
+
 
 def p_factor(p):
     """
-    factor : push_lparen expresion pop_rparen
-    | cte
-    """
+	factor : push_pa expression pop_pc
+              | var_ct"""
 
-def p_push_lparen(p):
+
+# Helper function in sintaxis for semantic (operators)
+def p_push_pa(p):
     """
-    push_lparen : LPAREN
-    """
+	push_pa : LPAREN"""
+
     global stackOper
     stackOper.append(p[1])
 
-def p_pop_rparen(p):
+
+# Helper function in sintaxis for semantic (operators)
+def p_pop_pc(p):
     """
-    pop_rparen : RPAREN
-    """
+	pop_pc : RPAREN"""
+
     global stackOper
     stackOper.pop()
 
-def p_cte(p):
+
+def p_var_ct(p):
     """
-    cte : id_aux lista_aux
-        | cte_e_aux
-        | cte_f_aux
-        | cte_b_aux
-        | cte_s_aux
+	var_ct : id_aux value_list
+           | cte_e_aux
+           | cte_f_aux
+           | cte_b_aux
+           | cte_s_aux
+           | function_use
     """
 
+    # TODO: - What happens when you receive a function
+
+
+# Helper functions of var_ct for semantic analysis (operands)
+# id checks if the id was declared, if not, there is an error.
 def p_id_aux(p):
     """
-    id_aux : ID
-    """
-    global stackTipos, stackOp, variables, variablesGlobales, stackOpVisible
-    if (not variables.has_key(p[1])):
-        if (not variablesGlobales.has_key(p[1])):
-            raise SemanticError("No se ha declarado variable: " + p[1])
+	id_aux : ID
+	"""
+
+    global stackTipos, stackOp, variables, globalVariables, stackOpVisible, dirFunciones, funcionId
+    # print variables, dirFunciones, p[1], funcionId
+    if (not variables.has_key(p[1]) and not dirFunciones[funcionId]["variables"].has_key(p[1])):
+        if (not globalVariables.has_key(p[1])):
+            raise SemanticError("Use of undeclared identifier for variable: " + p[1])
         else:
-            stackOp.append(variablesGlobales[p[1]]["memoria"])
+            stackOp.append(globalVariables[p[1]]["memory"])
             stackOpVisible.append(p[1])
-            stackTipos.append(variablesGlobales[p[1]]["tipo"])
+            stackTipos.append(globalVariables[p[1]]["tipo"])
     else:
-        stackOp.append(variables[p[1]]["memoria"])
-        stackOpVisible.append(p[1])
-        stackTipos.append(variables[p[1]]["tipo"])
+        if (variables.has_key(p[1])):
+            stackOp.append(variables[p[1]]["memory"])
+            stackOpVisible.append(p[1])
+            stackTipos.append(variables[p[1]]["tipo"])
+        else:
+            stackOp.append(dirFunciones[funcionId]["variables"][p[1]]["memory"])
+            stackOpVisible.append(p[1])
+            stackTipos.append(dirFunciones[funcionId]["variables"][p[1]]["tipo"])
+
+
+# the rest of the variables check if they exists in virtual memory, if not, add them.
 
 def p_cte_e_aux(p):
     """
-    cte_e_aux : CTE_E
-    """
-    global avail, stackOp, stackTipos, constants, stackOpVisible
-    if (not constants.has_key(p[1])):
-        constants[p[1]] = {"tipo": 101, "memoria": avail[3][101]}
+	cte_e_aux : CTE_E"""
+
+    global constantes, avail, stackOp, stackTipos, stackOpVisible
+    if (not constantes.has_key(p[1])):
+        constantes[p[1]] = {"tipo": 101, "memory": avail[3][101]}
         avail[3][101] += 1
-    stackOp.append(constants[p[1]]["memoria"])
+    stackOp.append(constantes[p[1]]["memory"])
     stackOpVisible.append(p[1])
-    stackTipos.append(constants[p[1]]["tipo"])
+    stackTipos.append(constantes[p[1]]["tipo"])
+
 
 def p_cte_f_aux(p):
     """
-    cte_f_aux : CTE_F
-    """
-    global avail, stackOp, stackTipos, constants, stackOpVisible
-    if (not constants.has_key(p[1])):
-        constants[p[1]] = {"tipo": 102, "memoria": avail[3][102]}
+	cte_f_aux : CTE_F"""
+
+    global constantes, avail, stackOp, stackTipos, stackOpVisible
+    if (not constantes.has_key(p[1])):
+        constantes[p[1]] = {"tipo": 102, "memory": avail[3][102]}
         avail[3][102] += 1
-    stackOp.append(constants[p[1]]["memoria"])
+    stackOp.append(constantes[p[1]]["memory"])
     stackOpVisible.append(p[1])
-    stackTipos.append(constants[p[1]]["tipo"])
-
-
-def p_cte_s_aux(p):
-    """
-    cte_s_aux : CTE_S
-    """
-    global avail, stackOp, stackTipos, constants, stackOpVisible
-    if (not constants.has_key(p[1])):
-        constants[p[1]] = {"tipo": 103, "memoria": avail[3][103]}
-        avail[3][103] += 1
-    stackOp.append(constants[p[1]]["memoria"])
-    stackOpVisible.append(p[1])
-    stackTipos.append(constants[p[1]]["tipo"])
+    stackTipos.append(constantes[p[1]]["tipo"])
 
 
 def p_cte_b_aux(p):
     """
-    cte_b_aux : CTE_B
-    """
-    global avail, stackOp, stackTipos, constants, stackOpVisible
-    if (not constants.has_key(p[1])):
-        constants[p[1]] = {"tipo": 104, "memoria": avail[3][104]}
-        avail[3][104] += 1
-    stackOp.append(constants[p[1]]["memoria"])
+	cte_b_aux : CTE_B"""
+
+    global constantes, avail, stackOp, stackTipos, stackOpVisible
+    if (not constantes.has_key(p[1])):
+        constantes[p[1]] = {"tipo": 105, "memory": avail[3][105]}
+        avail[3][105] += 1
+    stackOp.append(constantes[p[1]]["memory"])
     stackOpVisible.append(p[1])
-    stackTipos.append(constants[p[1]]["tipo"])
+    stackTipos.append(constantes[p[1]]["tipo"])
 
 
-def p_lista_aux(p):
+def p_cte_s_aux(p):
     """
-    lista_aux : LBRACKET exp RBRACKET
-              |
-    """
+	cte_s_aux : CTE_S"""
 
-def p_accion(p):
-    """
-    accion : accion_aux1 LPAREN exp RPAREN
-    """
+    global constantes, avail, stackOp, stackTipos, stackOpVisible
+    if (not constantes.has_key(p[1])):
+        constantes[p[1]] = {"tipo": 103, "memory": avail[3][103]}
+        avail[3][103] += 1
+    stackOp.append(constantes[p[1]]["memory"])
+    stackOpVisible.append(p[1])
+    stackTipos.append(variables[p[1]]["tipo"])
 
-def p_accion_aux1(p):
-    """
-    accion_aux1 : ARRIBA
-                | ABAJO
-                | IZQUIERDA
-                | DERECHA
-                | COLOR
-    """
-
-def p_mientras(p):
-    """
-    mientras : MIENTRAS push_a_stackJumps LPAREN expresion RPAREN genera_gotoF_mientras bloque genera_fin_mientras
-    """
-
-def p_push_a_stackJumps(p):
-    """push_a_stackJumps :
-    """
-    global stackJumps, cuadruplos
-    stackJumps.append(len(cuadruplos) + 1)
-
-def p_genera_gotoF_mientras(p):
-    """
-    genera_gotoF_mientras :
-    """
-    global stackOp, stackTipos, stackOpVisible, stackJumps, cuadruplos, stackOpVisible
-    tipoActual = stackTipos.pop()
-    if (tipoActual != Type2Code("booleano")):
-        raise SemanticError("Se esperaba un booleano en la condicion. Se recibio: " + str(tipoActual))
-    condicion = stackOp.pop()
-    stackOpVisible.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, 'null', 'espera'])
-    stackJumps.append(len(cuadruplos) - 1)
-
-def p_genera_fin_mientras(p):
-    """
-    genera_fin_mientras :
-    """
-    global stackJumps, cuadruplos
-    falseJump = stackJumps.pop()
-    returnJump = stackJumps.pop()
-    cuadruplos.append([oper2Code("goto"), 'null', 'null', returnJump])
-    cuadruplos[falseJump][3] = len(cuadruplos) + 1
-
-def p_return(p):
-    '''return : RETURN expresion'''
-
-def p_paratodos(p):
-    """
-    paratodos : PARATODOS LPAREN ID EN lista RPAREN bloque
-    """
 
 def p_error(p):
     if p:
-        raise SyntaxError("Syntax error at '%s'" % p.value)
+        raise SyntaxError("Syntax error at '%s'" % p.value, )
     if not p:
         print("EOF")
 
 
+# Helper function used to generate the code used for arithmetic, logic and relational operations
 def generateArithmeticCode():
-    global stackOper, stackTipos, stackOp, avail, cuadruplos
-#    if (debug):
-    print "stack operadores: ", stackOper
-    print "stack operandos: ", stackOp
-    print "stack tipos: ", stackTipos
+    global stackOper, stackTipos, stackOp, avail, cuadruplos, stackOpVisible
+    if (debug):
+        print "stack of operators: ", stackOper
+        print "stack of operands: ", stackOpVisible
+        print "stack of operands: ", stackOp
+        print "stack of tipos: ", stackTipos
 
-    operador = oper2Code(stackOper.pop())
+    # Get all the variables to test and generate a cuadruplet
+    operator = convertOperatorToCode(stackOper.pop())
     op2 = stackOp.pop()
     op1 = stackOp.pop()
     stackOpVisible.pop()
     stackOpVisible.pop()
     op2Tipo = stackTipos.pop()
     op1Tipo = stackTipos.pop()
-    nuevoTipo = cuboSemantico[op1Tipo-100][op2Tipo-100][operador]
-    if (nuevoTipo == -1):
-        raise SemanticError("Tipos incompatibles: " + str(op1Tipo) + str(operador) + str(op2tipo))
-    resultado = avail[2][nuevoTipo]
-    avail[2][nuevoTipo] += 1
-    cuadruplos.append([operador, op1, op2, resultado])
-    stackOp.append(resultado)
-    stackOpVisible.append(resultado)
-    stackTipos.append(nuevoTipo)
+    newTipo = semanticCube[operator][op1Tipo - 101][op2Tipo - 101]
+    # If the semantic cube tell us that the operation is not possible
+    if (newTipo == -1):
+        raise SemanticError("Tipo Mismatch: Trying to " + str(operator) + " = " + str(op1Tipo) + " :: " + str(op2Tipo))
+    result = avail[2][newTipo]
+    avail[2][newTipo] += 1
+    # Generate the cuadruplet, append result to the stacks
+    cuadruplos.append([operator, op1, op2, result])
+    stackOp.append(result)
+    stackOpVisible.append(result)
+    stackTipos.append(newTipo)
 
 
-lexer = lex.lex()
+# Import yacc
+import ply.yacc as yacc
 
 parser = yacc.yacc()
+
 while True:
     try:
-        s = input('iziLang > ')
+        s = raw_input('izilang > ')
     except EOFError:
         break
-    funciones = {"global": {}}
-    avail = {0: {101: 2000, 102:3000, 103:4000, 104:5000}, 1: {101: 8000, 102:9000, 103:10000, 104:11000}, 2: {101: 14000, 102:15000, 103:16000, 104:17000}, 3: {101: 20000, 102:21000, 103:22000, 104:23000}}
+    dirFunciones = {"global": {}}
+    avail = {0: {101: 2000, 102: 3000, 103: 4000, 104: 5000, 105: 6000, 106: 7000},
+             1: {101: 8000, 102: 9000, 103: 10000, 104: 11000, 105: 12000, 106: 13000},
+             2: {101: 14000, 102: 15000, 103: 16000, 104: 17000, 105: 18000, 106: 19000},
+             3: {101: 20000, 102: 21000, 103: 22000, 104: 23000, 105: 24000, 106: 25000}}
     variables = {}
-    constants = {}
-    variablesGlobales = {}
+    constantes = {}
     parametros = []
+    globalVariables = {}
     cuadruplos = []
     stackTipos = []
     stackOper = []
@@ -839,15 +1209,15 @@ while True:
     stackOpVisible = []
     stackJumps = []
 
-    # Start the scanning and parsing
     with open(s) as fp:
         completeString = ""
         for line in fp:
             completeString += line
         try:
             parser.parse(completeString)
-            print(funciones)
-            print (cuadruplos)
-            print("El programa se ejecuto con exito")
+            if (debug):
+                print "Funciones: ", dirFunciones
+                print "Cuadruplos: ", cuadruplos
+            print("El programa se ejecuto correctamente")
         except EOFError:
             break

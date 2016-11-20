@@ -1,0 +1,15 @@
+PROGRAMA example2:
+    ENTERO b;
+    FUNCION ENTERO imprimir(ENTERO n)
+    {
+        ENTERO x;
+        x = 5 + 0;
+        RETURN imprimir(n - 1);
+    }
+    MAIN()
+    {
+        ENTERO z;
+        z = 5 + 6;
+        imprimir(5);
+    }
+FIN
