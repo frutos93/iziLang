@@ -1,10 +1,16 @@
 PROGRAMA d43 :
     DECIMAL floatGlobal;
 
-    FUNCION ENTERO prueba1()
+    FUNCION ENTERO pruebaA()
     {
         ENTERO intPrueba1;
         intPrueba1 = 3;
+    }
+
+    FUNCION BOOLEANO pruebaB()
+    {
+        BOOLEANO boolPrueba2;
+        boolPrueba2 = VERDADERO;
     }
 
     MAIN ()
@@ -12,3 +18,4 @@ PROGRAMA d43 :
         floatGlobal = 5.6 + 7;
     }
 FIN
+
