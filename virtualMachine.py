@@ -3,7 +3,7 @@ import scanner as scanner
 
 
 
-currentPointer = 0
+currentPointer = 1
 memoriesStack = []
 pointersStack = []
 funcionesDir = {}
@@ -29,7 +29,7 @@ def cargaDatosEnMemoria():
             era[0] += scanner.dirFunciones[funcion]['temporals'][101]
             era[1] += scanner.dirFunciones[funcion]['temporals'][102]
             era[2] += scanner.dirFunciones[funcion]['temporals'][103]
-            era[3] += scanner.dirFunciones[funcion]['temporals'][105]
+            era[3] += scanner.dirFunciones[funcion]['temporals'][104]
             funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria':memoria, 'cuadruplo':cuadruploID, 'era':era}.
 
     for constante in scanner.dirFunciones["constantes"]:
@@ -113,16 +113,23 @@ def run(fileName):
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
     cargaDatosEnMemoria()
     memoriaEjecucion[3] = constantes
-    cuadruploActual = cuadruplos[currentPointer]
+    cuadruploActual = cuadruplos[currentPointer-1]
     currentPointer += 1
     while cuadruploActual[0] != 'FIN':
         if(cuadruploActual[0] < 10):
             operacion(cuadruploActual)
-            cuadruploActual = cuadruplos[currentPointer]
-            currentPointer += 1
         elif(cuadruploActual[0] == 10):
             saveValueMemory(getMemoryValue(cuadruploActual[1]),cuadruploActual[3])
         elif(cuadruploActual[0] == 11):
+            currentPointer = cuadruploActual[3] -1
+        elif(cuadruploActual[0] == 12):
+            if(getMemoryValue(cuadruploActual[1]) == 'FALSO'):
+                currentPointer = cuadruploActual[3] - 1
+        elif(cuadruploActual[0] == 13):
+
+        cuadruploActual = cuadruplos[currentPointer-1]
+        currentPointer += 1
+
 
 
 
