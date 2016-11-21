@@ -3,15 +3,18 @@ PROGRAMA example2:
     FUNCION ENTERO imprimir(ENTERO n)
     {
         ENTERO x;
-        x = 5 + 0;
+        ENTERO y;
+        x = 5;
+        y = 10;
+        n = x + y;
         RETURN imprimir(n - 1);
     }
     MAIN()
     {
         ENTERO z;
         z = 5 + 6;
-        z = 5 + 6;
-        z = 5 + 6;
         imprimir(5);
+        ARRIBA(10);
+        CUADRADO(20 + z);
     }
 FIN

@@ -126,39 +126,42 @@ def oper2Code(oper):
         return 8
     elif (oper == '=='):
         return 9
-    elif (oper == '='):
+    elif (oper == '<='):
         return 10
-    elif (oper == 'goto'):
+    elif (oper == '>='):
         return 11
-    elif (oper == 'gotoF'):
+    elif (oper == '='):
         return 12
-    elif (oper == 'print'):
+    elif (oper == 'goto'):
         return 13
-    elif (oper == 'ARRIBA'):
+    elif (oper == 'gotoF'):
         return 14
-    elif (oper == 'ABAJO'):
+    elif (oper == 'print'):
         return 15
-    elif (oper == 'IZQUIERDA'):
+    elif (oper == 'ARRIBA'):
         return 16
-    elif (oper == 'DERECHA'):
+    elif (oper == 'ABAJO'):
         return 17
-    elif (oper == 'endFunc'):
+    elif (oper == 'IZQUIERDA'):
         return 18
-    elif (oper == 'era'):
+    elif (oper == 'DERECHA'):
         return 19
-    elif (oper == 'gosub'):
+    elif (oper == 'endFunc'):
         return 20
-    elif (oper == 'param'):
+    elif (oper == 'era'):
         return 21
-    elif (oper == 'return'):
+    elif (oper == 'gosub'):
         return 22
-
+    elif (oper == 'param'):
+        return 23
+    elif (oper == 'return'):
+        return 24
 
 tokens = (
     'PROGRAMA', 'FUNCION', 'ENTERO', 'DECIMAL', 'PALABRA', 'BOOLEANO', 'MAIN', 'IMPRIME', 'SI', 'SINO', 'MIENTRAS',
     'FIN', 'RETURN', 'COLON', 'SEMI', 'COMMA', 'LPAREN', 'RPAREN', 'AMPERSAND', 'LCURLY', 'RCURLY', 'EQUAL', 'PLUS',
     'MINUS', 'TIMES', 'DIVIDE', 'LT', 'GT', 'LE', 'GE', 'NE', 'EQUALC', 'AND', 'OR', 'LBRACKET', 'RBRACKET', 'DIRECCION', 'ID',
-    'CTE_E', 'CTE_F', 'CTE_S', 'CTE_B'
+    'CTE_E', 'CTE_F', 'CTE_S', 'CTE_B', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'CIRCULO'
 )
 
 
@@ -208,14 +211,13 @@ def t_IMPRIME(t):
     'IMPRIME'
     return t
 
-
-def t_SI(t):
-    'SI'
+def t_SINO(t):
+    'SINO'
     return t
 
 
-def t_SINO(t):
-    'SINO'
+def t_SI(t):
+    'SI'
     return t
 
 
@@ -352,6 +354,22 @@ def t_DIRECCION(t):
     r'ARRIBA|ABAJO|IZQUIERDA|DERECHA'
     return t
 
+def t_CUADRADO(t):
+    r'CUADRADO'
+    return t
+
+def t_RECTANGULO(t):
+    r'RECTANGULO'
+    return t
+
+def t_TRIANGULO(t):
+    r'TRIANGULO'
+    return t
+
+def t_CIRCULO(t):
+    r'CIRCULO'
+    return t
+
 def t_CTE_F(t):
     r'[0-9]+\.[0-9]+'
     return t
@@ -413,7 +431,7 @@ def p_genera_goto_main(p):
 	"""
 
     global cuadruplos, pilaSaltos
-    cuadruplos.append([oper2Code('goto'), -1, -1, 'pending'])
+    cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos))
 
 
@@ -636,6 +654,7 @@ def p_estatuto(p):
                | function_use
                | return
                | accion
+               | dibujo
     """
 
 def p_checha_pila_equal(p):
@@ -763,7 +782,7 @@ def p_more_printable(p):
 
 def p_condicion(p):
     """
-	condicion : SI LPAREN expression RPAREN generate_gotoF_if COLON mini_bloque else_condicion generate_end_if
+	condicion : SI LPAREN expression RPAREN generate_gotoF_if LCURLY mini_bloque RCURLY else_condicion generate_end_if
 	"""
 
 
@@ -773,10 +792,10 @@ def p_generate_gotoF_if(p):
 
     global pilaOp, pilaTipos, pilaOper, pilaSaltos, cuadruplos
     condicionTipo = pilaTipos.pop()
-    if (condicionTipo != type2Code("boolean")):
+    if (condicionTipo != type2Code("BOOLEANO")):
         raise SemanticError("Se esparaba un booleano en la condicion. Se recibio: " + str(condicionTipo))
     condicion = pilaOp.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'pending'])
+    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos) - 1) 
 
 
@@ -791,7 +810,7 @@ def p_generate_end_if(p):
 
 def p_else_condicion(p):
     """
-	else_condicion : SINO generate_goto_else COLON mini_bloque
+	else_condicion : SINO LCURLY generate_goto_else mini_bloque RCURLY
                       |"""
 
 
@@ -799,7 +818,7 @@ def p_generate_goto_else(p):
     """
 	generate_goto_else : """
     global pilaSaltos, cuadruplos
-    cuadruplos.append([oper2Code("goto"), 'null', 'null', 'pending'])
+    cuadruplos.append([oper2Code("goto"), 'null', 'null', 'espera'])
     falseJump = pilaSaltos.pop()
     cuadruplos[falseJump][3] = len(cuadruplos) + 1
     pilaSaltos.append(len(cuadruplos) - 1)
@@ -827,10 +846,10 @@ def p_generate_gotoF_while(p):
 
     global pilaOp, pilaTipos, pilaSaltos, cuadruplos
     condicionTipo = pilaTipos.pop()
-    if (condicionTipo != type2Code("boolean")):
+    if (condicionTipo != type2Code("BOOLEANO")):
         raise SemanticError("Expected boolean in if condicion. Received: " + str(condicionTipo))
     condicion = pilaOp.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'pending'])
+    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos) - 1)  # Make it as a list that starts in 0.
 
 
@@ -862,15 +881,30 @@ def p_return(p):
 def p_accion(p):
     """
     accion : DIRECCION LPAREN expression RPAREN 
-    
+
     """
     global pilaOp, pilaTipos, cuadruplos
     expression = pilaOp.pop()
     opTipo = pilaTipos.pop()
     if( opTipo != 101):
         raise SemanticError("Se esperaba un entero. Se recibio: " + code2Type(opTipo))
-    else:
+    cuadruplos.append([oper2Code(p[1]), -1, -1, expression])
+
+def p_dibujo(p):
+    """
+    dibujo : CUADRADO LPAREN expression RPAREN
+           | RECTANGULO LPAREN expression COMMA expression RPAREN
+           | TRIANGULO LPAREN expression COMMA expression COMMA expression RPAREN
+           | CIRCULO LPAREN expression RPAREN
+    """
+    global pilaOp, pilaTipos, cuadruplos
+    if (p[1] == "CUADRADO" or p[1] == "CIRCULO"):
+        expression = pilaOp.pop()
+        opTipo = pilaTipos.pop()
+        if( opTipo != 101):
+            raise SemanticError("Se esperaba un entero. Se recibio: " + code2Type(opTipo))
         cuadruplos.append([oper2Code(p[1]), -1, -1, expression])
+
 
 
 def p_mini_bloque(p):

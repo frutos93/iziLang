@@ -11,5 +11,11 @@ PROGRAMA example2:
         ENTERO z;
         z = 5 + 6;
         imprimir(5);
+
+        SI (z > 5){
+            ARRIBA(10);
+            IZQUIERDA(20);
+        }
+
     }
 FIN
