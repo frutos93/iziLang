@@ -1,13 +1,15 @@
 import sys
 import scanner as scanner
-
+import turtle
 
 
 currentPointer = 1
 memoriesStack = []
 pointersStack = []
+tipoFuncion = []
 funcionesDir = {}
 constantes = {}
+parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000},
 memoriaEjecucion  = {{},{},{},constantes}
 cuadruplos = []
 inner = 0
@@ -23,13 +25,13 @@ def cargaDatosEnMemoria():
                 parametrosFuncion.append(parametros)
             regreso = scanner.dirFunciones[funcion]['return'] #no se llama return porque es palabra reservada
             memoria = scanner.dirFunciones[funcion]['memoria']
-            cuadruploID = scanner.dirFunciones[funcion]['start_cuadruplet']
+            cuadruploID = scanner.dirFunciones[funcion]['cuadruploIndice']
             for variables in scanner.dirFunciones[funcion]['variables']:
                 era[scanner.dirFunciones[funcion]['variables'][variables]['tipo'] - 101] += 1
-            era[0] += scanner.dirFunciones[funcion]['temporals'][101]
-            era[1] += scanner.dirFunciones[funcion]['temporals'][102]
-            era[2] += scanner.dirFunciones[funcion]['temporals'][103]
-            era[3] += scanner.dirFunciones[funcion]['temporals'][104]
+            era[0] += scanner.dirFunciones[funcion]['temporales'][101]
+            era[1] += scanner.dirFunciones[funcion]['temporales'][102]
+            era[2] += scanner.dirFunciones[funcion]['temporales'][103]
+            era[3] += scanner.dirFunciones[funcion]['temporales'][104]
             funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria':memoria, 'cuadruplo':cuadruploID, 'era':era}.
 
     for constante in scanner.dirFunciones["constantes"]:
@@ -56,22 +58,22 @@ def cargaDatosEnMemoria():
 
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
-    if(memoria < 7000):
+    if(memoria < 8000):
         return memoriaEjecucion[0][memoria]
-    elif (memoria < 12000):
+    elif (memoria < 14000):
         return memoriaEjecucion[1][-1-inner][memoria]
-    elif (memoria < 17000):
+    elif (memoria < 20000):
         return memoriaEjecucion[2][-1-inner][memoria]
     else:
         return memoriaEjecucion[3][memoria]['valor']
 
 def saveValueMemory(result, memoria):
     global memoriaEjecucion, inner
-    if (memoria < 7000):
+    if (memoria < 8000):
         memoriaEjecucion[0][memoria] = result
-    elif (memoria < 12000):
+    elif (memoria < 14000):
         memoriaEjecucion[1][-1 - inner][memoria] = result
-    elif (memoria < 17000):
+    elif (memoria < 20000):
         memoriaEjecucion[2][-1 - inner][memoria] = result
     else:
         memoriaEjecucion[3][-1 - inner][memoria] = result
@@ -105,31 +107,91 @@ def operacion(cuadruplo):
         saveValueMemory(oper1 != oper2, cuadruplo[3])
     elif (cuadruplo[0] == 9):
         saveValueMemory(oper1 == oper2, cuadruplo[3])
+    elif (cuadruplo[0] == 10):
+        saveValueMemory(oper1 <= oper2, cuadruplo[3])
+    elif (cuadruplo[0] == 11):
+        saveValueMemory(oper1 >= oper2, cuadruplo[3])
+
+def setMemoryParameter(memoria, result):
+    global memoriaEjecucion
+    result = getMemoryValue(result)
+    if (memoria < 8000):
+        memoriaEjecucion[0][-1][memoria] = result
+    elif (memoria < 14000):
+        memoriaEjecucion[1][-1][memoria] = result
+    elif (memoria < 20000):
+        memoriaEjecucion[2][-1][memoria] = result
+    else:
+        memoriaEjecucion[3][-1][memoria] = result
+
+def getMemoryParam(param):
+    global parametrosEnMemoria
+    temp = parametrosEnMemoria[param]
+    parametrosEnMemoria[param] += 1
+    return temp
 
 
+def reiniciaEra():
+    global memoriaEjecucion
+    memoriaEjecucion[1].pop()
+    memoriaEjecucion[2].pop()
 
-def run(fileName):
-    global currentPointer, memoriaEjecucion, constantes
+def iniciaEra():
+    global memoriaEjecucion
+    memoriaEjecucion[1].append({})
+    memoriaEjecucion[2].append({})
+def memoriaParametros():
+    global parametrosEnMemoria
+    parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000},
+
+def run():
+    global currentPointer, memoriaEjecucion, constantes, inner
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
     cargaDatosEnMemoria()
     memoriaEjecucion[3] = constantes
     cuadruploActual = cuadruplos[currentPointer-1]
     currentPointer += 1
     while cuadruploActual[0] != 'FIN':
-        if(cuadruploActual[0] < 10):
+        instruccion = cuadruploActual[0]
+        if(instruccion < 12):
             operacion(cuadruploActual)
-        elif(cuadruploActual[0] == 10):
+        elif(instruccion == 12):
             saveValueMemory(getMemoryValue(cuadruploActual[1]),cuadruploActual[3])
-        elif(cuadruploActual[0] == 11):
+        elif(instruccion == 13):
             currentPointer = cuadruploActual[3] -1
-        elif(cuadruploActual[0] == 12):
-            if(getMemoryValue(cuadruploActual[1]) == 'FALSO'):
+        elif(instruccion == 14):
+            if(getMemoryValue(cuadruploActual[1]) == False):
                 currentPointer = cuadruploActual[3] - 1
-        elif(cuadruploActual[0] == 13):
-
+        elif(instruccion == 15):
+            print "PRINT: ", getMemoryValue(cuadruploActual[3])
+        elif(instruccion == 19):
+            turtle.fd(cuadruploActual[3])
+        elif(instruccion == 20):
+            reiniciaEra()
+            currentPointer = memoriesStack.pop()
+            tipoFuncion.pop()
+            memoriaParametros()
+        elif(instruccion == 21):
+            iniciaEra()
+            tipoFuncion.append(cuadruploActual[3])
+            inner = 1
+        elif(instruccion == 22):
+            inner = 0
+            memoriesStack.append(currentPointer)
+            currentPointer = funcionesDir[cuadruploActual[3]]['cuadruplo'] -1
+            memoriaParametros()
+        elif(instruccion == 23):
+            tipo = funcionesDir[tipoFuncion[-1]]['parametros'][cuadruploActual[3]-1]
+            temp = getMemoryParam(tipo)
+            setMemoryParameter(temp, cuadruploActual[1])
+        elif(instruccion == 24):
+            saveValueMemory(funcionesDir[tipoFuncion[-1]['memoria']], getMemoryValue(cuadruploActual[3]))
+            reiniciaEra()
+            currentPointer = memoriesStack.pop()
+            tipoFuncion.pop()
         cuadruploActual = cuadruplos[currentPointer-1]
         currentPointer += 1
 
 
 
-
+run()
