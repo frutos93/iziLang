@@ -1,23 +1,7 @@
 PROGRAMA example2:
-    ENTERO b;
-    FUNCION ENTERO imprimir(ENTERO n)
-    {
-        ENTERO x;
-        x = 5 + 0;
-        RETURN imprimir(n - 1);
-    }
+
     MAIN()
     {
-        ENTERO z;
-        z = 5 + 6;
-        imprimir(5);
-
-        SI(z > 4){
-            ARRIBA(10);
-        }
-        SINO{
-            ABAJO(15);
-        };
-
+        DERECHA(200);
     }
 FIN

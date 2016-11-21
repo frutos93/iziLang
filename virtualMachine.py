@@ -146,6 +146,7 @@ def memoriaParametros():
 
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner
+    scanner.parse()
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
     cargaDatosEnMemoria()
     memoriaEjecucion[3] = constantes
