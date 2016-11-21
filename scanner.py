@@ -322,7 +322,7 @@ def t_GE(t):
 
 
 def t_NE(t):
-    '!='
+    '<>'
     return t
 
 
@@ -444,7 +444,6 @@ def p_bloque(p):
     variablesGlobales = {}
 
 
-# Helper function in sintaxis for semantic and compilation (virtual memory)
 def p_guarda_variables_global(p):
     """
 	guarda_variables_global :
@@ -516,12 +515,12 @@ def p_guarda_funcion(p):
     global dirFunciones, variables, parametros, funcionId, tipo, avail, cuadruplos
     # Save the function with its variables
     if (dirFunciones.has_key(funcionId)):
-        raise SemanticError("Repeated identifier for function: " + funcionId)
+        raise SemanticError("Ya existe la funcion: " + funcionId)
     if (debug):
         dirFunciones[funcionId] = {"variables": variables, "parametros": parametros,
                                    "return": type2Code(tipo),
                                    "memoria": avail[0][type2Code(tipo)],
-                                   "start_cuadruplet": len(cuadruplos) + 1}
+                                   "cuadruploIndice": len(cuadruplos) + 1}
     avail[0][type2Code(tipo)] += 1
     variables = {}
 
@@ -647,7 +646,7 @@ def p_guarda_variables_local(p):
 
 def p_estatuto(p):
     """
-	estatuto : assignation checha_pila_equal
+	estatuto : assignation checa_pila_equal
                | condicion
                | printing
                | mientras
@@ -657,9 +656,9 @@ def p_estatuto(p):
                | dibujo
     """
 
-def p_checha_pila_equal(p):
+def p_checa_pila_equal(p):
     """
-	checha_pila_equal : """
+	checa_pila_equal : """
 
     global pilaOper, pilaTipos, pilaOp, cuadruplos
     if (pilaOper):
@@ -805,7 +804,7 @@ def p_generate_end_if(p):
 
     global pilaSaltos, cuadruplos
     endJump = pilaSaltos.pop()
-    cuadruplos[endJump][3] = len(cuadruplos) + 1  # Because it needs to point to the next one
+    cuadruplos[endJump][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
 
 
 def p_else_condicion(p):
@@ -818,7 +817,7 @@ def p_generate_goto_else(p):
     """
 	generate_goto_else : """
     global pilaSaltos, cuadruplos
-    cuadruplos.append([oper2Code("goto"), 'null', 'null', 'espera'])
+    cuadruplos.append([oper2Code("goto"), -1, -1, 'espera'])
     falseJump = pilaSaltos.pop()
     cuadruplos[falseJump][3] = len(cuadruplos) + 1
     pilaSaltos.append(len(cuadruplos) - 1)
@@ -826,7 +825,7 @@ def p_generate_goto_else(p):
 
 def p_mientras(p):
     """
-	mientras : MIENTRAS push_cont_in_pilaSaltos LPAREN expression RPAREN generate_gotoF_while COLON mini_bloque generate_end_while
+	mientras : MIENTRAS push_cont_in_pilaSaltos LPAREN expression RPAREN generate_gotoF_while LCURLY mini_bloque RCURLY generate_end_while
 	"""
 
 
@@ -847,7 +846,7 @@ def p_generate_gotoF_while(p):
     global pilaOp, pilaTipos, pilaSaltos, cuadruplos
     condicionTipo = pilaTipos.pop()
     if (condicionTipo != type2Code("BOOLEANO")):
-        raise SemanticError("Expected boolean in if condicion. Received: " + str(condicionTipo))
+        raise SemanticError("Se esperaba booleano en la condicion. Se recibio: " + str(condicionTipo))
     condicion = pilaOp.pop()
     cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos) - 1)  # Make it as a list that starts in 0.
@@ -867,15 +866,16 @@ def p_generate_end_while(p):
 
 def p_return(p):
     """
-	return : RETURN expression"""
+	return : RETURN expression
+    """
 
     global cuadruplos, dirFunciones, funcionId, pilaOp, pilaTipos
     if (funcionId == 'MAIN'):
-        raise SemanticError("Trying to return something inside Main.")
+        raise SemanticError("Main no de")
     op = pilaOp.pop()
     opTipo = pilaTipos.pop()
     if (opTipo != dirFunciones[funcionId]['return']):
-        raise SemanticError("Returning a value of tipo: " + opTipo + ", expected: " + dirFunciones[funcionId]['return'])
+        raise SemanticError("Se esta retornando: " + opTipo + ", cuando se esperaba: " + dirFunciones[funcionId]['return'])
     cuadruplos.append([oper2Code('return'), -1, -1, op])
 
 def p_accion(p):
@@ -916,12 +916,12 @@ def p_mini_bloque(p):
 
 def p_expression(p):
     """
-	expression : big_exp or_exp checha_pila_or
+	expression : big_exp or_exp checa_pila_or
 	"""
 
-def p_checha_pila_or(p):
+def p_checa_pila_or(p):
     """
-	checha_pila_or :
+	checa_pila_or :
 	"""
 
     global pilaOper
@@ -946,12 +946,12 @@ def p_or_exp(p):
 
 def p_big_exp(p):
     """
-	big_exp : medium_exp and_exp checha_pila_and
+	big_exp : medium_exp and_exp checa_pila_and
 	"""
 
-def p_checha_pila_and(p):
+def p_checa_pila_and(p):
     """
-	checha_pila_and :
+	checa_pila_and :
 	"""
 
     global pilaOper
@@ -976,18 +976,18 @@ def p_and_exp(p):
 
 def p_medium_exp(p):
     """
-	medium_exp : exp relational_exp checha_pila_mmdi
+	medium_exp : exp relational_exp checa_pila_mmdi
 	"""
 
 
-def p_checha_pila_mmdi(p):
+def p_checa_pila_mmdi(p):
     """
-	checha_pila_mmdi :
+	checa_pila_mmdi :
 	"""
 
     global pilaOper
     if (pilaOper):
-        if (pilaOper[-1] == '>' or pilaOper[-1] == '<' or pilaOper[-1] == '!=' or pilaOper[-1] == '=='):
+        if (pilaOper[-1] == '>' or pilaOper[-1] == '<' or pilaOper[-1] == '<>' or pilaOper[-1] == '==' or pilaOper[-1] == '>=' or pilaOper[-1] == '<='):
             generateArithmeticCode()
 
 
@@ -1012,13 +1012,13 @@ def p_relational_exp(p):
 
 def p_exp(p):
     """
-	exp : term checha_pila_pm add_term
+	exp : term checa_pila_pm add_term
 	"""
 
 
-def p_checha_pila_pm(p):
+def p_checa_pila_pm(p):
     """
-	checha_pila_pm :
+	checa_pila_pm :
 	"""
 
     global pilaOper
@@ -1030,14 +1030,14 @@ def p_checha_pila_pm(p):
 def p_add_term(p):
     """
 	add_term : push_pm exp
-                |
+             |
 	"""
 
 
 def p_push_pm(p):
     """
 	push_pm : PLUS
-               | MINUS
+            | MINUS
     """
 
     global pilaOper
@@ -1046,13 +1046,13 @@ def p_push_pm(p):
 
 def p_term(p):
     """
-	term : factor checha_pila_td times_factor
+	term : factor checa_pila_td times_factor
 	"""
 
 
-def p_checha_pila_td(p):
+def p_checa_pila_td(p):
     """
-	checha_pila_td :
+	checa_pila_td :
 	"""
 
     global pilaOper
@@ -1064,14 +1064,15 @@ def p_checha_pila_td(p):
 def p_times_factor(p):
     """
 	times_factor : push_td term
-                    |
+                 |
 	"""
 
 
 def p_push_td(p):
     """
 	push_td : TIMES
-               | DIVIDE"""
+            | DIVIDE
+    """
 
     global pilaOper
     pilaOper.append(p[1])
@@ -1080,12 +1081,14 @@ def p_push_td(p):
 def p_factor(p):
     """
 	factor : push_pa expression pop_pc
-              | var_ct"""
+           | var_ct
+    """
 
 
 def p_push_pa(p):
     """
-	push_pa : LPAREN"""
+	push_pa : LPAREN
+    """
 
     global pilaOper
     pilaOper.append(p[1])
@@ -1093,7 +1096,8 @@ def p_push_pa(p):
 
 def p_pop_pc(p):
     """
-	pop_pc : RPAREN"""
+	pop_pc : RPAREN
+    """
 
     global pilaOper
     pilaOper.pop()
@@ -1109,11 +1113,6 @@ def p_var_ct(p):
            | function_use
     """
 
-    # TODO: - What happens when you receive a function
-
-
-# Helper functions of var_ct for semantic analysis (operands)
-# id checks if the id was declared, if not, there is an error.
 def p_id_aux(p):
     """
 	id_aux : ID
@@ -1123,7 +1122,7 @@ def p_id_aux(p):
     # print variables, dirFunciones, p[1], funcionId
     if (not variables.has_key(p[1]) and not dirFunciones[funcionId]["variables"].has_key(p[1])):
         if (not variablesGlobales.has_key(p[1])):
-            raise SemanticError("Use of undeclared identifier for variable: " + p[1])
+            raise SemanticError("La variable no ha sido declarada: " + p[1])
         else:
             pilaOp.append(variablesGlobales[p[1]]["memoria"])
             pilaTipos.append(variablesGlobales[p[1]]["tipo"])
@@ -1135,8 +1134,6 @@ def p_id_aux(p):
             pilaOp.append(dirFunciones[funcionId]["variables"][p[1]]["memoria"])
             pilaTipos.append(dirFunciones[funcionId]["variables"][p[1]]["tipo"])
 
-
-# the rest of the variables check if they exists in virtual memory, if not, add them.
 
 def p_cte_e_aux(p):
     """
@@ -1224,8 +1221,8 @@ while True:
     except EOFError:
         break
     dirFunciones = {"global": {}}
-    avail = {0: {101: 2000, 102: 3000, 103: 4000, 104: 5000},
-             1: {101: 8000, 102: 9000, 103: 10000, 104: 11000},
+    avail = {0: {101: 2000,  102: 3000,  103: 4000,  104: 5000},
+             1: {101: 8000,  102: 9000,  103: 10000, 104: 11000},
              2: {101: 14000, 102: 15000, 103: 16000, 104: 17000},
              3: {101: 20000, 102: 21000, 103: 22000, 104: 23000}}
     variables = {}

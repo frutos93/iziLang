@@ -12,10 +12,12 @@ PROGRAMA example2:
         z = 5 + 6;
         imprimir(5);
 
-        SI (z > 5){
+        SI(z > 4){
             ARRIBA(10);
-            IZQUIERDA(20);
         }
+        SINO{
+            ABAJO(15);
+        };
 
     }
 FIN
