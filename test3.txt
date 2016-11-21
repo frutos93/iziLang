@@ -1,0 +1,19 @@
+PROGRAMA example2:
+    ENTERO b;
+    FUNCION ENTERO imprimir(ENTERO n)
+    {
+        ENTERO x;
+        x = 5 + 0;
+        x = x + 1;
+        RETURN imprimir(x + x);
+    }
+    MAIN()
+    {
+        ENTERO z;
+        DECIMAL g;
+        z = 1;
+        g = 5 + 6.0;
+        g = g + z * 1;
+        imprimir(5 + 1);
+    }
+FIN
