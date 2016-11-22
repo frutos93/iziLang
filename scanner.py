@@ -37,6 +37,8 @@ constantes = {}
 parametros = []
 variablesGlobales = {}
 tipoVariable = ""
+listaAux = ''
+lista = ''
 funcionId = ""
 contParams = 0
 goSubFuncion = ""
@@ -156,6 +158,8 @@ def oper2Code(oper):
         return 23
     elif (oper == 'return'):
         return 24
+    elif( oper == 'lista'):
+        return 25
 
 tokens = (
     'PROGRAMA', 'FUNCION', 'ENTERO', 'DECIMAL', 'PALABRA', 'BOOLEANO', 'MAIN', 'IMPRIME', 'SI', 'SINO', 'MIENTRAS',
@@ -472,20 +476,23 @@ def p_vars(p):
 def p_var(p):
     """
 	var : tipo ID
-        | tipo ID RBRACKET CTE_E RBRACKET
+        | tipo ID LBRACKET CTE_E RBRACKET
     """
-
     global variables, tipo, dirFunciones
-    if (variables.has_key(p[2])):
-        raise SemanticError("Ya existe la variable: " + p[2])
-    if (dirFunciones.has_key("variables")):
-        if (dirFunciones["variables"].has_value(p[2])):
-            raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
-    tipoEnNumero = type2Code(tipo)
-    try:
-        if (p[3] != '['):
-            variables[p[2]] = {"tipo": tipoEnNumero + 1000}
-    except IndexError:
+    if (len(p) > 3):
+        if (variables.has_key(p[2])):
+            raise SemanticError("Ya existe la variable: " + p[2])
+        if (dirFunciones.has_key("variables")):
+            if (dirFunciones["variables"].has_value(p[2])):
+                raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
+        variables[p[2]] = {"tipo": type2Code(tipo), "tamano": {"inf": 0, "sup": int(p[4]), "K": 0}}
+    else:
+        if (variables.has_key(p[2])):
+            raise SemanticError("Ya existe la variable: " + p[2])
+        if (dirFunciones.has_key("variables")):
+            if (dirFunciones["variables"].has_value(p[2])):
+                raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
+        tipoEnNumero = type2Code(tipo)
         variables[p[2]] = {"tipo": tipoEnNumero}
 
 
@@ -632,15 +639,14 @@ def p_guarda_variables_local(p):
 	"""
 
     global variables, avail
-    # TODO: - Virtual memory for a list
-
-    # Assign virtual memory to variables in local scope
-    for key in variables.keys():
-        tipoEnNumero = variables[key]["tipo"]
-        if tipoEnNumero < 1000:
-            variables[key]["memoria"] = avail[1][tipoEnNumero]
-            avail[1][tipoEnNumero] += 1
-
+    for variable in variables.keys():
+        tipo = variables[variable]['tipo']
+        if(variables[variable].has_key('tamano')):
+            variables[variable]['memoria'] = avail[1][tipo]
+            avail[1][tipo] += variables[variable]['tamano']['sup']
+        else:
+            variables[variable]['memoria'] = avail[1][tipo]
+            avail[1][tipo] += 1
 
 def p_estatuto(p):
     """
@@ -751,10 +757,37 @@ def p_push_equal(p):
 
 def p_value_list(p):
     """
-	value_list : LBRACKET expression RBRACKET
+	value_list : value_list_aux LBRACKET expression RBRACKET
                   |
 	"""
+    if(len(p)> 2):
+        if(p[2] == '['):
+            op1 = pilaOp.pop()
+            tipoActual = pilaTipos.pop()
+            if(tipoActual != 101):
+                raise SemanticError("Necesitas un entero para accesar la lista: ", tipoActual)
+            print "PRUEBALISTA", oper2Code('lista'), op1,0, variables [lista]['tamano']['sup']
+            cuadruplos.append([code2Type('lista'), op1,0, variables [lista]['tamano']['sup']])
+            if(not(constantes.has_key(variables[lista]['memoria']))):
+                constantes[variables[lista]['memoria']] = {'tipo': 101, 'memoria': avail[3][101]}
+                avail[3][101] +=1
+            cuadruplo = [0, op1, constantes[variables[lista]['memoria']], avail[2][101]]
+            cuadruplos.append(cuadruplo)
+            pilaOp.append(-avail[2][101])
+            pilaTipos.append(variables[lista]['tipo'])
+            avail[2][101] += 1
 
+def p_value_list_aux(p):
+    """
+    value_list_aux :
+    """
+    global listaAux, lista, pilaOp, pilaTipos
+    if(variables[listaAux].has_key('tamano')):
+        pilaOp.pop()
+        pilaTipos.pop()
+        lista = listaAux
+    else:
+        raise SemanticError("Esta variable no es una lista")
 
 def p_printing(p):
     """
@@ -1117,8 +1150,8 @@ def p_id_aux(p):
 	id_aux : ID
 	"""
 
-    global pilaTipos, pilaOp, variables, variablesGlobales, dirFunciones, funcionId
-    # print variables, dirFunciones, p[1], funcionId
+    global pilaTipos, pilaOp, variables, variablesGlobales, dirFunciones, funcionId, listaAux
+    listaAux = p[1]
     if (not variables.has_key(p[1]) and not dirFunciones[funcionId]["variables"].has_key(p[1])):
         if (not variablesGlobales.has_key(p[1])):
             raise SemanticError("La variable no ha sido declarada: " + p[1])

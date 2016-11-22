@@ -1,17 +1,9 @@
 PROGRAMA example2:
 
-    FUNCION ENTERO prueba(ENTERO n){
-        SI(n == 1){
-            IMPRIME(1);
-        }
-        SINO{
-            IMPRIME(n);
-            prueba(n - 1);
-        };
-    }
-
     MAIN()
     {
-        prueba(5);
+        ENTERO a[2];
+        a[1] = 4;
+        IMPRIME(a[1]);
     }
 FIN

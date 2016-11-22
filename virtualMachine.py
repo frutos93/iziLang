@@ -191,6 +191,11 @@ def run():
             reiniciaEra()
             currentPointer = memoriesStack.pop()
             tipoFuncion.pop()
+        elif(instruccion == 25):
+            valor = getMemoryValue(cuadruploActual[1])
+            if (not(valor >= cuadruploActual[2] and valor <= cuadruploActual[3])):
+                print ("error")
+                break;
         cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
     turtle.fd(1)
