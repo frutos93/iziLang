@@ -59,7 +59,6 @@ def cargaDatosEnMemoria():
 
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
-    print memoriaEjecucion[2][-1-inner]
     if(memoria < 8000):
         return memoriaEjecucion[0][memoria]
     elif (memoria < 14000):
@@ -166,7 +165,7 @@ def run():
             if(getMemoryValue(cuadruploActual[1]) == False):
                 currentPointer = cuadruploActual[3] - 1
         elif(instruccion == 15):
-            print "PRINT: ", getMemoryValue(cuadruploActual[3])
+            print ("PRINT: "+ getMemoryValue(cuadruploActual[3]))
         elif(instruccion == 19):
             turtle.fd(cuadruploActual[3])
         elif(instruccion == 20):
