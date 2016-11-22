@@ -1,6 +1,14 @@
 PROGRAMA example2:
+    
+    FUNCION ENTERO prueba(){
+        RETURN 5;
+
+    }
+
     MAIN()
     {
-        DERECHA(200);
+        ENTERO a;
+        a = prueba();
+        IMPRIME(a);
     }
 FIN

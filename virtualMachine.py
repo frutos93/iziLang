@@ -19,8 +19,8 @@ def cargaDatosEnMemoria():
     parametrosFuncion = []
     era = [0,0,0,0]
     for funcion in scanner.dirFunciones:
-        #not(funcion == 'contantes' or funcion == 'global' or funcion == 'MAIN')
-        if (False):
+        
+        if (not(funcion == 'constantes' or funcion == 'global' or funcion == 'MAIN')):
             nombre = funcion
             for parametro in scanner.dirFunciones[funcion]["parametros"]:
                 parametrosFuncion.append(parametro)
@@ -37,7 +37,6 @@ def cargaDatosEnMemoria():
 
 
     for constante in scanner.dirFunciones["constantes"]:
-        print "Constantes", str(constante)
         tipo = scanner.dirFunciones['constantes'][constante]['tipo']
         memoria = scanner.dirFunciones['constantes'][constante]['memoria']
         valor = constante
@@ -47,7 +46,6 @@ def cargaDatosEnMemoria():
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
         else:
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
-
     for cuadruplo in scanner.cuadruplos:
         oper = cuadruplo[0]
         oper1 = cuadruplo[1]
@@ -61,6 +59,7 @@ def cargaDatosEnMemoria():
 
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
+    print memoriaEjecucion[2][-1-inner]
     if(memoria < 8000):
         return memoriaEjecucion[0][memoria]
     elif (memoria < 14000):
@@ -91,29 +90,29 @@ def operacion(cuadruplo):
     oper2 = getMemoryValue(oper2)
 
     if(cuadruplo[0] == 0):
-        saveValueMemory(oper1+oper2,cuadruplo[3])
+        saveValueMemory(int(oper1)+int(oper2),cuadruplo[3])
     elif(cuadruplo[0] == 1):
-        saveValueMemory(oper1 * oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) * int(oper2), cuadruplo[3])
     elif(cuadruplo[0] == 2):
-        saveValueMemory(oper1 - oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) - int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 3):
-        saveValueMemory(oper1 / oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) / int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 4):
-        saveValueMemory(oper1 & oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) & int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 5):
-        saveValueMemory(oper1 | oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) | int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 6):
-        saveValueMemory(oper1 < oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) < int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 7):
-        saveValueMemory(oper1 > oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) > int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 8):
-        saveValueMemory(oper1 != oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) != int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 9):
-        saveValueMemory(oper1 == oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) == int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 10):
-        saveValueMemory(oper1 <= oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) <= int(oper2), cuadruplo[3])
     elif (cuadruplo[0] == 11):
-        saveValueMemory(oper1 >= oper2, cuadruplo[3])
+        saveValueMemory(int(oper1) >= int(oper2), cuadruplo[3])
 
 def setMemoryParameter(memoria, result):
     global memoriaEjecucion
@@ -148,7 +147,7 @@ def memoriaParametros():
     parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
 
 def run():
-    global currentPointer, memoriaEjecucion, constantes, inner
+    global currentPointer, memoriaEjecucion, constantes, inner, funcionesDir
     scanner.parse()
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
     cargaDatosEnMemoria()
@@ -189,14 +188,14 @@ def run():
             temp = getMemoryParam(tipo)
             setMemoryParameter(temp, cuadruploActual[1])
         elif(instruccion == 24):
-            saveValueMemory(funcionesDir[tipoFuncion[-1]['memoria']], getMemoryValue(cuadruploActual[3]))
+            saveValueMemory(getMemoryValue(cuadruploActual[3]),funcionesDir[tipoFuncion[-1]]['memoria'])
             reiniciaEra()
             currentPointer = memoriesStack.pop()
             tipoFuncion.pop()
         cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
+    turtle.fd(1)
     turtle.done()
-    print cuadruplos
 
 
 
