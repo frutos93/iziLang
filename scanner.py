@@ -537,7 +537,6 @@ def p_generate_end_func(p):
     global cuadruplos, temporalStamp, dirFunciones, funcionId, avail
     cuadruplos.append([oper2Code('endFunc'), -1, -1, -1])
     temporalAuxDictionary = {}
-    print (temporalStamp)
     for key in avail[2]:
         temporalAuxDictionary[key] = avail[2][key] - temporalStamp[key]
     dirFunciones[funcionId]["temporales"] = temporalAuxDictionary
@@ -664,13 +663,10 @@ def p_checa_pila_equal(p):
         if (pilaOper[-1] == '='):
             # Different way to generate cuadruplet arithmetic != assignation
             operador = oper2Code(pilaOper.pop())
-            print (pilaOp)
             op2 = pilaOp.pop()
-            print (op2)
             op1 = pilaOp.pop()
             op2Tipo = pilaTipos.pop()
             op1Tipo = pilaTipos.pop()
-            print ("op2 "+ op2+ "op1 "+ op1)
             if (op1Tipo != op2Tipo):
                 raise SemanticError(
                     "Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
@@ -718,7 +714,6 @@ def p_validate_params_generate_gosub(p):
 	validate_params_generate_gosub : """
 
     global dirFunciones, cuadruplos, goSubFuncion, parametros, contParams, funcionId, avail, pilaOp, pilaTipos
-    print "dr1" ,dirFunciones
     if (contParams != len(parametros)):
         raise SemanticError("Use of less parametros than expected in function declaration.")
     #goSubFuncion permite asignar el resultado de una funcion a una varible
@@ -1193,9 +1188,9 @@ def p_error(p):
 def generateArithmeticCode():
     global pilaOper, pilaTipos, pilaOp, avail, cuadruplos
     if (debug):
-        print ("pila de operadores: "+ pilaOper)
-        print ("pila de operandos: "+ pilaOp)
-        print ("pila de tipos: "+ pilaTipos)
+        print ("pila de operadores: ", pilaOper)
+        print ("pila de operandos: ", pilaOp)
+        print ("pila de tipos: ", pilaTipos)
 
     #Creacion de cuadruplos
     operador = oper2Code(pilaOper.pop())
@@ -1253,4 +1248,4 @@ def parse():
             print("El programa se ejecuto correctamente")
         except EOFError:
             return
-            
+

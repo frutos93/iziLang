@@ -165,7 +165,7 @@ def run():
             if(getMemoryValue(cuadruploActual[1]) == False):
                 currentPointer = cuadruploActual[3] - 1
         elif(instruccion == 15):
-            print ("PRINT: "+ getMemoryValue(cuadruploActual[3]))
+            print "PRINT: ", getMemoryValue(cuadruploActual[3])
         elif(instruccion == 19):
             turtle.fd(cuadruploActual[3])
         elif(instruccion == 20):
