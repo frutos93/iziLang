@@ -620,7 +620,6 @@ def p_set_main_id(p):
     avail[1] = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
     avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000}
 
-
 def p_codigo_bloque(p):
     """
 	codigo_bloque : LCURLY vars guarda_variables_local mini_bloque RCURLY
@@ -1215,35 +1214,38 @@ import ply.yacc as yacc
 
 parser = yacc.yacc()
 def parse():
-    while True:
-        try:
-            s = raw_input('izilang > ')
-        except EOFError:
-            break
-        dirFunciones = {"global": {}}
-        avail = {0: {101: 2000,  102: 3000,  103: 4000,  104: 5000},
-                 1: {101: 8000,  102: 9000,  103: 10000, 104: 11000},
-                 2: {101: 14000, 102: 15000, 103: 16000, 104: 17000},
-                 3: {101: 20000, 102: 21000, 103: 22000, 104: 23000}}
-        variables = {}
-        constantes = {}
-        parametros = []
-        variablesGlobales = {}
-        cuadruplos = []
-        pilaTipos = []
-        pilaOper = []
-        pilaOp = []
-        pilaSaltos = []
+    global dirFunciones, avail, variables, constantes, parametros, variablesGlobales, cuadruplos, pilaTipos, pilaOper, pilaOp, push_cont_in_pilaSaltos
+    
+    try:
+        s = raw_input('izilang > ')
+    except EOFError:
+        return
+    dirFunciones = {"global": {}}
+    avail = {0: {101: 2000,  102: 3000,  103: 4000,  104: 5000},
+             1: {101: 8000,  102: 9000,  103: 10000, 104: 11000},
+             2: {101: 14000, 102: 15000, 103: 16000, 104: 17000},
+             3: {101: 20000, 102: 21000, 103: 22000, 104: 23000}}
+    
+    variables = {}
+    constantes = {}
+    parametros = []
+    variablesGlobales = {}
+    cuadruplos = []
+    pilaTipos = []
+    pilaOper = []
+    pilaOp = []
+    pilaSaltos = []
 
-        with open(s) as fp:
-            completeString = ""
-            for line in fp:
-                completeString += line
-            try:
-                parser.parse(completeString)
-                if (debug):
-                    print "Funciones: ", dirFunciones
-                    print "Cuadruplos: ", cuadruplos
-                print("El programa se ejecuto correctamente")
-            except EOFError:
-                break
+    with open(s) as fp:
+        completeString = ""
+        for line in fp:
+            completeString += line
+        try:
+            parser.parse(completeString)
+            if (debug):
+                print "Funciones: ", dirFunciones
+                print "Cuadruplos: ", cuadruplos
+            print("El programa se ejecuto correctamente")
+        except EOFError:
+            return
+            

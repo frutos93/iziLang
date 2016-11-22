@@ -1,5 +1,4 @@
 PROGRAMA example2:
-
     MAIN()
     {
         DERECHA(200);

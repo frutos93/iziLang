@@ -9,8 +9,8 @@ pointersStack = []
 tipoFuncion = []
 funcionesDir = {}
 constantes = {}
-parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000},
-memoriaEjecucion  = {{},{},{},constantes}
+parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
+memoriaEjecucion  = [{},[{}],[{}],constantes]
 cuadruplos = []
 inner = 0
 
@@ -19,10 +19,11 @@ def cargaDatosEnMemoria():
     parametrosFuncion = []
     era = [0,0,0,0]
     for funcion in scanner.dirFunciones:
-        if (funcion != 'contantes' & funcion != 'global' & funcion != 'main'):
+        #not(funcion == 'contantes' or funcion == 'global' or funcion == 'MAIN')
+        if (False):
             nombre = funcion
-            for parametros in scanner.dirFunciones[funcion]['parametros']:
-                parametrosFuncion.append(parametros)
+            for parametro in scanner.dirFunciones[funcion]["parametros"]:
+                parametrosFuncion.append(parametro)
             regreso = scanner.dirFunciones[funcion]['return'] #no se llama return porque es palabra reservada
             memoria = scanner.dirFunciones[funcion]['memoria']
             cuadruploID = scanner.dirFunciones[funcion]['cuadruploIndice']
@@ -32,11 +33,13 @@ def cargaDatosEnMemoria():
             era[1] += scanner.dirFunciones[funcion]['temporales'][102]
             era[2] += scanner.dirFunciones[funcion]['temporales'][103]
             era[3] += scanner.dirFunciones[funcion]['temporales'][104]
-            funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria':memoria, 'cuadruplo':cuadruploID, 'era':era}.
+            funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria':memoria, 'cuadruplo':cuadruploID, 'era':era}
+
 
     for constante in scanner.dirFunciones["constantes"]:
-        tipo = scanner.dirFunciones[constante]['tipo']
-        memoria = scanner.dirFunciones[constante]['memoria']
+        print "Constantes", str(constante)
+        tipo = scanner.dirFunciones['constantes'][constante]['tipo']
+        memoria = scanner.dirFunciones['constantes'][constante]['memoria']
         valor = constante
         if(tipo == 101):
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
@@ -142,7 +145,7 @@ def iniciaEra():
     memoriaEjecucion[2].append({})
 def memoriaParametros():
     global parametrosEnMemoria
-    parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000},
+    parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
 
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner
@@ -190,8 +193,10 @@ def run():
             reiniciaEra()
             currentPointer = memoriesStack.pop()
             tipoFuncion.pop()
-        cuadruploActual = cuadruplos[currentPointer-1]
+        cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
+    turtle.done()
+    print cuadruplos
 
 
 
