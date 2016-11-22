@@ -670,6 +670,7 @@ def p_checa_pila_equal(p):
             op1 = pilaOp.pop()
             op2Tipo = pilaTipos.pop()
             op1Tipo = pilaTipos.pop()
+            print "op2 ", op2, "op1 ", op1
             if (op1Tipo != op2Tipo):
                 raise SemanticError(
                     "Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
@@ -681,7 +682,6 @@ def p_function_use(p):
 	function_use : validate_function_id_do_era LPAREN add_parametro more_ids RPAREN validate_params_generate_gosub
                     | validate_function_id_do_era LPAREN RPAREN validate_params_generate_gosub
     """
-
 
 def p_validate_function_id_do_era(p):
     """
@@ -718,14 +718,16 @@ def p_validate_params_generate_gosub(p):
 	validate_params_generate_gosub : """
 
     global dirFunciones, cuadruplos, goSubFuncion, parametros, contParams, funcionId, avail, pilaOp, pilaTipos
+    print "dr1", dirFunciones
     if (contParams != len(parametros)):
         raise SemanticError("Use of less parametros than expected in function declaration.")
+    #goSubFuncion permite asignar el resultado de una funcion a una varible
     cuadruplos.append([oper2Code('gosub'), -1, -1, goSubFuncion])
-    if (funcionId != 'MAIN'):
-        cuadruplos.append([oper2Code('='), dirFunciones[funcionId]['memoria'], -1, avail[2][dirFunciones[funcionId]['return']]])
-        pilaOp.append(avail[2][dirFunciones[funcionId]['return']])
-        pilaTipos.append(dirFunciones[funcionId]['return'])
-        avail[2][dirFunciones[funcionId]['return']] += 1
+    cuadruplos.append([oper2Code('='), dirFunciones[goSubFuncion]['memoria'], -1, avail[2][dirFunciones[goSubFuncion]['return']]])
+    pilaOp.append(avail[2][dirFunciones[goSubFuncion]['return']])
+    pilaTipos.append(dirFunciones[goSubFuncion]['return'])
+    avail[2][dirFunciones[goSubFuncion]['return']] += 1
+
     goSubFuncion = ""
     parametros = []
     contParams = 0

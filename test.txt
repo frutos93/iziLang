@@ -7,8 +7,6 @@ PROGRAMA example2:
 
     MAIN()
     {
-        ENTERO a;
-        a = prueba();
-        IMPRIME(a);
+        IMPRIME(prueba());
     }
 FIN
