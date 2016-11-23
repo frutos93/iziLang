@@ -3,6 +3,7 @@ import scanner as scanner
 import turtle
 
 
+#variables globales de memoria, parametros y listas para control inicializadas.
 currentPointer = 1
 memoriesStack = []
 pointersStack = []
@@ -14,10 +15,14 @@ memoriaEjecucion  = [{},[{}],[{}],constantes]
 cuadruplos = []
 inner = 0
 
+#Método que carga todos los datos de scanner en la memoria de ejecución
+#guarda las funciones en un diccionario de funciones en memoria virtual al igual
+#que guarda constantes y cuadruplos
 def cargaDatosEnMemoria():
     global funcionesDir
     parametrosFuncion = []
     era = [0,0,0,0]
+    #se guardan funciones
     for funcion in scanner.dirFunciones:
         if (not(funcion == 'constantes' or funcion == 'global' or funcion == 'MAIN')):
             for parametro in scanner.dirFunciones[funcion]["parametros"]:
@@ -33,7 +38,7 @@ def cargaDatosEnMemoria():
             era[3] += scanner.dirFunciones[funcion]['temporales'][104]
             funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria':memoria, 'cuadruplo':cuadruploID, 'era':era}
 
-
+    #se guardan constantes
     for constante in scanner.dirFunciones["constantes"]:
         tipo = scanner.dirFunciones['constantes'][constante]['tipo']
         memoria = scanner.dirFunciones['constantes'][constante]['memoria']
@@ -44,6 +49,7 @@ def cargaDatosEnMemoria():
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
         else:
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
+    #se guardan cuadruplos
     for cuadruplo in scanner.cuadruplos:
         oper = cuadruplo[0]
         oper1 = cuadruplo[1]
@@ -54,7 +60,7 @@ def cargaDatosEnMemoria():
 
 
 
-
+#Accesa cierto pedazo de memoria y regresa el valor asignado a esa memoria
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
     if inner == 1:
@@ -73,6 +79,7 @@ def getMemoryValue(memoria):
     else:
         return memoriaEjecucion[3][memoria]['valor']
 
+#Guarda un valor a una memoria, generalmente es cuando se desea guardar una memoria dentro de ejecución
 def saveValueMemory(result, memoria):
     global memoriaEjecucion, inner
     if inner == 1:
@@ -93,7 +100,7 @@ def saveValueMemory(result, memoria):
 
 
 
-
+#Genera el resultado de una operación aritmética y lo guarda en la memoria
 def operacion(cuadruplo):
     oper1 = cuadruplo[1]
     oper1 = getMemoryValue(oper1)
@@ -125,6 +132,7 @@ def operacion(cuadruplo):
     elif (cuadruplo[0] == 11):
         saveValueMemory(int(oper1) >= int(oper2), cuadruplo[3])
 
+#Actualiza un pedazo de memoria con cierto valor
 def setMemoryParameter(memoria, result):
     global memoriaEjecucion
     result = getMemoryValue(result)
@@ -137,26 +145,30 @@ def setMemoryParameter(memoria, result):
     else:
         memoriaEjecucion[3][-1][memoria] = result
 
+#Obtiene la dirección de cierto parametro
 def getMemoryParam(param):
     global parametrosEnMemoria
     temp = parametrosEnMemoria[param]
     parametrosEnMemoria[param] += 1
     return temp
 
-
+#reinicia la memoria completamente, de una funcion, solo local y temporal
 def reiniciaEra():
     global memoriaEjecucion
     memoriaEjecucion[1].pop()
     memoriaEjecucion[2].pop()
-
+#Inicia la memoria para ser usada en una funcion
 def iniciaEra():
     global memoriaEjecucion
     memoriaEjecucion[1].append({})
     memoriaEjecucion[2].append({})
+
+#Reinicia la memoria de los parametros
 def memoriaParametros():
     global parametrosEnMemoria
     parametrosEnMemoria = {101: 5000,  102: 6000,  103: 7000, 104: 8000}
 
+#Funcion principal que llamada la carga  a memoria y contien el ciclo principal de valores.
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner, funcionesDir
     scanner.parse()
