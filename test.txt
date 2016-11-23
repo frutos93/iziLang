@@ -1,13 +1,8 @@
 PROGRAMA example2:
 
-    FUNCION ENTERO prueba(){
-        IMPRIME(3);
-    }
     MAIN()
     {
-        ENTERO a[2];
-        IMPRIME(3);
-        a[1] = 4;
-        IMPRIME(3);
+        DERECHA(100);
+        ARRIBA(20);
     }
 FIN
