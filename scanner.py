@@ -709,7 +709,6 @@ def p_fin_funcion(p):
         temporalStamp
     cuadruplos.append([oper2Code('endFunc'), -1, -1, -1])
     temporalAuxDictionary = {}
-    print (temporalStamp)
     for key in memoriaCompilacion[2]:
         temporalAuxDictionary[key] = memoriaCompilacion[2][key] \
             - temporalStamp[key]
@@ -867,13 +866,10 @@ def p_checa_pila_a(p):
     if pilaOper:
         if pilaOper[-1] == '=':
             operador = oper2Code(pilaOper.pop())
-            print (pilaOp)
             op2 = pilaOp.pop()
-            print (op2)
             op1 = pilaOp.pop()
             op2Tipo = pilaTipos.pop()
             op1Tipo = pilaTipos.pop()
-            print ('op2 ' , op2 , 'op1 ' , op1)
             if op1Tipo != op2Tipo:
                 raise SemanticError('Tipos incompatibles: '
                                     + code2Type(op2Tipo) + ' y '
@@ -930,7 +926,6 @@ def p_validate_params_generate_gosub(p):
 
     global contParams, memoriaCompilacion, pilaOp, pilaTipos, \
         dirFunciones, cuadruplos, goSubFuncion, parametros
-    print ('dr1', dirFunciones)
     if contParams != len(parametros):
         raise SemanticError('Menos parametros de lo esperado'
                             )
@@ -986,7 +981,6 @@ def p_value_list(p):
             tipoActual = pilaTipos.pop()
             if(tipoActual != 101):
                 raise SemanticError("Necesitas un entero para accesar la lista: ", tipoActual)
-            print "PRUEBALISTA", oper2Code('lista'), op1,0, variables [lista]['tamano']['sup']
             cuadruplos.append([code2Type('lista'), op1,0, variables [lista]['tamano']['sup']])
             if(not(constantes.has_key(variables[lista]['memoria']))):
                 constantes[variables[lista]['memoria']] = {'tipo': 101, 'memoria': memoriaCompilacion[3][101]}
@@ -1480,13 +1474,6 @@ def p_error(p):
 
 def generateArithmeticCode():
     global pilaOper, pilaTipos, pilaOp, memoriaCompilacion, cuadruplos
-    
-    print ('pila de operadores: ' + pilaOper)
-    print ('pila de operandos: ' + pilaOp)
-    print ('pila de tipos: ' + pilaTipos)
-
-    # Elementos del cuadruplo
-
     operador = oper2Code(pilaOper.pop())
     op2 = pilaOp.pop()
     op1 = pilaOp.pop()
