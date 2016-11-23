@@ -41,7 +41,7 @@ listaAux = ''
 lista = ''
 funcionId = ''
 contParams = 0
-goSubFuncion = ''
+goSub = ''
 temporalStamp = {}
 
 
@@ -848,7 +848,7 @@ def p_estatuto(p):
     """
     estatuto : assignation checa_pila_a
                | condicion
-               | printing
+               | imprime
                | mientras
                | function_use
                | return
@@ -879,17 +879,17 @@ def p_checa_pila_a(p):
 
 def p_function_use(p):
     """
-    function_use : validate_function_id_do_era LPAREN add_parametro more_ids RPAREN validate_params_generate_gosub
-                    | validate_function_id_do_era LPAREN RPAREN validate_params_generate_gosub
+    function_use : validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+                    | validar_funcion LPAREN RPAREN validar_parametros
     """
 
 
-def p_validate_function_id_do_era(p):
+def p_validar_funcion(p):
     """
-    validate_function_id_do_era : ID
+    validar_funcion : ID
     """
 
-    global parametros, contParams, goSubFuncion, cuadruplos, \
+    global parametros, contParams, goSub, cuadruplos, \
         dirFunciones
     if not p[1] in dirFunciones:
         raise SemanticError('No existe la funcion: '
@@ -897,7 +897,7 @@ def p_validate_function_id_do_era(p):
     cuadruplos.append([oper2Code('era'), -1, -1, p[1]])
     parametros = dirFunciones[p[1]]['parametros']
     contParams = 0
-    goSubFuncion = p[1]
+    goSub = p[1]
 
 
 def p_add_parametro(p):
@@ -919,30 +919,29 @@ def p_add_parametro(p):
     cuadruplos.append([oper2Code('param'), operand, -1, contParams])
 
 
-def p_validate_params_generate_gosub(p):
+def p_validar_parametros(p):
     """
-    validate_params_generate_gosub : 
+    validar_parametros : 
     """
 
     global contParams, memoriaCompilacion, pilaOp, pilaTipos, \
-        dirFunciones, cuadruplos, goSubFuncion, parametros
+        dirFunciones, cuadruplos, goSub, parametros
     if contParams != len(parametros):
-        raise SemanticError('Menos parametros de lo esperado'
-                            )
+        raise SemanticError('Menos parametros de lo esperado')
 
-    # Con goSubFuncion se permite asignar el resultado de una funcion a una varible
+    # Con goSub se permite asignar el resultado de una funcion a una varible
 
-    cuadruplos.append([oper2Code('gosub'), -1, -1, goSubFuncion])
+    cuadruplos.append([oper2Code('gosub'), -1, -1, goSub])
     cuadruplos.append([oper2Code('='),
-                      dirFunciones[goSubFuncion]['memoria'], -1,
-                      memoriaCompilacion[2][dirFunciones[goSubFuncion]['return'
+                      dirFunciones[goSub]['memoria'], -1,
+                      memoriaCompilacion[2][dirFunciones[goSub]['return'
                       ]]])
-    pilaOp.append(memoriaCompilacion[2][dirFunciones[goSubFuncion]['return'
+    pilaOp.append(memoriaCompilacion[2][dirFunciones[goSub]['return'
                   ]])
-    pilaTipos.append(dirFunciones[goSubFuncion]['return'])
-    memoriaCompilacion[2][dirFunciones[goSubFuncion]['return']] += 1
+    pilaTipos.append(dirFunciones[goSub]['return'])
+    memoriaCompilacion[2][dirFunciones[goSub]['return']] += 1
 
-    goSubFuncion = ''
+    goSub = ''
     parametros = []
     contParams = 0
 
@@ -1005,21 +1004,21 @@ def p_value_list_aux(p):
         raise SemanticError("Esta variable no es una lista")
 
 
-def p_printing(p):
+def p_imprime(p):
     """
-    printing : IMPRIME LPAREN printable RPAREN
-    """
-
-
-def p_printable(p):
-    """
-    printable : expresion more_printable
+    imprime : IMPRIME LPAREN imprimir RPAREN
     """
 
 
-def p_more_printable(p):
+def p_imprimir(p):
     """
-    more_printable : COMMA printable
+    imprimir : expresion imprimir_mas
+    """
+
+
+def p_imprimir_mas(p):
+    """
+    imprimir_mas : COMMA imprimir
                    |
     """
 
@@ -1062,14 +1061,14 @@ def p_fin_condicion(p):
 
 def p_else_condicion(p):
     """
-    else_condicion : SINO LCURLY generate_goto_else estatutos RCURLY
+    else_condicion : SINO LCURLY goto_else estatutos RCURLY
                    |
     """
 
 
-def p_generate_goto_else(p):
+def p_goto_else(p):
     """
-    generate_goto_else : 
+    goto_else : 
     """
 
     global pilaSaltos, cuadruplos
@@ -1081,7 +1080,7 @@ def p_generate_goto_else(p):
 
 def p_mientras(p):
     """
-    mientras : MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN generate_gotoF_while LCURLY estatutos RCURLY generate_end_while
+    mientras : MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
     """
 
 
@@ -1094,9 +1093,9 @@ def p_actualiza_pilaSaltos(p):
     pilaSaltos.append(len(cuadruplos) + 1)
 
 
-def p_generate_gotoF_while(p):
+def p_gotoF_while(p):
     """
-    generate_gotoF_while :
+    gotoF_while :
     """
 
     global pilaSaltos, cuadruplos, pilaOp, pilaTipos
@@ -1109,9 +1108,9 @@ def p_generate_gotoF_while(p):
     pilaSaltos.append(len(cuadruplos) - 1) 
 
 
-def p_generate_end_while(p):
+def p_fin_while(p):
     """
-    generate_end_while :
+    fin_while :
     """
 
     global pilaSaltos, cuadruplos
@@ -1349,7 +1348,7 @@ def p_actualiza_pilaOper_md(p):
 def p_factor(p):
     """
     factor : actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
-           | var_ct
+           | constante
     """
 
 
@@ -1371,9 +1370,9 @@ def p_actualiza_pilaOper_rparen(p):
     pilaOper.pop()
 
 
-def p_var_ct(p):
+def p_constante(p):
     """
-    var_ct : id_aux value_list
+    constante : id_aux value_list
            | cte_e_aux
            | cte_f_aux
            | cte_b_aux
@@ -1553,8 +1552,6 @@ def parse():
             completeString += line
         try:
             parser.parse(completeString)
-            print ('Funciones: ', dirFunciones)
-            print ('Cuadruplos: ', cuadruplos)
             print ('El programa se ejecuto correctamente')
         except EOFError:
             return
