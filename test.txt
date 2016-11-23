@@ -1,9 +1,7 @@
 PROGRAMA example2:
-
     MAIN()
     {
-        ENTERO a[2];
-        a[1] = 4;
-        IMPRIME(a[1]);
+        IMPRIME(1+8);
+        DERECHA(20);
     }
 FIN

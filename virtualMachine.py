@@ -19,9 +19,7 @@ def cargaDatosEnMemoria():
     parametrosFuncion = []
     era = [0,0,0,0]
     for funcion in scanner.dirFunciones:
-        
         if (not(funcion == 'constantes' or funcion == 'global' or funcion == 'MAIN')):
-            nombre = funcion
             for parametro in scanner.dirFunciones[funcion]["parametros"]:
                 parametrosFuncion.append(parametro)
             regreso = scanner.dirFunciones[funcion]['return'] #no se llama return porque es palabra reservada
@@ -148,7 +146,9 @@ def memoriaParametros():
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner, funcionesDir
     scanner.parse()
+    print "DirdeFunciones", scanner.dirFunciones
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
+    print "Cuadruplos: ", scanner.cuadruplos
     cargaDatosEnMemoria()
     memoriaEjecucion[3] = constantes
     cuadruploActual = cuadruplos[currentPointer-1]
@@ -158,7 +158,8 @@ def run():
         if(instruccion < 12):
             operacion(cuadruploActual)
         elif(instruccion == 12):
-            saveValueMemory(getMemoryValue(cuadruploActual[1]),cuadruploActual[3])
+            print memoriaEjecucion
+            saveValueMemory(getMemoryValue(cuadruploActual[1]), cuadruploActual[3])
         elif(instruccion == 13):
             currentPointer = cuadruploActual[3] -1
         elif(instruccion == 14):
@@ -180,7 +181,7 @@ def run():
         elif(instruccion == 22):
             inner = 0
             memoriesStack.append(currentPointer)
-            currentPointer = funcionesDir[cuadruploActual[3]]['cuadruplo'] -1
+            currentPointer = funcionesDir[cuadruploActual[3]]['cuadruplo'] - 1
             memoriaParametros()
         elif(instruccion == 23):
             tipo = funcionesDir[tipoFuncion[-1]]['parametros'][cuadruploActual[3]-1]
