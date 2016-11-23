@@ -1,7 +1,11 @@
 PROGRAMA example2:
     MAIN()
     {
-        IMPRIME(1+8);
-        DERECHA(20);
+        ENTERO a;
+        ENTERO b;
+        a = 5;
+        b = 3;
+        IMPRIME(a + b);
+        DERECHA(10);
     }
 FIN

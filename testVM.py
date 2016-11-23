@@ -64,7 +64,7 @@ def saveValueMemory(value, memoryKey):
 
 
 def getMemoryValue(memoryKey):
-    global memory, offset
+    global memoriaEjecucion, offset
     if (memoryKey < 0):
         memoryKey = getMemoryValue(-1 * memoryKey)
     section = getSection(memoryKey)
@@ -91,14 +91,12 @@ def deleteERAInMemory():
 
 
 def assignParamInMemory(memoryKey1, memoryKey2):
-    global memoriaEjecucion, offset
+    global memoriaEjecucion
     if (memoryKey2 < 0):
         memoryKey2 = getMemoryValue(-1 * memoryKey2)
     section = getSection(memoryKey2)
     value = getMemoryValue(memoryKey1)
-    if (debug):
-        print "Assigning parameters: ", memoryKey1, memoryKey2, value
-        memoriaEjecucion[section][-1][memoryKey2] = value
+    memoriaEjecucion[section][-1][memoryKey2] = value
 
 
 def getParamMemoryValue(paramType):
@@ -266,5 +264,6 @@ while 1:
     else:
         break;
 
-print cuadruplos
+
+
 turtle.done()
