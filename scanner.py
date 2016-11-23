@@ -268,288 +268,239 @@ tokens = (
     'CIRCULO'
     )
 
-
-# def de tokens
-
+#Definicion de diferentes tockens y su construccion en ER
 def t_PROGRAMA(t):
     '''PROGRAMA'''
-
     return t
 
 
 def t_FUNCION(t):
     '''FUNCION'''
-
     return t
 
 
 def t_ENTERO(t):
     '''ENTERO'''
-
     return t
 
 
 def t_DECIMAL(t):
     '''DECIMAL'''
-
     return t
 
 
 def t_PALABRA(t):
     '''PALABRA'''
-
     return t
 
 
 def t_CHAR(t):
     '''CHAR'''
-
     return t
 
 
 def t_BOOLEANO(t):
     '''BOOLEANO'''
-
     return t
 
 
 def t_MAIN(t):
     '''MAIN'''
-
     return t
 
 
 def t_IMPRIME(t):
     '''IMPRIME'''
-
     return t
 
 
 def t_SINO(t):
     '''SINO'''
-
     return t
 
 
 def t_SI(t):
     '''SI'''
-
     return t
 
 
 def t_MIENTRAS(t):
     '''MIENTRAS'''
-
     return t
 
 
 def t_FIN(t):
     '''FIN'''
-
     return t
 
 
 def t_RETURN(t):
     '''RETURN'''
-
     return t
 
 
 def t_COLON(t):
     ''':'''
-
     return t
 
 
 def t_SEMI(t):
     ''';'''
-
     return t
 
 
 def t_COMMA(t):
     ''','''
-
     return t
 
 
 def t_LPAREN(t):
     '''\('''
-
     return t
 
 
 def t_RPAREN(t):
     '''\)'''
-
     return t
 
 
 def t_LCURLY(t):
     '''\{'''
-
     return t
 
 
 def t_RCURLY(t):
     '''\}'''
-
     return t
 
 
 def t_EQUALC(t):
     '''=='''
-
     return t
 
 
 def t_EQUAL(t):
     '''='''
-
     return t
 
 
 def t_PLUS(t):
     '''\+'''
-
     return t
 
 
 def t_MINUS(t):
     '''-'''
-
     return t
 
 
 def t_TIMES(t):
     '''\*'''
-
     return t
 
 
 def t_DIVIDE(t):
     '''/'''
-
     return t
 
 
 def t_LT(t):
     '''<'''
-
     return t
 
 
 def t_GT(t):
     '''>'''
-
     return t
 
 
 def t_LE(t):
     '''<='''
-
     return t
 
 
 def t_GE(t):
     '''>='''
-
     return t
 
 
 def t_NE(t):
     '''<>'''
-
     return t
 
 
 def t_AND(t):
     '''&&'''
-
     return t
 
 
 def t_AMPERSAND(t):
     '''&'''
-
     return t
 
 
 def t_OR(t):
     '''\|\|'''
-
     return t
 
 
 def t_LBRACKET(t):
     '''\['''
-
     return t
 
 
 def t_RBRACKET(t):
     '''\]'''
-
     return t
 
 
 def t_DIRECCION(t):
     r'''ARRIBA|ABAJO|IZQUIERDA|DERECHA'''
-
     return t
 
 
 def t_CUADRADO(t):
     r'''CUADRADO'''
-
     return t
 
 
 def t_RECTANGULO(t):
     r'''RECTANGULO'''
-
     return t
 
 
 def t_TRIANGULO(t):
     r'''TRIANGULO'''
-
     return t
 
 
 def t_CIRCULO(t):
     r'''CIRCULO'''
-
     return t
 
 
 def t_CTE_F(t):
     r'''[0-9]+\.[0-9]+'''
-
     return t
 
 
 def t_CTE_E(t):
     r'''[0-9]+'''
-
     return t
 
 
 def t_CTE_B(t):
     r'''VERDADERO|FALSO'''
-
     return t
 
 
 def t_CTE_S(t):
     r'''\"([a-zA-Z]|[0-9]|[ \*\[\]\\\^\-\.\?\+\|\(\)\$\/\{\}\%\<\>=&;,_:\[\]\'!$#@])*\"'''
-
     return t
 
 
 def t_ID(t):
     r'''[a-zA-Z]([a-zA-Z]|[0-9])*(_([a-zA-z]|[0-9])+)*'''
-
     return t
 
 
@@ -719,16 +670,16 @@ def p_guarda_funcion_id(p):
     global temporalStamp, memoriaCompilacion, funcionId
     funcionId = p[1]
     memoriaCompilacion[1] = {
-        101: 7000,
-        102: 8000,
-        103: 9000,
-        104: 10000,
+        101: 5000,
+        102: 6000,
+        103: 7000,
+        104: 8000,
         }
     memoriaCompilacion[2] = {
-        101: 12000,
-        102: 13000,
-        103: 14000,
-        104: 15000,
+        101: 9000,
+        102: 10000,
+        103: 11000,
+        104: 12000,
         }
     temporalStamp = memoriaCompilacion[2].copy()
 
@@ -788,16 +739,16 @@ def p_set_main_id(p):
     saltoM = pilaSaltos.pop()
     cuadruplos[saltoM - 1][3] = len(cuadruplos) + 1
     memoriaCompilacion[1] = {
-        101: 8000,
-        102: 9000,
-        103: 10000,
-        104: 11000,
+        101: 5000,
+        102: 6000,
+        103: 7000,
+        104: 8000,
         }
     memoriaCompilacion[2] = {
-        101: 14000,
-        102: 15000,
-        103: 16000,
-        104: 17000,
+        101: 9000,
+        102: 10000,
+        103: 11000,
+        104: 12000,
         }
 
 
@@ -908,6 +859,8 @@ def p_validar_parametros(p):
     cuadruplos.append([oper2Code('='),
                       dirFunciones[goSub]['memoria'], -1,
                       memoriaCompilacion[2][dirFunciones[goSub]['return']]])
+    print ("cuadruplo raro:")
+
     pilaOp.append(memoriaCompilacion[2][dirFunciones[goSub]['return'
                   ]])
     pilaTipos.append(dirFunciones[goSub]['return'])
@@ -1124,7 +1077,7 @@ def p_accion(p):
     if opTipo != 101:
         raise SemanticError('Se esperaba un entero. Se recibio: '
                             + code2Type(opTipo))
-    cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
+        cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
 
 def p_dibujo(p):
@@ -1475,7 +1428,7 @@ parser = yacc.yacc()
 def parse():
     global dirFunciones, memoriaCompilacion, variables, constantes, \
         parametros, variablesGlobales, cuadruplos, pilaTipos, pilaOper, \
-        pilaOp, actualiza_pilaSaltos
+        pilaOp, actualiza_pilaSaltos,pilaSaltos
 
     try:
         s = raw_input('izilang > ')
@@ -1484,28 +1437,28 @@ def parse():
     dirFunciones = {'global': {}}
     memoriaCompilacion = {
         0: {
-            101: 2000,
-            102: 3000,
-            103: 4000,
-            104: 5000,
+            101: 1000,
+            102: 2000,
+            103: 3000,
+            104: 4000,
             },
         1: {
-            101: 8000,
-            102: 9000,
-            103: 10000,
-            104: 11000,
+            101: 5000,
+            102: 6000,
+            103: 7000,
+            104: 8000,
             },
         2: {
-            101: 14000,
-            102: 15000,
-            103: 16000,
-            104: 17000,
+            101: 9000,
+            102: 10000,
+            103: 11000,
+            104: 12000,
             },
         3: {
-            101: 20000,
-            102: 21000,
-            103: 22000,
-            104: 23000,
+            101: 13000,
+            102: 14000,
+            103: 15000,
+            104: 16000,
             },
         }
 

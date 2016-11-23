@@ -26,7 +26,7 @@ cuadruplos = []
 currentPointer = 1
 instructionStack = []
 functionScope = []
-parametersMemoryValues = {101: 8000,  102: 9000,  103: 10000, 104: 11000}
+parametersMemoryValues = {101: 5000,  102: 6000,  103: 7000, 104: 8000}
 offset = 0
 protectFrom = ""
 protect = ""
@@ -42,11 +42,11 @@ memoriaEjecucion = memoriaEjecucion = [{}, [{}], [{}], constantes]
 
 
 def getSection(value):
-    if (value < 8000):
+    if (value < 5000):
         return 0
-    elif (value < 14000):
+    elif (value < 9000):
         return 1
-    elif (value < 20000):
+    elif (value < 13000):
         return 2
     else:
         return 3
@@ -78,7 +78,7 @@ def getMemoryValue(memoryKey):
         return memoriaEjecucion[section][-1 - offset][memoryKey]
 
 
-def createERAInMemory():
+def era():
     global memoriaEjecucion
     memoriaEjecucion[1].append({})
     memoriaEjecucion[2].append({})
@@ -108,7 +108,7 @@ def getParamMemoryValue(paramType):
 
 def resetParametersMemoryValues():
     global parametersMemoryValues
-    parametersMemoryValues = {101: 8000,  102: 9000,  103: 10000, 104: 11000}
+    parametersMemoryValues = {101: 5000,  102: 6000,  103: 7000, 104: 8000}
 
 
 def cargaDatosAMemoria():
@@ -218,7 +218,7 @@ def acciones(cuadruplo):
         resetParametersMemoryValues()
         return True
     elif (cuadruplo[0] == 21):
-        createERAInMemory()
+        era()
         functionScope.append(cuadruplo[3])
         offset = 1
         return True
