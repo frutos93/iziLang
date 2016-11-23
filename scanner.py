@@ -580,7 +580,7 @@ def p_programa(p):
     programa : PROGRAMA goto_main ID COLON bloque FIN
     """
 
-    global dirFunciones, gameSections, constantes
+    global dirFunciones, constantes
     dirFunciones['constantes'] = constantes
 
 
@@ -608,12 +608,10 @@ def p_guarda_variables_global(p):
     guarda_variables_global :
     """
 
-    global dirFunciones, variablesGlobales, variables, \
-        memoriaCompilacion
+    global dirFunciones, variablesGlobales, variables, memoriaCompilacion
 
     for key in variables.keys():
-        variables[key]['memoria'] = \
-            memoriaCompilacion[0][variables[key]['tipo']]
+        variables[key]['memoria'] = memoriaCompilacion[0][variables[key]['tipo']]
         memoriaCompilacion[0][variables[key]['tipo']] += 1
 
     variablesGlobales = variables
@@ -641,15 +639,14 @@ def p_var(p):
         if (dirFunciones.has_key("variables")):
             if (dirFunciones["variables"].has_value(p[2])):
                 raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
-        variables[p[2]] = {"tipo": type2Code(tipo), "tamano": {"inf": 0, "sup": int(p[4]), "K": 0}}
+        variables[p[2]] = {"tipo": type2Code(tipo), "tamano": {"K": 0, "inf": 0, "sup": int(p[4])}}
     else:
         if (variables.has_key(p[2])):
             raise SemanticError("Ya existe la variable: " + p[2])
         if (dirFunciones.has_key("variables")):
             if (dirFunciones["variables"].has_value(p[2])):
                 raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
-        tipoEnNumero = type2Code(tipo)
-        variables[p[2]] = {"tipo": tipoEnNumero}
+        variables[p[2]] = {"tipo": type2Code(tipo)}
 
 
 def p_tipo(p):
@@ -676,8 +673,7 @@ def p_guarda_funcion(p):
     guarda_funcion : 
     """
 
-    global dirFunciones, variables, parametros, funcionId, tipo, \
-        memoriaCompilacion, cuadruplos
+    global dirFunciones, variables, parametros, funcionId, tipo, memoriaCompilacion, cuadruplos
 
     # Guarda variables de la funcion
 
@@ -692,6 +688,7 @@ def p_guarda_funcion(p):
         }
     memoriaCompilacion[0][type2Code(tipo)] += 1
     variables = {}
+    parametros= []
 
 
 def p_funcion(p):
@@ -714,7 +711,6 @@ def p_fin_funcion(p):
             - temporalStamp[key]
     dirFunciones[funcionId]['temporales'] = temporalAuxDictionary
 
-
 def p_guarda_funcion_id(p):
     """
     guarda_funcion_id : ID
@@ -723,16 +719,16 @@ def p_guarda_funcion_id(p):
     global temporalStamp, memoriaCompilacion, funcionId
     funcionId = p[1]
     memoriaCompilacion[1] = {
-        101: 8000,
-        102: 9000,
-        103: 10000,
-        104: 11000,
+        101: 7000,
+        102: 8000,
+        103: 9000,
+        104: 10000,
         }
     memoriaCompilacion[2] = {
-        101: 14000,
-        102: 15000,
-        103: 16000,
-        104: 17000,
+        101: 12000,
+        102: 13000,
+        103: 14000,
+        104: 15000,
         }
     temporalStamp = memoriaCompilacion[2].copy()
 
@@ -746,34 +742,16 @@ def p_parametros(p):
 
 def p_parametro(p):
     """
-    parametro : tipo tipo_parametro
-    """
-
-
-def p_tipo_parametro(p):
-    """
-    tipo_parametro : AMPERSAND ID
-                   | ID
+    parametro : tipo ID
     """
 
     global tipo, parametros, memoriaCompilacion, variables
-
-    if p[1] == '&':
-        if p[2] in variables:
-            raise SemanticError('Ya existe la variable: '
-                                + p[2])
-        variables[p[2]] = {'tipo': type2Code(tipo),
-                           'reference_parametro': True,
-                           'memoria': memoriaCompilacion[1][type2Code(tipo)]}
-        parametros.append(type2Code(tipo))
-    else:
-        if p[1] in variables:
-            raise SemanticError('Ya existe la variable: '
-                                + p[1])
-        variables[p[1]] = {'tipo': type2Code(tipo),
-                           'reference_parametro': False,
-                           'memoria': memoriaCompilacion[1][type2Code(tipo)]}
-        parametros.append(type2Code(tipo))
+    if p[2] in variables:
+        raise SemanticError('Ya existe la variable: '
+                            + p[2])
+    variables[p[2]] = {'tipo': type2Code(tipo),
+                       'memoria': memoriaCompilacion[1][type2Code(tipo)]}
+    parametros.append(type2Code(tipo))
     memoriaCompilacion[1][type2Code(tipo)] += 1
 
 
@@ -835,13 +813,13 @@ def p_guarda_variables_local(p):
 
     global variables, memoriaCompilacion
     for variable in variables.keys():
-        tipo = variables[variable]['tipo']
+        tipoVar = variables[variable]['tipo']
         if(variables[variable].has_key('tamano')):
-            variables[variable]['memoria'] = memoriaCompilacion[1][tipo]
-            memoriaCompilacion[1][tipo] += variables[variable]['tamano']['sup']
+            variables[variable]['memoria'] = memoriaCompilacion[1][tipoVar]
+            memoriaCompilacion[1][tipoVar] += variables[variable]['tamano']['sup']
         else:
-            variables[variable]['memoria'] = memoriaCompilacion[1][tipo]
-            memoriaCompilacion[1][tipo] += 1
+            variables[variable]['memoria'] = memoriaCompilacion[1][tipoVar]
+            memoriaCompilacion[1][tipoVar] += 1
 
 
 def p_estatuto(p):
@@ -870,10 +848,6 @@ def p_checa_pila_a(p):
             op1 = pilaOp.pop()
             op2Tipo = pilaTipos.pop()
             op1Tipo = pilaTipos.pop()
-            if op1Tipo != op2Tipo:
-                raise SemanticError('Tipos incompatibles: '
-                                    + code2Type(op2Tipo) + ' y '
-                                    + code2Type(op1Tipo))
             cuadruplos.append([operador, op2, -1, op1])
 
 
@@ -889,8 +863,7 @@ def p_validar_funcion(p):
     validar_funcion : ID
     """
 
-    global parametros, contParams, goSub, cuadruplos, \
-        dirFunciones
+    global parametros, contParams, goSub, cuadruplos,dirFunciones
     if not p[1] in dirFunciones:
         raise SemanticError('No existe la funcion: '
                             + p[1])
@@ -907,7 +880,7 @@ def p_add_parametro(p):
 
     global parametros, contParams, cuadruplos, pilaOp, pilaTipos
     paramTipo = pilaTipos.pop()
-    operand = pilaOp.pop()
+    operando = pilaOp.pop()
     try:
         if parametros[contParams] != paramTipo:
             raise SemanticError('Se esperaba parametro de tipo: '
@@ -916,7 +889,7 @@ def p_add_parametro(p):
     except IndexError:
         raise SemanticError('Mas parametros de lo esperado')
     contParams += 1
-    cuadruplos.append([oper2Code('param'), operand, -1, contParams])
+    cuadruplos.append([oper2Code('param'), operando, -1, contParams])
 
 
 def p_validar_parametros(p):
@@ -934,8 +907,7 @@ def p_validar_parametros(p):
     cuadruplos.append([oper2Code('gosub'), -1, -1, goSub])
     cuadruplos.append([oper2Code('='),
                       dirFunciones[goSub]['memoria'], -1,
-                      memoriaCompilacion[2][dirFunciones[goSub]['return'
-                      ]]])
+                      memoriaCompilacion[2][dirFunciones[goSub]['return']]])
     pilaOp.append(memoriaCompilacion[2][dirFunciones[goSub]['return'
                   ]])
     pilaTipos.append(dirFunciones[goSub]['return'])
@@ -973,18 +945,19 @@ def p_value_list(p):
     value_list : value_list_aux LBRACKET expresion RBRACKET
                |
     """
-
+    global variables, constantes, lista, pilaTipos, pilaOp, cuadruplos, memoriaCompilacion
     if(len(p)> 2):
         if(p[2] == '['):
             op1 = pilaOp.pop()
             tipoActual = pilaTipos.pop()
             if(tipoActual != 101):
                 raise SemanticError("Necesitas un entero para accesar la lista: ", tipoActual)
-            cuadruplos.append([code2Type('lista'), op1,0, variables [lista]['tamano']['sup']])
-            if(not(constantes.has_key(variables[lista]['memoria']))):
-                constantes[variables[lista]['memoria']] = {'tipo': 101, 'memoria': memoriaCompilacion[3][101]}
+            cuadruplos.append([oper2Code('lista'), op1,0, variables [lista]['tamano']['sup']])
+            constant = variables[lista]['memoria']
+            if(not(constantes.has_key(constant))):
+                constantes[constant] = {'tipo': 101, 'memoria': memoriaCompilacion[3][101]}
                 memoriaCompilacion[3][101] +=1
-            cuadruplo = [0, op1, constantes[variables[lista]['memoria']], memoriaCompilacion[2][101]]
+            cuadruplo = [0, op1, constantes[constant]['memoria'], memoriaCompilacion[2][101]]
             cuadruplos.append(cuadruplo)
             pilaOp.append(-memoriaCompilacion[2][101])
             pilaTipos.append(variables[lista]['tipo'])
@@ -1045,8 +1018,9 @@ def p_gotoF_condicion(p):
         raise SemanticError('Se esparaba un booleano en la condicion. Se recibio: '
                              + code2Type(condicionTipo))
     condicion = pilaOp.pop()
+    pilaSaltos.append(len(cuadruplos))
     cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
-    pilaSaltos.append(len(cuadruplos) - 1)
+    
 
 
 def p_fin_condicion(p):
@@ -1055,8 +1029,8 @@ def p_fin_condicion(p):
     """
 
     global pilaSaltos, cuadruplos
-    endJump = pilaSaltos.pop()
-    cuadruplos[endJump][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    finSalto = pilaSaltos.pop()
+    cuadruplos[finSalto][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
 
 
 def p_else_condicion(p):
@@ -1074,8 +1048,9 @@ def p_goto_else(p):
     global pilaSaltos, cuadruplos
     cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
     saltoF = pilaSaltos.pop()
+    pilaSaltos.append(len(cuadruplos))
     cuadruplos[saltoF][3] = len(cuadruplos) + 1
-    pilaSaltos.append(len(cuadruplos) - 1)
+    
 
 
 def p_mientras(p):
@@ -1402,10 +1377,8 @@ def p_id_aux(p):
             pilaOp.append(variables[p[1]]['memoria'])
             pilaTipos.append(variables[p[1]]['tipo'])
         else:
-            pilaOp.append(dirFunciones[funcionId]['variables'
-                          ][p[1]]['memoria'])
-            pilaTipos.append(dirFunciones[funcionId]['variables'
-                             ][p[1]]['tipo'])
+            pilaOp.append(dirFunciones[funcionId]['variables'][p[1]]['memoria'])
+            pilaTipos.append(dirFunciones[funcionId]['variables'][p[1]]['tipo'])
 
 
 def p_cte_e_aux(p):

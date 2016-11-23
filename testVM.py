@@ -130,7 +130,6 @@ def cargaDatosAMemoria():
             era[3] += scanner.dirFunciones[funcion]['temporales'][104]
             funcionesDir[funcion] = {'parametros': parametrosFuncion, 'return': regreso, 'memoria': memoria,
                                      'cuadruplo': cuadruploID, 'era': era}
-
     for constante in scanner.dirFunciones["constantes"]:
         tipo = scanner.dirFunciones['constantes'][constante]['tipo']
         memoria = scanner.dirFunciones['constantes'][constante]['memoria']
@@ -141,6 +140,7 @@ def cargaDatosAMemoria():
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
         else:
             constantes[memoria] = {'tipo': tipo, 'valor': valor}
+
     for cuadruplo in scanner.cuadruplos:
         oper = cuadruplo[0]
         oper1 = cuadruplo[1]
@@ -255,15 +255,14 @@ def acciones(cuadruplo):
 argv = sys.argv[1:]
 scanner.parse()
 memoriaEjecucion[3] = constantes
-
+scanner.cuadruplos.append(['FIN',-1,-1,-1])
 cargaDatosAMemoria()
-cuadruplos.append(['FIN',-1,-1,-1])
+print cuadruplos
 while 1:
+
     if (acciones(cuadruplos[currentPointer - 1])):
         currentPointer += 1;
     else:
         break;
 
-
-
-turtle.done()
+turtle.getscreen()._root.mainloop()
