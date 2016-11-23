@@ -2,7 +2,6 @@ PROGRAMA example2:
 
     MAIN()
     {
-        DERECHA(100);
-        ARRIBA(20);
+        ARRIBA(30);
     }
 FIN
