@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 # + = 0
 # * = 1
 # - = 2
@@ -18,14 +20,12 @@
 
 import sys
 
-sys.path.insert(0, "../..")
+sys.path.insert(0, '../..')
 
 if sys.version_info[0] >= 3:
     raw_input = input
 
-debug = True
-
-avail = {}
+memoriaCompilacion = {}
 pilaSaltos = []
 pilaTipos = []
 pilaOper = []
@@ -36,16 +36,17 @@ variables = {}
 constantes = {}
 parametros = []
 variablesGlobales = {}
-tipoVariable = ""
+tipoVariable = ''
 listaAux = ''
 lista = ''
-funcionId = ""
+funcionId = ''
 contParams = 0
-goSubFuncion = ""
+goSubFuncion = ''
 temporalStamp = {}
 
 
 class LexerError(Exception):
+
     def __init__(self, value):
         self.value = value
 
@@ -54,6 +55,7 @@ class LexerError(Exception):
 
 
 class SyntaxError(Exception):
+
     def __init__(self, value):
         self.value = value
 
@@ -62,6 +64,7 @@ class SyntaxError(Exception):
 
 
 class SemanticError(Exception):
+
     def __init__(self, value):
         self.value = value
 
@@ -87,324 +90,476 @@ cuboSemantico = [
 
 
 def type2Code(tipo):
-    if (tipo == "ENTERO"):
+    if tipo == 'ENTERO':
         return 101
-    elif (tipo == "DECIMAL"):
+    elif tipo == 'DECIMAL':
         return 102
-    elif (tipo == "PALABRA"):
+    elif tipo == 'PALABRA':
         return 103
-    elif (tipo == "BOOLEANO"):
+    elif tipo == 'BOOLEANO':
         return 104
 
+
 def code2Type(code):
-    if (code == 101):
-        return "ENTERO"
-    elif (code == 102):
-        return "DECIMAL"
-    elif (code == 103):
-        return "PALABRA"
-    elif (code == 104):
-        return "BOOLEANO"
+    if code == 101:
+        return 'ENTERO'
+    elif code == 102:
+        return 'DECIMAL'
+    elif code == 103:
+        return 'PALABRA'
+    elif code == 104:
+        return 'BOOLEANO'
 
 
 def oper2Code(oper):
-    if (oper == '+'):
+    if oper == '+':
         return 0
-    elif (oper == '*'):
+    elif oper == '*':
         return 1
-    elif (oper == '-'):
+    elif oper == '-':
         return 2
-    elif (oper == '/'):
+    elif oper == '/':
         return 3
-    elif (oper == '&&'):
+    elif oper == '&&':
         return 4
-    elif (oper == '||'):
+    elif oper == '||':
         return 5
-    elif (oper == '<'):
+    elif oper == '<':
         return 6
-    elif (oper == '>'):
+    elif oper == '>':
         return 7
-    elif (oper == '!='):
+    elif oper == '!=':
         return 8
-    elif (oper == '=='):
+    elif oper == '==':
         return 9
-    elif (oper == '<='):
+    elif oper == '<=':
         return 10
-    elif (oper == '>='):
+    elif oper == '>=':
         return 11
-    elif (oper == '='):
+    elif oper == '=':
         return 12
-    elif (oper == 'goto'):
+    elif oper == 'goto':
         return 13
-    elif (oper == 'gotoF'):
+    elif oper == 'gotoF':
         return 14
-    elif (oper == 'print'):
+    elif oper == 'IMPRIME':
         return 15
-    elif (oper == 'ARRIBA'):
+    elif oper == 'ARRIBA':
         return 16
-    elif (oper == 'ABAJO'):
+    elif oper == 'ABAJO':
         return 17
-    elif (oper == 'IZQUIERDA'):
+    elif oper == 'IZQUIERDA':
         return 18
-    elif (oper == 'DERECHA'):
+    elif oper == 'DERECHA':
         return 19
-    elif (oper == 'endFunc'):
+    elif oper == 'endFunc':
         return 20
-    elif (oper == 'era'):
+    elif oper == 'era':
         return 21
-    elif (oper == 'gosub'):
+    elif oper == 'gosub':
         return 22
-    elif (oper == 'param'):
+    elif oper == 'param':
         return 23
-    elif (oper == 'return'):
+    elif oper == 'return':
         return 24
-    elif( oper == 'lista'):
+    elif oper == 'lista':
+        return 25
+
+def code2Oper(code):
+    if code == '+':
+        return 0
+    elif code == '*':
+        return 1
+    elif code == '-':
+        return 2
+    elif code == '/':
+        return 3
+    elif code == '&&':
+        return 4
+    elif code == '||':
+        return 5
+    elif code == '<':
+        return 6
+    elif code == '>':
+        return 7
+    elif code == '!=':
+        return 8
+    elif code == '==':
+        return 9
+    elif code == '<=':
+        return 10
+    elif code == '>=':
+        return 11
+    elif code == '=':
+        return 12
+    elif code == 'goto':
+        return 13
+    elif code == 'gotoF':
+        return 14
+    elif code == 'IMPRIME':
+        return 15
+    elif code == 'ARRIBA':
+        return 16
+    elif code == 'ABAJO':
+        return 17
+    elif code == 'IZQUIERDA':
+        return 18
+    elif code == 'DERECHA':
+        return 19
+    elif code == 'endFunc':
+        return 20
+    elif code == 'era':
+        return 21
+    elif code == 'gosub':
+        return 22
+    elif code == 'param':
+        return 23
+    elif code == 'return':
+        return 24
+    elif code == 'lista':
         return 25
 
 tokens = (
-    'PROGRAMA', 'FUNCION', 'ENTERO', 'DECIMAL', 'PALABRA', 'BOOLEANO', 'MAIN', 'IMPRIME', 'SI', 'SINO', 'MIENTRAS',
-    'FIN', 'RETURN', 'COLON', 'SEMI', 'COMMA', 'LPAREN', 'RPAREN', 'AMPERSAND', 'LCURLY', 'RCURLY', 'EQUAL', 'PLUS',
-    'MINUS', 'TIMES', 'DIVIDE', 'LT', 'GT', 'LE', 'GE', 'NE', 'EQUALC', 'AND', 'OR', 'LBRACKET', 'RBRACKET', 'DIRECCION', 'ID',
-    'CTE_E', 'CTE_F', 'CTE_S', 'CTE_B', 'CUADRADO', 'RECTANGULO', 'TRIANGULO', 'CIRCULO'
-)
+    'PROGRAMA',
+    'FUNCION',
+    'ENTERO',
+    'DECIMAL',
+    'PALABRA',
+    'BOOLEANO',
+    'MAIN',
+    'IMPRIME',
+    'SI',
+    'SINO',
+    'MIENTRAS',
+    'FIN',
+    'RETURN',
+    'COLON',
+    'SEMI',
+    'COMMA',
+    'LPAREN',
+    'RPAREN',
+    'AMPERSAND',
+    'LCURLY',
+    'RCURLY',
+    'EQUAL',
+    'PLUS',
+    'MINUS',
+    'TIMES',
+    'DIVIDE',
+    'LT',
+    'GT',
+    'LE',
+    'GE',
+    'NE',
+    'EQUALC',
+    'AND',
+    'OR',
+    'LBRACKET',
+    'RBRACKET',
+    'DIRECCION',
+    'ID',
+    'CTE_E',
+    'CTE_F',
+    'CTE_S',
+    'CTE_B',
+    'CUADRADO',
+    'RECTANGULO',
+    'TRIANGULO',
+    'CIRCULO'
+    )
 
 
-# Define regular expressions of tokens
+# def de tokens
 
 def t_PROGRAMA(t):
-    'PROGRAMA'
+    '''PROGRAMA'''
+
     return t
 
 
 def t_FUNCION(t):
-    'FUNCION'
+    '''FUNCION'''
+
     return t
 
 
 def t_ENTERO(t):
-    'ENTERO'
+    '''ENTERO'''
+
     return t
 
 
 def t_DECIMAL(t):
-    'DECIMAL'
+    '''DECIMAL'''
+
     return t
 
 
 def t_PALABRA(t):
-    'PALABRA'
+    '''PALABRA'''
+
     return t
 
 
 def t_CHAR(t):
-    'CHAR'
+    '''CHAR'''
+
     return t
 
 
 def t_BOOLEANO(t):
-    'BOOLEANO'
+    '''BOOLEANO'''
+
     return t
 
 
 def t_MAIN(t):
-    'MAIN'
+    '''MAIN'''
+
     return t
 
 
 def t_IMPRIME(t):
-    'IMPRIME'
+    '''IMPRIME'''
+
     return t
 
+
 def t_SINO(t):
-    'SINO'
+    '''SINO'''
+
     return t
 
 
 def t_SI(t):
-    'SI'
+    '''SI'''
+
     return t
 
 
 def t_MIENTRAS(t):
-    'MIENTRAS'
+    '''MIENTRAS'''
+
     return t
 
 
 def t_FIN(t):
-    'FIN'
+    '''FIN'''
+
     return t
 
 
 def t_RETURN(t):
-    'RETURN'
+    '''RETURN'''
+
     return t
 
 
 def t_COLON(t):
-    ':'
+    ''':'''
+
     return t
 
 
 def t_SEMI(t):
-    ';'
+    ''';'''
+
     return t
 
 
 def t_COMMA(t):
-    ','
+    ''','''
+
     return t
 
 
 def t_LPAREN(t):
-    '\('
+    '''\('''
+
     return t
 
 
 def t_RPAREN(t):
-    '\)'
+    '''\)'''
+
     return t
 
 
 def t_LCURLY(t):
-    '\{'
+    '''\{'''
+
     return t
 
 
 def t_RCURLY(t):
-    '\}'
+    '''\}'''
+
     return t
 
 
 def t_EQUALC(t):
-    '=='
+    '''=='''
+
     return t
 
 
 def t_EQUAL(t):
-    '='
+    '''='''
+
     return t
 
 
 def t_PLUS(t):
-    '\+'
+    '''\+'''
+
     return t
 
 
 def t_MINUS(t):
-    '-'
+    '''-'''
+
     return t
 
 
 def t_TIMES(t):
-    '\*'
+    '''\*'''
+
     return t
 
 
 def t_DIVIDE(t):
-    '/'
+    '''/'''
+
     return t
 
 
 def t_LT(t):
-    '<'
+    '''<'''
+
     return t
 
 
 def t_GT(t):
-    '>'
+    '''>'''
+
     return t
 
 
 def t_LE(t):
-    '<='
+    '''<='''
+
     return t
 
 
 def t_GE(t):
-    '>='
+    '''>='''
+
     return t
 
 
 def t_NE(t):
-    '<>'
+    '''<>'''
+
     return t
 
 
 def t_AND(t):
-    '&&'
+    '''&&'''
+
     return t
 
 
 def t_AMPERSAND(t):
-    '&'
+    '''&'''
+
     return t
 
 
 def t_OR(t):
-    '\|\|'
+    '''\|\|'''
+
     return t
 
 
 def t_LBRACKET(t):
-    '\['
+    '''\['''
+
     return t
 
 
 def t_RBRACKET(t):
-    '\]'
+    '''\]'''
+
     return t
+
 
 def t_DIRECCION(t):
-    r'ARRIBA|ABAJO|IZQUIERDA|DERECHA'
+    r'''ARRIBA|ABAJO|IZQUIERDA|DERECHA'''
+
     return t
+
 
 def t_CUADRADO(t):
-    r'CUADRADO'
+    r'''CUADRADO'''
+
     return t
+
 
 def t_RECTANGULO(t):
-    r'RECTANGULO'
+    r'''RECTANGULO'''
+
     return t
+
 
 def t_TRIANGULO(t):
-    r'TRIANGULO'
+    r'''TRIANGULO'''
+
     return t
+
 
 def t_CIRCULO(t):
-    r'CIRCULO'
+    r'''CIRCULO'''
+
     return t
 
+
 def t_CTE_F(t):
-    r'[0-9]+\.[0-9]+'
+    r'''[0-9]+\.[0-9]+'''
+
     return t
 
 
 def t_CTE_E(t):
-    r'[0-9]+'
+    r'''[0-9]+'''
+
     return t
 
 
 def t_CTE_B(t):
-    r'VERDADERO|FALSO'
+    r'''VERDADERO|FALSO'''
+
     return t
 
 
 def t_CTE_S(t):
-    r'\"([a-zA-Z]|[0-9]|[ \*\[\]\\\^\-\.\?\+\|\(\)\$\/\{\}\%\<\>=&;,_:\[\]\'!$#@])*\"'
+    r'''\"([a-zA-Z]|[0-9]|[ \*\[\]\\\^\-\.\?\+\|\(\)\$\/\{\}\%\<\>=&;,_:\[\]\'!$#@])*\"'''
+
     return t
 
 
 def t_ID(t):
-    r'[a-zA-Z]([a-zA-Z]|[0-9])*(_([a-zA-z]|[0-9])+)*'
+    r'''[a-zA-Z]([a-zA-Z]|[0-9])*(_([a-zA-z]|[0-9])+)*'''
+
     return t
 
 
-t_ignore = " \t"
+t_ignore = ' \t'
 
 
 def t_newline(t):
-    r'\n+'
-    t.lexer.lineno += t.value.count("\n")
+    r'''\n+'''
+
+    t.lexer.lineno += t.value.count('\n')
 
 
 def t_error(t):
@@ -412,6 +567,7 @@ def t_error(t):
 
 
 # Build the lexer
+
 import ply.lex as lex
 
 lex.lex()
@@ -421,18 +577,17 @@ start = 'programa'
 
 def p_programa(p):
     """
-	programa : PROGRAMA genera_goto_main ID COLON bloque FIN
-	"""
+    programa : PROGRAMA goto_main ID COLON bloque FIN
+    """
 
     global dirFunciones, gameSections, constantes
-    if (debug):
-        dirFunciones["constantes"] = constantes
+    dirFunciones['constantes'] = constantes
 
 
-def p_genera_goto_main(p):
+def p_goto_main(p):
     """
-	genera_goto_main :
-	"""
+    goto_main :
+    """
 
     global cuadruplos, pilaSaltos
     cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
@@ -441,8 +596,8 @@ def p_genera_goto_main(p):
 
 def p_bloque(p):
     """
-	bloque : vars guarda_variables_global funciones bloque_main
-	"""
+    bloque : vars guarda_variables_global funciones bloque_main
+    """
 
     global variablesGlobales
     variablesGlobales = {}
@@ -450,34 +605,35 @@ def p_bloque(p):
 
 def p_guarda_variables_global(p):
     """
-	guarda_variables_global :
-	"""
+    guarda_variables_global :
+    """
 
-    global dirFunciones, variablesGlobales, variables, avail
-    # Assign virtual memory to variables in global scope
+    global dirFunciones, variablesGlobales, variables, \
+        memoriaCompilacion
+
     for key in variables.keys():
-        variables[key]["memoria"] = avail[0][variables[key]["tipo"]]
-        avail[0][variables[key]["tipo"]] += 1
+        variables[key]['memoria'] = \
+            memoriaCompilacion[0][variables[key]['tipo']]
+        memoriaCompilacion[0][variables[key]['tipo']] += 1
 
-    # Save global variables with its attributes.
     variablesGlobales = variables
     variables = {}
-    if (debug):
-        dirFunciones["global"] = variablesGlobales
+    dirFunciones['global'] = variablesGlobales
 
 
 def p_vars(p):
     """
-	vars : var SEMI vars
-            |
-	"""
+    vars : var SEMI vars
+         |
+    """
 
 
 def p_var(p):
     """
-	var : tipo ID
+    var : tipo ID
         | tipo ID LBRACKET CTE_E RBRACKET
     """
+
     global variables, tipo, dirFunciones
     if (len(p) > 3):
         if (variables.has_key(p[2])):
@@ -498,7 +654,7 @@ def p_var(p):
 
 def p_tipo(p):
     """
-	tipo : ENTERO
+    tipo : ENTERO
          | DECIMAL
          | PALABRA
          | BOOLEANO
@@ -510,147 +666,188 @@ def p_tipo(p):
 
 def p_funciones(p):
     """
-	funciones : funcion funciones
-                 |
-	"""
+    funciones : funcion funciones
+              |
+    """
 
 
 def p_guarda_funcion(p):
     """
-	guarda_funcion : """
+    guarda_funcion : 
+    """
 
-    global dirFunciones, variables, parametros, funcionId, tipo, avail, cuadruplos
-    # Save the function with its variables
-    if (dirFunciones.has_key(funcionId)):
-        raise SemanticError("Ya existe la funcion: " + funcionId)
-    if (debug):
-        dirFunciones[funcionId] = {"variables": variables, "parametros": parametros,
-                                   "return": type2Code(tipo),
-                                   "memoria": avail[0][type2Code(tipo)],
-                                   "cuadruploIndice": len(cuadruplos) + 1}
-    avail[0][type2Code(tipo)] += 1
+    global dirFunciones, variables, parametros, funcionId, tipo, \
+        memoriaCompilacion, cuadruplos
+
+    # Guarda variables de la funcion
+
+    if funcionId in dirFunciones:
+        raise SemanticError('Ya existe la funcion: ' + funcionId)
+    dirFunciones[funcionId] = {
+        'variables': variables,
+        'parametros': parametros,
+        'return': type2Code(tipo),
+        'memoria': memoriaCompilacion[0][type2Code(tipo)],
+        'cuadruploIndice': len(cuadruplos) + 1,
+        }
+    memoriaCompilacion[0][type2Code(tipo)] += 1
     variables = {}
 
 
 def p_funcion(p):
     """
-	funcion : FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque generate_end_func"""
-
-
-def p_generate_end_func(p):
+    funcion : FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
     """
-	generate_end_func : """
 
-    global cuadruplos, temporalStamp, dirFunciones, funcionId, avail
+
+def p_fin_funcion(p):
+    """
+    fin_funcion : 
+    """
+
+    global dirFunciones, funcionId, memoriaCompilacion, cuadruplos, \
+        temporalStamp
     cuadruplos.append([oper2Code('endFunc'), -1, -1, -1])
     temporalAuxDictionary = {}
-    for key in avail[2]:
-        temporalAuxDictionary[key] = avail[2][key] - temporalStamp[key]
-    dirFunciones[funcionId]["temporales"] = temporalAuxDictionary
+    print (temporalStamp)
+    for key in memoriaCompilacion[2]:
+        temporalAuxDictionary[key] = memoriaCompilacion[2][key] \
+            - temporalStamp[key]
+    dirFunciones[funcionId]['temporales'] = temporalAuxDictionary
 
 
 def p_guarda_funcion_id(p):
     """
-	guarda_funcion_id : ID"""
+    guarda_funcion_id : ID
+    """
 
-    global funcionId, temporalStamp, avail
+    global temporalStamp, memoriaCompilacion, funcionId
     funcionId = p[1]
-    avail[1] = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
-    avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000}
-    temporalStamp = avail[2].copy()
+    memoriaCompilacion[1] = {
+        101: 8000,
+        102: 9000,
+        103: 10000,
+        104: 11000,
+        }
+    memoriaCompilacion[2] = {
+        101: 14000,
+        102: 15000,
+        103: 16000,
+        104: 17000,
+        }
+    temporalStamp = memoriaCompilacion[2].copy()
 
 
 def p_parametros(p):
     """
-	parametros : parametro mas_parametros
-                  |
-	"""
+    parametros : parametro mas_parametros
+               |
+    """
 
 
 def p_parametro(p):
     """
-	parametro : tipo tipo_parametro"""
+    parametro : tipo tipo_parametro
+    """
 
 
 def p_tipo_parametro(p):
     """
-	tipo_parametro : AMPERSAND ID
-                      | ID"""
+    tipo_parametro : AMPERSAND ID
+                   | ID
+    """
 
-    global variables, tipo, parametros, avail
-    # Get parametro attributes and save it.
-    if (p[1] == '&'):
-        if (variables.has_key(p[2])):
-            raise SemanticError("Repeated identifier for variable: " + p[2])
-        variables[p[2]] = {"tipo": type2Code(tipo), "reference_parametro": True,
-                           "memoria": avail[1][type2Code(tipo)]}
+    global tipo, parametros, memoriaCompilacion, variables
+
+    if p[1] == '&':
+        if p[2] in variables:
+            raise SemanticError('Ya existe la variable: '
+                                + p[2])
+        variables[p[2]] = {'tipo': type2Code(tipo),
+                           'reference_parametro': True,
+                           'memoria': memoriaCompilacion[1][type2Code(tipo)]}
         parametros.append(type2Code(tipo))
     else:
-        if (variables.has_key(p[1])):
-            raise SemanticError("Repeated identifier for variable: " + p[1])
-        variables[p[1]] = {"tipo": type2Code(tipo), "reference_parametro": False,
-                           "memoria": avail[1][type2Code(tipo)]}
+        if p[1] in variables:
+            raise SemanticError('Ya existe la variable: '
+                                + p[1])
+        variables[p[1]] = {'tipo': type2Code(tipo),
+                           'reference_parametro': False,
+                           'memoria': memoriaCompilacion[1][type2Code(tipo)]}
         parametros.append(type2Code(tipo))
-    avail[1][type2Code(tipo)] += 1
+    memoriaCompilacion[1][type2Code(tipo)] += 1
 
 
 def p_mas_parametros(p):
     """
-	mas_parametros : COMMA parametro mas_parametros
+    mas_parametros : COMMA parametro mas_parametros
                        |
-	"""
+    """
 
 
 def p_bloque_main(p):
     """
-	bloque_main : MAIN LPAREN RPAREN set_main_id codigo_bloque
-	"""
+    bloque_main : MAIN LPAREN RPAREN set_main_id codigo_bloque
+    """
 
-    global dirFunciones, variables, avail
-    #if (dirFunciones.has_key(p[1])):
-        #raise SemanticError("Repeated identifier for function: " + p[1])
-    if (debug):
-        dirFunciones["MAIN"]["variables"] = variables
+    global variables, memoriaCompilacion, dirFunciones
+
+    # if (p[1] in dirFunciones):
+        # raise SemanticError("Ya existe la funcion: " + p[1])
+
+    dirFunciones['MAIN']['variables'] = variables
     variables = {}
 
 
 def p_set_main_id(p):
     """
-	set_main_id : """
+    set_main_id : 
+    """
 
-    global dirFunciones, funcionId, cuadruplos, pilaSaltos, avail
-    funcionId = "MAIN"
-    dirFunciones[funcionId] = {"variables": {}}
-    firstJump = pilaSaltos.pop()
-    cuadruplos[firstJump - 1][3] = len(cuadruplos) + 1
-    avail[1] = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
-    avail[2] = {101: 14000, 102: 15000, 103: 16000, 104: 17000}
+    global cuadruplos, pilaSaltos, memoriaCompilacion, dirFunciones, \
+        funcionId
+    funcionId = 'MAIN'
+    dirFunciones[funcionId] = {'variables': {}}
+    saltoM = pilaSaltos.pop()
+    cuadruplos[saltoM - 1][3] = len(cuadruplos) + 1
+    memoriaCompilacion[1] = {
+        101: 8000,
+        102: 9000,
+        103: 10000,
+        104: 11000,
+        }
+    memoriaCompilacion[2] = {
+        101: 14000,
+        102: 15000,
+        103: 16000,
+        104: 17000,
+        }
+
 
 def p_codigo_bloque(p):
     """
-	codigo_bloque : LCURLY vars guarda_variables_local mini_bloque RCURLY
-	"""
+    codigo_bloque : LCURLY vars guarda_variables_local estatutos RCURLY
+    """
 
-
-# Helper function in sintaxis for semantic and compilation (virtual memory)
 def p_guarda_variables_local(p):
     """
-	guarda_variables_local :
-	"""
+    guarda_variables_local :
+    """
 
-    global variables, avail
+    global variables, memoriaCompilacion
     for variable in variables.keys():
         tipo = variables[variable]['tipo']
         if(variables[variable].has_key('tamano')):
-            variables[variable]['memoria'] = avail[1][tipo]
-            avail[1][tipo] += variables[variable]['tamano']['sup']
+            variables[variable]['memoria'] = memoriaCompilacion[1][tipo]
+            memoriaCompilacion[1][tipo] += variables[variable]['tamano']['sup']
         else:
-            variables[variable]['memoria'] = avail[1][tipo]
-            avail[1][tipo] += 1
+            variables[variable]['memoria'] = memoriaCompilacion[1][tipo]
+            memoriaCompilacion[1][tipo] += 1
+
 
 def p_estatuto(p):
     """
-	estatuto : assignation checa_pila_equal
+    estatuto : assignation checa_pila_a
                | condicion
                | printing
                | mientras
@@ -660,96 +857,118 @@ def p_estatuto(p):
                | dibujo
     """
 
-def p_checa_pila_equal(p):
-    """
-	checa_pila_equal : """
 
-    global pilaOper, pilaTipos, pilaOp, cuadruplos
-    if (pilaOper):
-        if (pilaOper[-1] == '='):
-            # Different way to generate cuadruplet arithmetic != assignation
+def p_checa_pila_a(p):
+    """
+    checa_pila_a : 
+    """
+
+    global pilaOp, cuadruplos, pilaOper, pilaTipos
+    if pilaOper:
+        if pilaOper[-1] == '=':
             operador = oper2Code(pilaOper.pop())
+            print (pilaOp)
             op2 = pilaOp.pop()
+            print (op2)
             op1 = pilaOp.pop()
             op2Tipo = pilaTipos.pop()
             op1Tipo = pilaTipos.pop()
-            if (op1Tipo != op2Tipo):
-                raise SemanticError(
-                    "Tipos incompatibles: " + str(op2Tipo) + " y " + str(op1Tipo))
+            print ('op2 ' , op2 , 'op1 ' , op1)
+            if op1Tipo != op2Tipo:
+                raise SemanticError('Tipos incompatibles: '
+                                    + code2Type(op2Tipo) + ' y '
+                                    + code2Type(op1Tipo))
             cuadruplos.append([operador, op2, -1, op1])
 
 
 def p_function_use(p):
     """
-	function_use : validate_function_id_do_era LPAREN add_parametro more_ids RPAREN validate_params_generate_gosub
+    function_use : validate_function_id_do_era LPAREN add_parametro more_ids RPAREN validate_params_generate_gosub
                     | validate_function_id_do_era LPAREN RPAREN validate_params_generate_gosub
     """
 
+
 def p_validate_function_id_do_era(p):
     """
-	validate_function_id_do_era : ID"""
+    validate_function_id_do_era : ID
+    """
 
-    global cuadruplos, dirFunciones, parametros, contParams, goSubFuncion
-    if (not dirFunciones.has_key(p[1])):
-        raise SemanticError("Use of undeclared function identifier: " + p[1])
+    global parametros, contParams, goSubFuncion, cuadruplos, \
+        dirFunciones
+    if not p[1] in dirFunciones:
+        raise SemanticError('No existe la funcion: '
+                            + p[1])
     cuadruplos.append([oper2Code('era'), -1, -1, p[1]])
-    parametros = dirFunciones[p[1]]["parametros"]
+    parametros = dirFunciones[p[1]]['parametros']
     contParams = 0
     goSubFuncion = p[1]
 
 
 def p_add_parametro(p):
     """
-	add_parametro : expression"""
+    add_parametro : expresion
+    """
 
-    global pilaOp, pilaTipos, parametros, contParams, cuadruplos
+    global parametros, contParams, cuadruplos, pilaOp, pilaTipos
     paramTipo = pilaTipos.pop()
     operand = pilaOp.pop()
     try:
-        if (parametros[contParams] != paramTipo):
-            raise SemanticError("Diferent tipo of parametro in function. Expected: " + parametros[
-                contParams] + " received: " + paramTipo)
+        if parametros[contParams] != paramTipo:
+            raise SemanticError('Se esperaba parametro de tipo: '
+                                 + parametros[contParams]
+                                + ' se recibio: ' + paramTipo)
     except IndexError:
-        raise SemanticError("Use of more parametros than function declaration.")
+        raise SemanticError('Mas parametros de lo esperado')
     contParams += 1
     cuadruplos.append([oper2Code('param'), operand, -1, contParams])
 
 
 def p_validate_params_generate_gosub(p):
     """
-	validate_params_generate_gosub : """
+    validate_params_generate_gosub : 
+    """
 
-    global dirFunciones, cuadruplos, goSubFuncion, parametros, contParams, funcionId, avail, pilaOp, pilaTipos
-    if (contParams != len(parametros)):
-        raise SemanticError("Use of less parametros than expected in function declaration.")
-    #goSubFuncion permite asignar el resultado de una funcion a una varible
+    global contParams, memoriaCompilacion, pilaOp, pilaTipos, \
+        dirFunciones, cuadruplos, goSubFuncion, parametros
+    print ('dr1', dirFunciones)
+    if contParams != len(parametros):
+        raise SemanticError('Menos parametros de lo esperado'
+                            )
+
+    # Con goSubFuncion se permite asignar el resultado de una funcion a una varible
+
     cuadruplos.append([oper2Code('gosub'), -1, -1, goSubFuncion])
-    cuadruplos.append([oper2Code('='), dirFunciones[goSubFuncion]['memoria'], -1, avail[2][dirFunciones[goSubFuncion]['return']]])
-    pilaOp.append(avail[2][dirFunciones[goSubFuncion]['return']])
+    cuadruplos.append([oper2Code('='),
+                      dirFunciones[goSubFuncion]['memoria'], -1,
+                      memoriaCompilacion[2][dirFunciones[goSubFuncion]['return'
+                      ]]])
+    pilaOp.append(memoriaCompilacion[2][dirFunciones[goSubFuncion]['return'
+                  ]])
     pilaTipos.append(dirFunciones[goSubFuncion]['return'])
-    avail[2][dirFunciones[goSubFuncion]['return']] += 1
+    memoriaCompilacion[2][dirFunciones[goSubFuncion]['return']] += 1
 
-    goSubFuncion = ""
+    goSubFuncion = ''
     parametros = []
     contParams = 0
 
 
 def p_more_ids(p):
     """
-	more_ids : COMMA add_parametro more_ids
-                |
-	"""
+    more_ids : COMMA add_parametro more_ids
+             |
+    """
 
 
 def p_assignation(p):
     """
-	assignation : id_aux value_list push_equal expression
+    assignation : id_aux value_list actualiza_pilaOper_a expresion
     """
 
 
-def p_push_equal(p):
+def p_actualiza_pilaOper_a(p):
     """
-	push_equal : EQUAL"""
+    actualiza_pilaOper_a : EQUAL
+    """
 
     global pilaOper
     pilaOper.append(p[1])
@@ -757,9 +976,10 @@ def p_push_equal(p):
 
 def p_value_list(p):
     """
-	value_list : value_list_aux LBRACKET expression RBRACKET
-                  |
-	"""
+    value_list : value_list_aux LBRACKET expresion RBRACKET
+               |
+    """
+
     if(len(p)> 2):
         if(p[2] == '['):
             op1 = pilaOp.pop()
@@ -769,18 +989,19 @@ def p_value_list(p):
             print "PRUEBALISTA", oper2Code('lista'), op1,0, variables [lista]['tamano']['sup']
             cuadruplos.append([code2Type('lista'), op1,0, variables [lista]['tamano']['sup']])
             if(not(constantes.has_key(variables[lista]['memoria']))):
-                constantes[variables[lista]['memoria']] = {'tipo': 101, 'memoria': avail[3][101]}
-                avail[3][101] +=1
-            cuadruplo = [0, op1, constantes[variables[lista]['memoria']], avail[2][101]]
+                constantes[variables[lista]['memoria']] = {'tipo': 101, 'memoria': memoriaCompilacion[3][101]}
+                memoriaCompilacion[3][101] +=1
+            cuadruplo = [0, op1, constantes[variables[lista]['memoria']], memoriaCompilacion[2][101]]
             cuadruplos.append(cuadruplo)
-            pilaOp.append(-avail[2][101])
+            pilaOp.append(-memoriaCompilacion[2][101])
             pilaTipos.append(variables[lista]['tipo'])
-            avail[2][101] += 1
+            memoriaCompilacion[2][101] += 1
 
 def p_value_list_aux(p):
     """
     value_list_aux :
     """
+
     global listaAux, lista, pilaOp, pilaTipos
     if(variables[listaAux].has_key('tamano')):
         pilaOp.pop()
@@ -789,50 +1010,56 @@ def p_value_list_aux(p):
     else:
         raise SemanticError("Esta variable no es una lista")
 
+
 def p_printing(p):
     """
-	printing : IMPRIME LPAREN printable RPAREN"""
+    printing : IMPRIME LPAREN printable RPAREN
+    """
 
 
 def p_printable(p):
     """
-	printable : expression more_printable"""
+    printable : expresion more_printable
+    """
 
 
 def p_more_printable(p):
     """
-	more_printable : COMMA printable
-                      |
-	"""
+    more_printable : COMMA printable
+                   |
+    """
 
-    global pilaOp, pilaTipos, cuadruplos
-    expression = pilaOp.pop()
+    global pilaTipos, cuadruplos, pilaOp
+    expresion = pilaOp.pop()
     pilaTipos.pop()
-    cuadruplos.append([oper2Code("print"), -1, -1, expression])
+    cuadruplos.append([oper2Code('IMPRIME'), -1, -1, expresion])
 
 
 def p_condicion(p):
     """
-	condicion : SI LPAREN expression RPAREN generate_gotoF_if LCURLY mini_bloque RCURLY else_condicion generate_end_if
-	"""
-
-
-def p_generate_gotoF_if(p):
+    condicion : SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
     """
-	generate_gotoF_if : """
 
-    global pilaOp, pilaTipos, pilaOper, pilaSaltos, cuadruplos
+
+def p_gotoF_condicion(p):
+    """
+    gotoF_condicion : 
+    """
+
+    global pilaOper, pilaSaltos, cuadruplos, pilaOp, pilaTipos
     condicionTipo = pilaTipos.pop()
-    if (condicionTipo != type2Code("BOOLEANO")):
-        raise SemanticError("Se esparaba un booleano en la condicion. Se recibio: " + str(condicionTipo))
+    if condicionTipo != type2Code('BOOLEANO'):
+        raise SemanticError('Se esparaba un booleano en la condicion. Se recibio: '
+                             + code2Type(condicionTipo))
     condicion = pilaOp.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
-    pilaSaltos.append(len(cuadruplos) - 1) 
+    cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
+    pilaSaltos.append(len(cuadruplos) - 1)
 
 
-def p_generate_end_if(p):
+def p_fin_condicion(p):
     """
-	generate_end_if : """
+    fin_condicion : 
+    """
 
     global pilaSaltos, cuadruplos
     endJump = pilaSaltos.pop()
@@ -841,30 +1068,33 @@ def p_generate_end_if(p):
 
 def p_else_condicion(p):
     """
-	else_condicion : SINO LCURLY generate_goto_else mini_bloque RCURLY
-                      |"""
+    else_condicion : SINO LCURLY generate_goto_else estatutos RCURLY
+                   |
+    """
 
 
 def p_generate_goto_else(p):
     """
-	generate_goto_else : """
+    generate_goto_else : 
+    """
+
     global pilaSaltos, cuadruplos
-    cuadruplos.append([oper2Code("goto"), -1, -1, 'espera'])
-    falseJump = pilaSaltos.pop()
-    cuadruplos[falseJump][3] = len(cuadruplos) + 1
+    cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
+    saltoF = pilaSaltos.pop()
+    cuadruplos[saltoF][3] = len(cuadruplos) + 1
     pilaSaltos.append(len(cuadruplos) - 1)
 
 
 def p_mientras(p):
     """
-	mientras : MIENTRAS push_cont_in_pilaSaltos LPAREN expression RPAREN generate_gotoF_while LCURLY mini_bloque RCURLY generate_end_while
-	"""
-
-
-def p_push_cont_in_pilaSaltos(p):
+    mientras : MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN generate_gotoF_while LCURLY estatutos RCURLY generate_end_while
     """
-	push_cont_in_pilaSaltos :
-	"""
+
+
+def p_actualiza_pilaSaltos(p):
+    """
+    actualiza_pilaSaltos :
+    """
 
     global pilaSaltos, cuadruplos
     pilaSaltos.append(len(cuadruplos) + 1)
@@ -872,105 +1102,114 @@ def p_push_cont_in_pilaSaltos(p):
 
 def p_generate_gotoF_while(p):
     """
-	generate_gotoF_while :
-	"""
+    generate_gotoF_while :
+    """
 
-    global pilaOp, pilaTipos, pilaSaltos, cuadruplos
+    global pilaSaltos, cuadruplos, pilaOp, pilaTipos
     condicionTipo = pilaTipos.pop()
-    if (condicionTipo != type2Code("BOOLEANO")):
-        raise SemanticError("Se esperaba booleano en la condicion. Se recibio: " + str(condicionTipo))
+    if condicionTipo != type2Code('BOOLEANO'):
+        raise SemanticError('Se esperaba booleano en la condicion. Se recibio: '
+                             + code2Type(condicionTipo))
     condicion = pilaOp.pop()
-    cuadruplos.append([oper2Code("gotoF"), condicion, -1, 'espera'])
-    pilaSaltos.append(len(cuadruplos) - 1)  # Make it as a list that starts in 0.
+    cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
+    pilaSaltos.append(len(cuadruplos) - 1) 
 
 
 def p_generate_end_while(p):
     """
-	generate_end_while :
-	"""
+    generate_end_while :
+    """
 
     global pilaSaltos, cuadruplos
-    falseJump = pilaSaltos.pop()
-    returnJump = pilaSaltos.pop()
-    cuadruplos.append([oper2Code("goto"), -1, -1, returnJump])
-    cuadruplos[falseJump][3] = len(cuadruplos) + 1
+    saltoF = pilaSaltos.pop()
+    saltoR = pilaSaltos.pop()
+    cuadruplos.append([oper2Code('goto'), -1, -1, saltoR])
+    cuadruplos[saltoF][3] = len(cuadruplos) + 1
 
 
 def p_return(p):
     """
-	return : RETURN expression
+    return : RETURN expresion
     """
 
-    global cuadruplos, dirFunciones, funcionId, pilaOp, pilaTipos
-    if (funcionId == 'MAIN'):
-        raise SemanticError("Main no de")
+    global funcionId, pilaOp, pilaTipos, cuadruplos, dirFunciones
+    if funcionId == 'MAIN':
+        raise SemanticError('Main no debe tener return')
     op = pilaOp.pop()
     opTipo = pilaTipos.pop()
-    if (opTipo != dirFunciones[funcionId]['return']):
-        raise SemanticError("Se esta retornando: " + opTipo + ", cuando se esperaba: " + dirFunciones[funcionId]['return'])
+    if opTipo != dirFunciones[funcionId]['return']:
+        raise SemanticError('Se esta retornando: ' + opTipo
+                            + ', cuando se esperaba: '
+                            + dirFunciones[funcionId]['return'])
     cuadruplos.append([oper2Code('return'), -1, -1, op])
+
 
 def p_accion(p):
     """
-    accion : DIRECCION LPAREN expression RPAREN 
+    accion : DIRECCION LPAREN expresion RPAREN 
 
     """
-    global pilaOp, pilaTipos, cuadruplos
-    expression = pilaOp.pop()
+
+    global pilaTipos, cuadruplos, pilaOp
+    expresion = pilaOp.pop()
     opTipo = pilaTipos.pop()
-    if( opTipo != 101):
-        raise SemanticError("Se esperaba un entero. Se recibio: " + code2Type(opTipo))
-    cuadruplos.append([oper2Code(p[1]), -1, -1, expression])
+    if opTipo != 101:
+        raise SemanticError('Se esperaba un entero. Se recibio: '
+                            + code2Type(opTipo))
+    cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
+
 
 def p_dibujo(p):
     """
-    dibujo : CUADRADO LPAREN expression RPAREN
-           | RECTANGULO LPAREN expression COMMA expression RPAREN
-           | TRIANGULO LPAREN expression COMMA expression COMMA expression RPAREN
-           | CIRCULO LPAREN expression RPAREN
+    dibujo : CUADRADO LPAREN expresion RPAREN
+           | RECTANGULO LPAREN expresion COMMA expresion RPAREN
+           | TRIANGULO LPAREN expresion COMMA expresion COMMA expresion RPAREN
+           | CIRCULO LPAREN expresion RPAREN
     """
-    global pilaOp, pilaTipos, cuadruplos
-    if (p[1] == "CUADRADO" or p[1] == "CIRCULO"):
-        expression = pilaOp.pop()
+
+    global pilaTipos, cuadruplos, pilaOp
+    if p[1] == 'CUADRADO' or p[1] == 'CIRCULO':
+        expresion = pilaOp.pop()
         opTipo = pilaTipos.pop()
-        if( opTipo != 101):
-            raise SemanticError("Se esperaba un entero. Se recibio: " + code2Type(opTipo))
-        cuadruplos.append([oper2Code(p[1]), -1, -1, expression])
+        if opTipo != 101:
+            raise SemanticError('Se esperaba un entero. Se recibio: '
+                                + code2Type(opTipo))
+        cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
 
-
-def p_mini_bloque(p):
+def p_estatutos(p):
     """
-	mini_bloque : estatuto SEMI mini_bloque
-                  |
-	"""
-
-
-def p_expression(p):
+    estatutos : estatuto SEMI estatutos
+                |
     """
-	expression : big_exp or_exp checa_pila_or
-	"""
+
+
+def p_expresion(p):
+    """
+    expresion : big_exp or_exp checa_pila_or
+    """
+
 
 def p_checa_pila_or(p):
     """
-	checa_pila_or :
-	"""
+    checa_pila_or :
+    """
 
     global pilaOper
-    if (pilaOper):
-        if (pilaOper[-1] == '||'):
+    if pilaOper:
+        if pilaOper[-1] == '||':
             generateArithmeticCode()
 
 
 def p_or_exp(p):
     """
-	or_exp : OR expression
-              |
-	"""
+    or_exp : OR expresion
+           |
+    """
 
     global pilaOper
     try:
-        if (p[1] == '||'):
+        if p[1] == '||':
             pilaOper.append(p[1])
     except IndexError:
         return
@@ -978,29 +1217,30 @@ def p_or_exp(p):
 
 def p_big_exp(p):
     """
-	big_exp : medium_exp and_exp checa_pila_and
-	"""
+    big_exp : medium_exp and_exp checa_pila_and
+    """
+
 
 def p_checa_pila_and(p):
     """
-	checa_pila_and :
-	"""
+    checa_pila_and :
+    """
 
     global pilaOper
-    if (pilaOper):
-        if (pilaOper[-1] == '&&'):
+    if pilaOper:
+        if pilaOper[-1] == '&&':
             generateArithmeticCode()
 
 
 def p_and_exp(p):
     """
-	and_exp : AND big_exp
+    and_exp : AND big_exp
                |
-	"""
+    """
 
     global pilaOper
     try:
-        if (p[1] == '&&'):
+        if p[1] == '&&':
             pilaOper.append(p[1])
     except IndexError:
         return
@@ -1008,35 +1248,37 @@ def p_and_exp(p):
 
 def p_medium_exp(p):
     """
-	medium_exp : exp relational_exp checa_pila_mmdi
-	"""
-
-
-def p_checa_pila_mmdi(p):
+    medium_exp : exp comp_exp checa_pila_comp
     """
-	checa_pila_mmdi :
-	"""
+
+
+def p_checa_pila_comp(p):
+    """
+    checa_pila_comp :
+    """
 
     global pilaOper
-    if (pilaOper):
-        if (pilaOper[-1] == '>' or pilaOper[-1] == '<' or pilaOper[-1] == '<>' or pilaOper[-1] == '==' or pilaOper[-1] == '>=' or pilaOper[-1] == '<='):
+    if pilaOper:
+        if pilaOper[-1] == '>' or pilaOper[-1] == '<' or pilaOper[-1] \
+            == '<>' or pilaOper[-1] == '==' or pilaOper[-1] == '>=' \
+            or pilaOper[-1] == '<=':
             generateArithmeticCode()
 
 
-def p_relational_exp(p):
+def p_comp_exp(p):
     """
-	relational_exp : GT exp
-                   | LT exp
-                   | GE exp
-                   | LE exp
-                   | NE exp
-                   | EQUALC exp
-                   |
-	"""
+    comp_exp : GT exp
+             | LT exp
+             | GE exp
+             | LE exp
+             | NE exp
+             | EQUALC exp
+             |
+    """
 
     global pilaOper
     try:
-        if (p[1] == '>' or p[1] == '<' or p[1] == '!=' or p[1] == '=='):
+        if p[1] == '>' or p[1] == '<' or p[1] == '!=' or p[1] == '==':
             pilaOper.append(p[1])
     except IndexError:
         return
@@ -1044,66 +1286,66 @@ def p_relational_exp(p):
 
 def p_exp(p):
     """
-	exp : term checa_pila_pm add_term
-	"""
-
-
-def p_checa_pila_pm(p):
+    exp : termino checa_pila_mm termino_mm
     """
-	checa_pila_pm :
-	"""
+
+
+def p_checa_pila_mm(p):
+    """
+    checa_pila_mm :
+    """
 
     global pilaOper
-    if (pilaOper):
-        if (pilaOper[-1] == '+' or pilaOper[-1] == '-'):
+    if pilaOper:
+        if pilaOper[-1] == '+' or pilaOper[-1] == '-':
             generateArithmeticCode()
 
 
-def p_add_term(p):
+def p_termino_mm(p):
     """
-	add_term : push_pm exp
-             |
-	"""
+    termino_mm : actualiza_pilaOper_mm exp
+               |
+    """
 
 
-def p_push_pm(p):
+def p_actualiza_pilaOper_mm(p):
     """
-	push_pm : PLUS
-            | MINUS
+    actualiza_pilaOper_mm : PLUS
+                          | MINUS
     """
 
     global pilaOper
     pilaOper.append(p[1])
 
 
-def p_term(p):
+def p_termino(p):
     """
-	term : factor checa_pila_td times_factor
-	"""
+    termino : factor checa_pila_md factor_md
+    """
 
 
-def p_checa_pila_td(p):
+def p_checa_pila_md(p):
     """
-	checa_pila_td :
-	"""
+    checa_pila_md :
+    """
 
     global pilaOper
-    if (pilaOper):
-        if (pilaOper[-1] == '*' or pilaOper[-1] == '/'):
+    if pilaOper:
+        if pilaOper[-1] == '*' or pilaOper[-1] == '/':
             generateArithmeticCode()
 
 
-def p_times_factor(p):
+def p_factor_md(p):
     """
-	times_factor : push_td term
-                 |
-	"""
+    factor_md : actualiza_pilaOper_md termino
+              |
+    """
 
 
-def p_push_td(p):
+def p_actualiza_pilaOper_md(p):
     """
-	push_td : TIMES
-            | DIVIDE
+    actualiza_pilaOper_md : TIMES
+                          | DIVIDE
     """
 
     global pilaOper
@@ -1112,23 +1354,23 @@ def p_push_td(p):
 
 def p_factor(p):
     """
-	factor : push_pa expression pop_pc
+    factor : actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
            | var_ct
     """
 
 
-def p_push_pa(p):
+def p_actualiza_pilaOper_lparen(p):
     """
-	push_pa : LPAREN
+    actualiza_pilaOper_lparen : LPAREN
     """
 
     global pilaOper
     pilaOper.append(p[1])
 
 
-def p_pop_pc(p):
+def p_actualiza_pilaOper_rparen(p):
     """
-	pop_pc : RPAREN
+    actualiza_pilaOper_rparen : RPAREN
     """
 
     global pilaOper
@@ -1137,7 +1379,7 @@ def p_pop_pc(p):
 
 def p_var_ct(p):
     """
-	var_ct : id_aux value_list
+    var_ct : id_aux value_list
            | cte_e_aux
            | cte_f_aux
            | cte_b_aux
@@ -1145,120 +1387,169 @@ def p_var_ct(p):
            | function_use
     """
 
+
 def p_id_aux(p):
     """
-	id_aux : ID
-	"""
+    id_aux : ID
+    """
 
-    global pilaTipos, pilaOp, variables, variablesGlobales, dirFunciones, funcionId, listaAux
+    global variablesGlobales, dirFunciones, funcionId, pilaTipos, \
+        pilaOp, variables,  listaAux
     listaAux = p[1]
-    if (not variables.has_key(p[1]) and not dirFunciones[funcionId]["variables"].has_key(p[1])):
-        if (not variablesGlobales.has_key(p[1])):
-            raise SemanticError("La variable no ha sido declarada: " + p[1])
+    if not p[1] in variables and not p[1] \
+        in dirFunciones[funcionId]['variables']:
+        if not p[1] in variablesGlobales:
+            raise SemanticError('La variable no ha sido declarada: '
+                                + p[1])
         else:
-            pilaOp.append(variablesGlobales[p[1]]["memoria"])
-            pilaTipos.append(variablesGlobales[p[1]]["tipo"])
+            pilaOp.append(variablesGlobales[p[1]]['memoria'])
+            pilaTipos.append(variablesGlobales[p[1]]['tipo'])
     else:
-        if (variables.has_key(p[1])):
-            pilaOp.append(variables[p[1]]["memoria"])
-            pilaTipos.append(variables[p[1]]["tipo"])
+        if p[1] in variables:
+            pilaOp.append(variables[p[1]]['memoria'])
+            pilaTipos.append(variables[p[1]]['tipo'])
         else:
-            pilaOp.append(dirFunciones[funcionId]["variables"][p[1]]["memoria"])
-            pilaTipos.append(dirFunciones[funcionId]["variables"][p[1]]["tipo"])
+            pilaOp.append(dirFunciones[funcionId]['variables'
+                          ][p[1]]['memoria'])
+            pilaTipos.append(dirFunciones[funcionId]['variables'
+                             ][p[1]]['tipo'])
 
 
 def p_cte_e_aux(p):
     """
-	cte_e_aux : CTE_E"""
+    cte_e_aux : CTE_E
+    """
 
-    global constantes, avail, pilaOp, pilaTipos
-    if (not constantes.has_key(p[1])):
-        constantes[p[1]] = {"tipo": 101, "memoria": avail[3][101]}
-        avail[3][101] += 1
-    pilaOp.append(constantes[p[1]]["memoria"])
-    pilaTipos.append(constantes[p[1]]["tipo"])
+    global pilaOp, pilaTipos, constantes, memoriaCompilacion
+    if not p[1] in constantes:
+        constantes[p[1]] = {'tipo': 101,
+                            'memoria': memoriaCompilacion[3][101]}
+        memoriaCompilacion[3][101] += 1
+    pilaOp.append(constantes[p[1]]['memoria'])
+    pilaTipos.append(constantes[p[1]]['tipo'])
 
 
 def p_cte_f_aux(p):
     """
-	cte_f_aux : CTE_F"""
+    cte_f_aux : CTE_F
+    """
 
-    global constantes, avail, pilaOp, pilaTipos
-    if (not constantes.has_key(p[1])):
-        constantes[p[1]] = {"tipo": 102, "memoria": avail[3][102]}
-        avail[3][102] += 1
-    pilaOp.append(constantes[p[1]]["memoria"])
-    pilaTipos.append(constantes[p[1]]["tipo"])
+    global pilaOp, pilaTipos, constantes, memoriaCompilacion
+    if not p[1] in constantes:
+        constantes[p[1]] = {'tipo': 102,
+                            'memoria': memoriaCompilacion[3][102]}
+        memoriaCompilacion[3][102] += 1
+    pilaOp.append(constantes[p[1]]['memoria'])
+    pilaTipos.append(constantes[p[1]]['tipo'])
+
 
 def p_cte_s_aux(p):
     """
-    cte_s_aux : CTE_S"""
+    cte_s_aux : CTE_S
+    """
 
-    global constantes, avail, pilaOp, pilaTipos
-    if (not constantes.has_key(p[1])):
-        constantes[p[1]] = {"tipo": 103, "memoria": avail[3][103]}
-        avail[3][103] += 1
-    pilaOp.append(constantes[p[1]]["memoria"])
-    pilaTipos.append(variables[p[1]]["tipo"])
+    global pilaOp, pilaTipos, constantes, memoriaCompilacion
+    if not p[1] in constantes:
+        constantes[p[1]] = {'tipo': 103,
+                            'memoria': memoriaCompilacion[3][103]}
+        memoriaCompilacion[3][103] += 1
+    pilaOp.append(constantes[p[1]]['memoria'])
+    pilaTipos.append(variables[p[1]]['tipo'])
+
 
 def p_cte_b_aux(p):
     """
-	cte_b_aux : CTE_B"""
+    cte_b_aux : CTE_B
+    """
 
-    global constantes, avail, pilaOp, pilaTipos
-    if (not constantes.has_key(p[1])):
-        constantes[p[1]] = {"tipo": 104, "memoria": avail[3][104]}
-        avail[3][104] += 1
-    pilaOp.append(constantes[p[1]]["memoria"])
-    pilaTipos.append(constantes[p[1]]["tipo"])
+    global pilaOp, pilaTipos, constantes, memoriaCompilacion
+    if not p[1] in constantes:
+        constantes[p[1]] = {'tipo': 104,
+                            'memoria': memoriaCompilacion[3][104]}
+        memoriaCompilacion[3][104] += 1
+    pilaOp.append(constantes[p[1]]['memoria'])
+    pilaTipos.append(constantes[p[1]]['tipo'])
+
 
 def p_error(p):
     if p:
-        raise SyntaxError("Syntax error at '%s'" % p.value, )
+        raise SyntaxError("Error de sintaxis en '%s'" % p.value)
     if not p:
-        print("EOF")
+        print ('EOF')
+
 
 def generateArithmeticCode():
-    global pilaOper, pilaTipos, pilaOp, avail, cuadruplos
-    if (debug):
-        print ("pila de operadores: ", pilaOper)
-        print ("pila de operandos: ", pilaOp)
-        print ("pila de tipos: ", pilaTipos)
+    global pilaOper, pilaTipos, pilaOp, memoriaCompilacion, cuadruplos
+    
+    print ('pila de operadores: ' + pilaOper)
+    print ('pila de operandos: ' + pilaOp)
+    print ('pila de tipos: ' + pilaTipos)
 
-    #Creacion de cuadruplos
+    # Elementos del cuadruplo
+
     operador = oper2Code(pilaOper.pop())
     op2 = pilaOp.pop()
     op1 = pilaOp.pop()
     op2Tipo = pilaTipos.pop()
     op1Tipo = pilaTipos.pop()
-    newTipo = cuboSemantico[operador][op1Tipo - 101][op2Tipo - 101]
-    if (newTipo == -1):
-        raise SemanticError("Tipos incompatibles: " + str(op1Tipo) + str(operador) + str(op2Tipo))
-    result = avail[2][newTipo]
-    avail[2][newTipo] += 1
-    # Generate the cuadruplet, append result to the stacks
-    cuadruplos.append([operador, op1, op2, result])
-    pilaOp.append(result)
-    pilaTipos.append(newTipo)
+    cuboTipo = cuboSemantico[operador][op1Tipo - 101][op2Tipo - 101]
+    if cuboTipo == -1:
+        raise SemanticError('Tipos incompatibles: ' + code2Type(op1Tipo)
+                            + code2Oper(operador) + code2Type(op2Tipo))
+    resultado = memoriaCompilacion[2][cuboTipo]
+    memoriaCompilacion[2][cuboTipo] += 1
+
+    # creacion del cuadruplo
+
+    cuadruplos.append([operador, op1, op2, resultado])
+    pilaOp.append(resultado)
+    pilaTipos.append(cuboTipo)
 
 
 # Import yacc
+
 import ply.yacc as yacc
 
 parser = yacc.yacc()
+
+
 def parse():
-    global dirFunciones, avail, variables, constantes, parametros, variablesGlobales, cuadruplos, pilaTipos, pilaOper, pilaOp, push_cont_in_pilaSaltos
-    
+    global dirFunciones, memoriaCompilacion, variables, constantes, \
+        parametros, variablesGlobales, cuadruplos, pilaTipos, pilaOper, \
+        pilaOp, actualiza_pilaSaltos
+
     try:
         s = raw_input('izilang > ')
     except EOFError:
         return
-    dirFunciones = {"global": {}}
-    avail = {0: {101: 2000,  102: 3000,  103: 4000,  104: 5000},
-             1: {101: 8000,  102: 9000,  103: 10000, 104: 11000},
-             2: {101: 14000, 102: 15000, 103: 16000, 104: 17000},
-             3: {101: 20000, 102: 21000, 103: 22000, 104: 23000}}
-    
+    dirFunciones = {'global': {}}
+    memoriaCompilacion = {
+        0: {
+            101: 2000,
+            102: 3000,
+            103: 4000,
+            104: 5000,
+            },
+        1: {
+            101: 8000,
+            102: 9000,
+            103: 10000,
+            104: 11000,
+            },
+        2: {
+            101: 14000,
+            102: 15000,
+            103: 16000,
+            104: 17000,
+            },
+        3: {
+            101: 20000,
+            102: 21000,
+            103: 22000,
+            104: 23000,
+            },
+        }
+
     variables = {}
     constantes = {}
     parametros = []
@@ -1270,15 +1561,13 @@ def parse():
     pilaSaltos = []
 
     with open(s) as fp:
-        completeString = ""
+        completeString = ''
         for line in fp:
             completeString += line
         try:
             parser.parse(completeString)
-            if (debug):
-                print ("Funciones: ", dirFunciones)
-                print ("Cuadruplos: ", cuadruplos)
-            print("El programa se ejecuto correctamente")
+            print ('Funciones: ', dirFunciones)
+            print ('Cuadruplos: ', cuadruplos)
+            print ('El programa se ejecuto correctamente')
         except EOFError:
             return
-
