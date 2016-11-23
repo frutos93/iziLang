@@ -1553,8 +1553,6 @@ def parse():
             completeString += line
         try:
             parser.parse(completeString)
-            print ('Funciones: ', dirFunciones)
-            print ('Cuadruplos: ', cuadruplos)
             print ('El programa se ejecuto correctamente')
         except EOFError:
             return
