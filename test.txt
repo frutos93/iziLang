@@ -5,9 +5,8 @@ PROGRAMA example2:
     }
     MAIN()
     {
-        ENTERO a[2];
-        IMPRIME(3);
-        a[1] = 4;
-        IMPRIME(3);
+        ENTERO a[10];
+        a[2] = 4;
+        prueba();
     }
 FIN

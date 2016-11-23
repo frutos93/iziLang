@@ -9,7 +9,7 @@ pointersStack = []
 tipoFuncion = []
 funcionesDir = {}
 constantes = {}
-parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
+parametrosEnMemoria = {101: 5000,  102: 6000,  103: 7000, 104: 8000}
 memoriaEjecucion  = [{},[{}],[{}],constantes]
 cuadruplos = []
 inner = 0
@@ -57,25 +57,39 @@ def cargaDatosEnMemoria():
 
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
-    if(memoria < 8000):
+    if inner == 1:
+        cont = -2
+    else:
+        cont = -1
+    if (memoria < 0):
+        memoria *= -1
+        memoria = getMemoryValue(memoria)
+    if(memoria < 5000):
         return memoriaEjecucion[0][memoria]
-    elif (memoria < 14000):
-        return memoriaEjecucion[1][-1-inner][memoria]
-    elif (memoria < 20000):
-        return memoriaEjecucion[2][-1-inner][memoria]
+    elif (memoria < 9000):
+        return memoriaEjecucion[1][cont][memoria]
+    elif (memoria < 13000):
+        return memoriaEjecucion[2][cont][memoria]
     else:
         return memoriaEjecucion[3][memoria]['valor']
 
 def saveValueMemory(result, memoria):
     global memoriaEjecucion, inner
-    if (memoria < 8000):
-        memoriaEjecucion[0][memoria] = result
-    elif (memoria < 14000):
-        memoriaEjecucion[1][-1 - inner][memoria] = result
-    elif (memoria < 20000):
-        memoriaEjecucion[2][-1 - inner][memoria] = result
+    if inner == 1:
+        cont = -2
     else:
-        memoriaEjecucion[3][-1 - inner][memoria] = result
+        cont = -1
+    if (memoria < 0):
+        memoria *= -1
+        memoria = getMemoryValue(memoria)
+    if (memoria < 5000):
+        memoriaEjecucion[0][memoria] = result
+    elif (memoria < 9000):
+        memoriaEjecucion[1][cont][memoria] = result
+    elif (memoria < 13000):
+        memoriaEjecucion[2][cont][memoria] = result
+    else:
+        memoriaEjecucion[3][cont][memoria] = result
 
 
 
@@ -114,11 +128,11 @@ def operacion(cuadruplo):
 def setMemoryParameter(memoria, result):
     global memoriaEjecucion
     result = getMemoryValue(result)
-    if (memoria < 8000):
+    if (memoria < 5000):
         memoriaEjecucion[0][-1][memoria] = result
-    elif (memoria < 14000):
+    elif (memoria < 9000):
         memoriaEjecucion[1][-1][memoria] = result
-    elif (memoria < 20000):
+    elif (memoria < 13000):
         memoriaEjecucion[2][-1][memoria] = result
     else:
         memoriaEjecucion[3][-1][memoria] = result
@@ -141,7 +155,7 @@ def iniciaEra():
     memoriaEjecucion[2].append({})
 def memoriaParametros():
     global parametrosEnMemoria
-    parametrosEnMemoria = {101: 8000, 102: 9000, 103: 10000, 104: 11000}
+    parametrosEnMemoria = {101: 5000,  102: 6000,  103: 7000, 104: 8000}
 
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner, funcionesDir
@@ -167,7 +181,17 @@ def run():
                 currentPointer = cuadruploActual[3] - 1
         elif(instruccion == 15):
             print "PRINT: ", getMemoryValue(cuadruploActual[3])
+        elif(instruccion == 16):
+            turtle.setheading(90)
+            turtle.fd(cuadruploActual[3])
+        elif(instruccion == 17):
+            turtle.setheading(270)
+            turtle.fd(cuadruploActual[3])
         elif(instruccion == 19):
+            turtle.setheading(180)
+            turtle.fd(cuadruploActual[3])
+        elif(instruccion == 19):
+            turtle.setheading(0)
             turtle.fd(cuadruploActual[3])
         elif(instruccion == 20):
             reiniciaEra()
@@ -179,7 +203,7 @@ def run():
             tipoFuncion.append(cuadruploActual[3])
             inner = 1
         elif(instruccion == 22):
-            inner = 0
+
             memoriesStack.append(currentPointer)
             currentPointer = funcionesDir[cuadruploActual[3]]['cuadruplo'] - 1
             memoriaParametros()
@@ -194,7 +218,8 @@ def run():
             tipoFuncion.pop()
         elif(instruccion == 25):
             valor = getMemoryValue(cuadruploActual[1])
-            if (not(valor >= cuadruploActual[2] and valor <= cuadruploActual[3])):
+            print cuadruploActual, valor
+            if (not(int(valor) >= int(cuadruploActual[2]) and int(valor) <= int(cuadruploActual[3]))):
                 print ("error")
                 break;
         cuadruploActual = cuadruplos[currentPointer]
