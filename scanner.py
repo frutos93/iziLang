@@ -1191,7 +1191,7 @@ def p_checa_pila_or(p):
     global pilaOper
     if pilaOper:
         if pilaOper[-1] == '||':
-            generateArithmeticCode()
+            creaCuadruplos()
 
 
 def p_or_exp(p):
@@ -1222,7 +1222,7 @@ def p_checa_pila_and(p):
     global pilaOper
     if pilaOper:
         if pilaOper[-1] == '&&':
-            generateArithmeticCode()
+            creaCuadruplos()
 
 
 def p_and_exp(p):
@@ -1255,7 +1255,7 @@ def p_checa_pila_comp(p):
         if pilaOper[-1] == '>' or pilaOper[-1] == '<' or pilaOper[-1] \
             == '<>' or pilaOper[-1] == '==' or pilaOper[-1] == '>=' \
             or pilaOper[-1] == '<=':
-            generateArithmeticCode()
+            creaCuadruplos()
 
 
 def p_comp_exp(p):
@@ -1291,7 +1291,7 @@ def p_checa_pila_mm(p):
     global pilaOper
     if pilaOper:
         if pilaOper[-1] == '+' or pilaOper[-1] == '-':
-            generateArithmeticCode()
+            creaCuadruplos()
 
 
 def p_termino_mm(p):
@@ -1325,7 +1325,7 @@ def p_checa_pila_md(p):
     global pilaOper
     if pilaOper:
         if pilaOper[-1] == '*' or pilaOper[-1] == '/':
-            generateArithmeticCode()
+            creaCuadruplos()
 
 
 def p_factor_md(p):
@@ -1471,7 +1471,7 @@ def p_error(p):
         print ('EOF')
 
 
-def generateArithmeticCode():
+def creaCuadruplos():
     global pilaOper, pilaTipos, pilaOp, memoriaCompilacion, cuadruplos
     operador = oper2Code(pilaOper.pop())
     op2 = pilaOp.pop()
@@ -1547,11 +1547,11 @@ def parse():
     pilaSaltos = []
 
     with open(s) as fp:
-        completeString = ''
+        string = ''
         for line in fp:
-            completeString += line
+            string += line
         try:
-            parser.parse(completeString)
+            parser.parse(string)
             print ('El programa se ejecuto correctamente')
         except EOFError:
             return
