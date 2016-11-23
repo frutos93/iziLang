@@ -670,16 +670,16 @@ def p_guarda_funcion_id(p):
     global temporalStamp, memoriaCompilacion, funcionId
     funcionId = p[1]
     memoriaCompilacion[1] = {
-        101: 7000,
-        102: 8000,
-        103: 9000,
-        104: 10000,
+        101: 5000,
+        102: 6000,
+        103: 7000,
+        104: 8000,
         }
     memoriaCompilacion[2] = {
-        101: 12000,
-        102: 13000,
-        103: 14000,
-        104: 15000,
+        101: 9000,
+        102: 10000,
+        103: 11000,
+        104: 12000,
         }
     temporalStamp = memoriaCompilacion[2].copy()
 
@@ -739,16 +739,16 @@ def p_set_main_id(p):
     saltoM = pilaSaltos.pop()
     cuadruplos[saltoM - 1][3] = len(cuadruplos) + 1
     memoriaCompilacion[1] = {
-        101: 8000,
-        102: 9000,
-        103: 10000,
-        104: 11000,
+        101: 5000,
+        102: 6000,
+        103: 7000,
+        104: 8000,
         }
     memoriaCompilacion[2] = {
-        101: 14000,
-        102: 15000,
-        103: 16000,
-        104: 17000,
+        101: 9000,
+        102: 10000,
+        103: 11000,
+        104: 12000,
         }
 
 
@@ -1075,7 +1075,7 @@ def p_accion(p):
     if opTipo != 101:
         raise SemanticError('Se esperaba un entero. Se recibio: '
                             + code2Type(opTipo))
-    cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
+        cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
 
 def p_dibujo(p):

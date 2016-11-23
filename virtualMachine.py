@@ -160,9 +160,7 @@ def memoriaParametros():
 def run():
     global currentPointer, memoriaEjecucion, constantes, inner, funcionesDir
     scanner.parse()
-    print "DirdeFunciones", scanner.dirFunciones
     scanner.cuadruplos.append(['FIN', -1, -1, -1])
-    print "Cuadruplos: ", scanner.cuadruplos
     cargaDatosEnMemoria()
     memoriaEjecucion[3] = constantes
     cuadruploActual = cuadruplos[currentPointer-1]
@@ -172,7 +170,6 @@ def run():
         if(instruccion < 12):
             operacion(cuadruploActual)
         elif(instruccion == 12):
-            print memoriaEjecucion
             saveValueMemory(getMemoryValue(cuadruploActual[1]), cuadruploActual[3])
         elif(instruccion == 13):
             currentPointer = cuadruploActual[3] -1
@@ -218,14 +215,13 @@ def run():
             tipoFuncion.pop()
         elif(instruccion == 25):
             valor = getMemoryValue(cuadruploActual[1])
-            print cuadruploActual, valor
             if (not(int(valor) >= int(cuadruploActual[2]) and int(valor) <= int(cuadruploActual[3]))):
                 print ("error")
                 break;
         cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
-    turtle.fd(1)
-    turtle.done()
+    print scanner.cuadruplos
+    turtle.getscreen()._root.mainloop()
 
 
 
