@@ -25,6 +25,8 @@ sys.path.insert(0, '../..')
 if sys.version_info[0] >= 3:
     raw_input = input
 
+#Variables globales
+
 memoriaCompilacion = {}
 pilaSaltos = []
 pilaTipos = []
@@ -44,6 +46,7 @@ contParams = 0
 goSub = ''
 temporalStamp = {}
 
+#Manejo de errores
 
 class LexerError(Exception):
 
@@ -268,7 +271,7 @@ tokens = (
     'CIRCULO'
     )
 
-#Definicion de diferentes tockens y su construccion en ER
+#Definicion de diferentes tokens y su construccion en ER
 def t_PROGRAMA(t):
     '''PROGRAMA'''
     return t
@@ -517,14 +520,13 @@ def t_error(t):
     raise LexerError("Caracter ilegal en '%s'" % t.value[0])
 
 
-# Build the lexer
+# Construye el lexer
 
 import ply.lex as lex
-
 lex.lex()
 
-start = 'programa'
-
+#El codigo siempre empieza con la palabra PROGRAMA, un id y dos puntos.
+#Despues es el bloque general de codigo y al final la palabra FIN
 
 def p_programa(p):
     """
@@ -534,6 +536,7 @@ def p_programa(p):
     global dirFunciones, constantes
     dirFunciones['constantes'] = constantes
 
+#Se crea el cuadruplo con el goto hacia el main
 
 def p_goto_main(p):
     """
@@ -544,6 +547,7 @@ def p_goto_main(p):
     cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos))
 
+#Bloque general del codigo
 
 def p_bloque(p):
     """
@@ -553,6 +557,7 @@ def p_bloque(p):
     global variablesGlobales
     variablesGlobales = {}
 
+#A cada variable declarada, se le asigna un espacio de memoria
 
 def p_guarda_variables_global(p):
     """
@@ -569,6 +574,7 @@ def p_guarda_variables_global(p):
     variables = {}
     dirFunciones['global'] = variablesGlobales
 
+#variables
 
 def p_vars(p):
     """
@@ -576,6 +582,7 @@ def p_vars(p):
          |
     """
 
+#variable individual, se guarda el id de esta como key en un diccionario que tendra sus atributos como contenido
 
 def p_var(p):
     """
@@ -599,6 +606,7 @@ def p_var(p):
                 raise SemanticError("Ya existe una funcion con el mismo nombre: " + p[2])
         variables[p[2]] = {"tipo": type2Code(tipo)}
 
+#Se recibe el tipo y se guarda en variable global
 
 def p_tipo(p):
     """
@@ -611,6 +619,7 @@ def p_tipo(p):
     global tipo
     tipo = p[1]
 
+#funciones
 
 def p_funciones(p):
     """
@@ -618,6 +627,8 @@ def p_funciones(p):
               |
     """
 
+#Checa ya existe una funcion con ese nombre. Si no, guarda el nombre
+#de la funcion con sus atributos en el directorio de funciones.
 
 def p_guarda_funcion(p):
     """
@@ -641,12 +652,15 @@ def p_guarda_funcion(p):
     variables = {}
     parametros= []
 
+#funcion
 
 def p_funcion(p):
     """
     funcion : FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
     """
 
+#Crea cuádruplo que declara que la funcion ha terminado. Se agregan
+#en el directorio de funciones, las variables temporales en la función actual
 
 def p_fin_funcion(p):
     """
@@ -661,6 +675,8 @@ def p_fin_funcion(p):
         temporalAuxDictionary[key] = memoriaCompilacion[2][key] \
             - temporalStamp[key]
     dirFunciones[funcionId]['temporales'] = temporalAuxDictionary
+
+#Se guarda el nombre de la funcion en una variable global llamada funcionId
 
 def p_guarda_funcion_id(p):
     """
@@ -683,6 +699,7 @@ def p_guarda_funcion_id(p):
         }
     temporalStamp = memoriaCompilacion[2].copy()
 
+#parametros
 
 def p_parametros(p):
     """
@@ -690,8 +707,10 @@ def p_parametros(p):
                |
     """
 
+#parametro individual. Si ya existe la variable marca error.
+#Guarda parametros con sus atributos en diccionario de variables.
 
-def p_parametro(p):
+def p_parametro(p):1
     """
     parametro : tipo ID
     """
@@ -705,6 +724,7 @@ def p_parametro(p):
     parametros.append(type2Code(tipo))
     memoriaCompilacion[1][type2Code(tipo)] += 1
 
+#parametros
 
 def p_mas_parametros(p):
     """
@@ -712,6 +732,7 @@ def p_mas_parametros(p):
                        |
     """
 
+#Bloque de codigo para el la funcion main
 
 def p_bloque_main(p):
     """
@@ -726,6 +747,7 @@ def p_bloque_main(p):
     dirFunciones['MAIN']['variables'] = variables
     variables = {}
 
+#El estatuto creado por bloque_main es llenado con los datos reales de las variables.
 
 def p_set_main_id(p):
     """
@@ -751,11 +773,15 @@ def p_set_main_id(p):
         104: 12000,
         }
 
+#Bloque de codigo
 
 def p_codigo_bloque(p):
     """
     codigo_bloque : LCURLY vars guarda_variables_local estatutos RCURLY
     """
+
+#Se guardan las variables en memoria local.
+# Si es lista, utiliza el tamaño de esta para asignarle el espacio de memoria adecuado.
 
 def p_guarda_variables_local(p):
     """
@@ -772,6 +798,7 @@ def p_guarda_variables_local(p):
             variables[variable]['memoria'] = memoriaCompilacion[1][tipoVar]
             memoriaCompilacion[1][tipoVar] += 1
 
+#llama a alguna de los diferentes estatutos asignados
 
 def p_estatuto(p):
     """
@@ -785,6 +812,8 @@ def p_estatuto(p):
                | dibujo
     """
 
+#Revisa si la pila de operadores tiene como ultimo elemento un "=". Si es así,
+#se lleva a cabo el proceso de asignacion y entra a su bloque indcado.
 
 def p_checa_pila_a(p):
     """
@@ -801,6 +830,7 @@ def p_checa_pila_a(p):
             op1Tipo = pilaTipos.pop()
             cuadruplos.append([operador, op2, -1, op1])
 
+#Se usa cuando se llama una funcion
 
 def p_function_use(p):
     """
@@ -808,6 +838,8 @@ def p_function_use(p):
                     | validar_funcion LPAREN RPAREN validar_parametros
     """
 
+#Validacion de la funcion. Revisa si es unica y crea el cuadruplo pidiendo el ERA.
+#La variable goSub se guarda con el nombre de la funcion actual.
 
 def p_validar_funcion(p):
     """
@@ -823,6 +855,9 @@ def p_validar_funcion(p):
     contParams = 0
     goSub = p[1]
 
+#Esta instrucción revisa que los parámetros insertados en una llamada a función
+#sean correspondientes a los tipos que se esperan así como el número de argumentos 
+#que se esperan
 
 def p_add_parametro(p):
     """
@@ -842,6 +877,8 @@ def p_add_parametro(p):
     contParams += 1
     cuadruplos.append([oper2Code('param'), operando, -1, contParams])
 
+#Revisa que no hayan menos parámetros de lo esperado. También se realiza 
+#el cuádruplo de gosub con el nombre de la función.
 
 def p_validar_parametros(p):
     """
@@ -870,20 +907,21 @@ def p_validar_parametros(p):
     parametros = []
     contParams = 0
 
-
+#mas parametros
 def p_more_ids(p):
     """
     more_ids : COMMA add_parametro more_ids
              |
     """
 
-
+#Asignacion
 def p_assignation(p):
     """
     assignation : id_aux value_list actualiza_pilaOper_a expresion
     """
 
 
+#actualiza pila de operadores con operador de asignacion
 def p_actualiza_pilaOper_a(p):
     """
     actualiza_pilaOper_a : EQUAL
@@ -892,6 +930,11 @@ def p_actualiza_pilaOper_a(p):
     global pilaOper
     pilaOper.append(p[1])
 
+#Value_list revisa que el valor que se recibe al intentar acceder a una lista sea entero.
+#Confirma que sea, en realidad una lista, y se obtiene el tipo del tope para ver que sea compatible,
+#al igual que el operador de la pila de operadores. Con estos datos se genera el 
+#cuádruplo del acceso de la lista y se guarda en una dirección negativa la cual indica que
+#se realizará un offset para indicar que es una lista.
 
 def p_value_list(p):
     """
@@ -916,6 +959,9 @@ def p_value_list(p):
             pilaTipos.append(variables[lista]['tipo'])
             memoriaCompilacion[2][101] += 1
 
+#Se verifica que, efectivamente, la variable que se está llamando
+#sea dimensionada para así poder asignarle los valores adecuados.
+
 def p_value_list_aux(p):
     """
     value_list_aux :
@@ -929,11 +975,14 @@ def p_value_list_aux(p):
     else:
         raise SemanticError("Esta variable no es una lista")
 
+#Estatuto de imprime
 
 def p_imprime(p):
     """
     imprime : IMPRIME LPAREN imprimir RPAREN
     """
+
+#Dentro de expresion se encuentra la información que se quiere imprimir.
 
 
 def p_imprimir(p):
@@ -941,6 +990,7 @@ def p_imprimir(p):
     imprimir : expresion imprimir_mas
     """
 
+#Se crea el cuádruplo de imprime, con el valor de la expresión a imprimir en la cuarta posición.
 
 def p_imprimir_mas(p):
     """
@@ -953,12 +1003,20 @@ def p_imprimir_mas(p):
     pilaTipos.pop()
     cuadruplos.append([oper2Code('IMPRIME'), -1, -1, expresion])
 
+#Primero valida que en la condición, el tipo sea un booleano.
+#Después genera el cuádruplo con la instrucción gotoF, 
+#la dirección de memoria en donde se guardará el resultado booleano
+# y el valor del gotoF queda en espera. Se actualiza la pila de saltos.
+
 
 def p_condicion(p):
     """
     condicion : SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
     """
-
+#Primero valida que en la condición, el tipo sea un booleano.
+#Después genera el cuádruplo con la instrucción gotoF, 
+#la dirección de memoria en donde se guardará el resultado booleano y 
+#el valor del gotoF queda en espera. Se actualiza la pila de saltos.
 
 def p_gotoF_condicion(p):
     """
@@ -975,6 +1033,7 @@ def p_gotoF_condicion(p):
     cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
     
 
+#Actualiza cuadruplp con salto
 
 def p_fin_condicion(p):
     """
@@ -986,12 +1045,16 @@ def p_fin_condicion(p):
     cuadruplos[finSalto][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
 
 
+#SINO
+
 def p_else_condicion(p):
     """
     else_condicion : SINO LCURLY goto_else estatutos RCURLY
                    |
     """
 
+#Se crea un cuádruplo con un goto.
+#Se actualiza cuádruplo que estaba en espera con valor del salto.
 
 def p_goto_else(p):
     """
@@ -1004,13 +1067,14 @@ def p_goto_else(p):
     pilaSaltos.append(len(cuadruplos))
     cuadruplos[saltoF][3] = len(cuadruplos) + 1
     
-
+#La instrucción base para un ciclo  while, dentro de expresion va a ser la condición que deberia de ser verdadera.
 
 def p_mientras(p):
     """
     mientras : MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
     """
 
+#Se genera una nueva instrucción en pilaSaltos, lo cual indica que en esa posición se necesita crear un nuevo salto.
 
 def p_actualiza_pilaSaltos(p):
     """
@@ -1019,6 +1083,11 @@ def p_actualiza_pilaSaltos(p):
 
     global pilaSaltos, cuadruplos
     pilaSaltos.append(len(cuadruplos) + 1)
+
+#Se crea la instrucción para cuando la condición del ciclo sea falso.
+#Dentro de esta se genera una comparación de que la condición tiene que regresar un booleano,
+#y si si la pila de Operaciones se le hace el pop correspondiente y se agrega el cuádruplo 
+#generado junto con su salto correspondiente.
 
 
 def p_gotoF_while(p):
@@ -1035,6 +1104,8 @@ def p_gotoF_while(p):
     cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
     pilaSaltos.append(len(cuadruplos) - 1) 
 
+#Se marca la instrucción para el fin del ciclo de while(Cuando) generando los saltos para cuando sea Verdadero 
+#y para cuando sea Falso al igual que el fin de este. Se agrega el cuádruplo correspondiente a la lista de cuádruplos.
 
 def p_fin_while(p):
     """
@@ -1047,6 +1118,8 @@ def p_fin_while(p):
     cuadruplos.append([oper2Code('goto'), -1, -1, saltoR])
     cuadruplos[saltoF][3] = len(cuadruplos) + 1
 
+#Dentro de la instrucción se agrega el cuádruplo sacando el operando y el tipo de operando de sus respectivas pilas.
+#Asimismo se asegura que el return no este dentro de MAIN o que se retorne el valor correspondiente a la función.
 
 def p_return(p):
     """
@@ -1065,6 +1138,9 @@ def p_return(p):
     cuadruplos.append([oper2Code('return'), -1, -1, op])
 
 
+#Esta instrucción agrega un cuádruplo a la lista de cuadruplos el cual contiene una dirección asignada acoplada a nuestro código.
+#El cuádruplo contiene la instrucción necesaria y la cantidad de unidades que se movera la flecha.
+
 def p_accion(p):
     """
     accion : DIRECCION LPAREN expresion RPAREN 
@@ -1077,8 +1153,11 @@ def p_accion(p):
     if opTipo != 101:
         raise SemanticError('Se esperaba un entero. Se recibio: '
                             + code2Type(opTipo))
-        cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
+    cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
+#Dentro de esta instrucción se encuentran los comandos para agregar 
+#instrucciones de cuadrado, círculo, rectángulo, triángulo lo cual agrega un cuadruplo, 
+#dependiendo de la instrucción, con sus respectivos valores para que esto sea interpretado después y ejecutado también.
 
 def p_dibujo(p):
     """
@@ -1097,6 +1176,7 @@ def p_dibujo(p):
                                 + code2Type(opTipo))
         cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
+#Van a agregarse diferentes estatutos a la pila de acciones y cada uno va a tener sus respectivas acciones y cuadruplos.
 
 def p_estatutos(p):
     """
@@ -1104,12 +1184,14 @@ def p_estatutos(p):
                 |
     """
 
+#Dentro de esta instrucción se genera la jerarquía de las diferentes expresiones junto con los operadores lógicos.
 
 def p_expresion(p):
     """
     expresion : big_exp or_exp checa_pila_or
     """
 
+#Revisa si existen condicionales de OR en la pila de operadores y si sí genera un cuádruplo para asignarle los valores correspondientes.
 
 def p_checa_pila_or(p):
     """
@@ -1121,6 +1203,7 @@ def p_checa_pila_or(p):
         if pilaOper[-1] == '||':
             creaCuadruplos()
 
+#Si hay un or, agregarlo a la pila de operadores.
 
 def p_or_exp(p):
     """
@@ -1135,12 +1218,14 @@ def p_or_exp(p):
     except IndexError:
         return
 
+#referenciado por expresion
 
 def p_big_exp(p):
     """
     big_exp : medium_exp and_exp checa_pila_and
     """
 
+#Si el último operador es un and, crear cuádruplo.   
 
 def p_checa_pila_and(p):
     """
@@ -1152,6 +1237,7 @@ def p_checa_pila_and(p):
         if pilaOper[-1] == '&&':
             creaCuadruplos()
 
+#Si hay un and, agregarlo a la pila de operadores.
 
 def p_and_exp(p):
     """
@@ -1166,12 +1252,14 @@ def p_and_exp(p):
     except IndexError:
         return
 
+#referenciado por big_exp
 
 def p_medium_exp(p):
     """
     medium_exp : exp comp_exp checa_pila_comp
     """
 
+#Si el último operador es un >, <, <>, ==, >=, o <= entonces crear cuádruplo.
 
 def p_checa_pila_comp(p):
     """
@@ -1185,6 +1273,7 @@ def p_checa_pila_comp(p):
             or pilaOper[-1] == '<=':
             creaCuadruplos()
 
+#Si hay un operador de comparación, agregarlo a la pila de operadores.
 
 def p_comp_exp(p):
     """
@@ -1204,11 +1293,14 @@ def p_comp_exp(p):
     except IndexError:
         return
 
+#referenciado por medium_exp
 
 def p_exp(p):
     """
     exp : termino checa_pila_mm termino_mm
     """
+
+#Si el último elemento de la pila de operadores es suma o resta, mandar a hacer el cuádruplo.
 
 
 def p_checa_pila_mm(p):
@@ -1221,6 +1313,7 @@ def p_checa_pila_mm(p):
         if pilaOper[-1] == '+' or pilaOper[-1] == '-':
             creaCuadruplos()
 
+#termino mas y menos
 
 def p_termino_mm(p):
     """
@@ -1228,6 +1321,7 @@ def p_termino_mm(p):
                |
     """
 
+#Si hay un mas o menos, actualizar pila de operadores.
 
 def p_actualiza_pilaOper_mm(p):
     """
@@ -1238,12 +1332,14 @@ def p_actualiza_pilaOper_mm(p):
     global pilaOper
     pilaOper.append(p[1])
 
+#referenciado por exp
 
 def p_termino(p):
     """
     termino : factor checa_pila_md factor_md
     """
 
+#Si el último elemento de la pila es multiplicacion o division, mandar a hacer el cuádruplo.
 
 def p_checa_pila_md(p):
     """
@@ -1255,6 +1351,7 @@ def p_checa_pila_md(p):
         if pilaOper[-1] == '*' or pilaOper[-1] == '/':
             creaCuadruplos()
 
+#factor multiplicacion, division
 
 def p_factor_md(p):
     """
@@ -1262,6 +1359,7 @@ def p_factor_md(p):
               |
     """
 
+#Agrega a la pila de operadores, la multiplicacion o division.  
 
 def p_actualiza_pilaOper_md(p):
     """
@@ -1273,12 +1371,15 @@ def p_actualiza_pilaOper_md(p):
     pilaOper.append(p[1])
 
 
+#Referenciado por termino. Factor esta comprendido por una expresión rodeada por paréntesis o una constante.
+
 def p_factor(p):
     """
     factor : actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
            | constante
     """
 
+#push del parentesis a la pila de operadores
 
 def p_actualiza_pilaOper_lparen(p):
     """
@@ -1288,6 +1389,7 @@ def p_actualiza_pilaOper_lparen(p):
     global pilaOper
     pilaOper.append(p[1])
 
+#pop al cerrar el parentesis
 
 def p_actualiza_pilaOper_rparen(p):
     """
@@ -1297,6 +1399,7 @@ def p_actualiza_pilaOper_rparen(p):
     global pilaOper
     pilaOper.pop()
 
+#En este punto se encuentran todas las constantes, y la llamada a una función.
 
 def p_constante(p):
     """
@@ -1308,6 +1411,7 @@ def p_constante(p):
            | function_use
     """
 
+#Guardar id
 
 def p_id_aux(p):
     """
@@ -1333,6 +1437,7 @@ def p_id_aux(p):
             pilaOp.append(dirFunciones[funcionId]['variables'][p[1]]['memoria'])
             pilaTipos.append(dirFunciones[funcionId]['variables'][p[1]]['tipo'])
 
+#Guardar constante entero
 
 def p_cte_e_aux(p):
     """
@@ -1347,6 +1452,7 @@ def p_cte_e_aux(p):
     pilaOp.append(constantes[p[1]]['memoria'])
     pilaTipos.append(constantes[p[1]]['tipo'])
 
+#Guardad constante decimal
 
 def p_cte_f_aux(p):
     """
@@ -1361,6 +1467,7 @@ def p_cte_f_aux(p):
     pilaOp.append(constantes[p[1]]['memoria'])
     pilaTipos.append(constantes[p[1]]['tipo'])
 
+#Gardar constante palabra
 
 def p_cte_s_aux(p):
     """
@@ -1375,6 +1482,7 @@ def p_cte_s_aux(p):
     pilaOp.append(constantes[p[1]]['memoria'])
     pilaTipos.append(variables[p[1]]['tipo'])
 
+#Guardar constante booleano
 
 def p_cte_b_aux(p):
     """
@@ -1404,6 +1512,7 @@ def creaCuadruplos():
     op1 = pilaOp.pop()
     op2Tipo = pilaTipos.pop()
     op1Tipo = pilaTipos.pop()
+    #Checa si son compatibles los tipos con el cubo semantico
     cuboTipo = cuboSemantico[operador][op1Tipo - 101][op2Tipo - 101]
     if cuboTipo == -1:
         raise SemanticError('Tipos incompatibles: ' + code2Type(op1Tipo)
@@ -1430,6 +1539,8 @@ def parse():
         parametros, variablesGlobales, cuadruplos, pilaTipos, pilaOper, \
         pilaOp, actualiza_pilaSaltos,pilaSaltos
 
+    #Lee nombre de archivo
+    
     try:
         s = raw_input('izilang > ')
     except EOFError:
