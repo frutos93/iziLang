@@ -45,6 +45,7 @@ funcionId = ''
 contParams = 0
 goSub = ''
 temporalStamp = {}
+elseFlag = 0;
 
 #Manejo de errores
 
@@ -1038,13 +1039,14 @@ def p_fin_condicion(p):
     fin_condicion :
     """
 
-    global pilaSaltos, cuadruplos
+    global pilaSaltos, cuadruplos, elseFlag
     finSalto = pilaSaltos.pop()
     print("fin_condicion")
-    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
-    cuadruplos[finSalto-1][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    print ("cuadruplos[finSalto]: ", cuadruplos[finSalto])
+    cuadruplos[finSalto-elseFlag][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    elseFlag = 0
     print (cuadruplos[finSalto])
-    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
+    print ("cuadruplos[finSalto]: ", cuadruplos[finSalto])
 
 
 #SINO
@@ -1054,6 +1056,10 @@ def p_else_condicion(p):
     else_condicion : SINO LCURLY goto_else estatutos RCURLY
                    |
     """
+    global elseFlag
+    if(len(p) > 2):
+        elseFlag = 1
+
 
 #Se crea un cuádruplo con un goto.
 #Se actualiza cuádruplo que estaba en espera con valor del salto.
