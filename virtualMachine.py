@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import scanner as scanner
 import turtle
@@ -15,7 +16,7 @@ memoriaEjecucion  = [{},[{}],[{}],constantes]
 cuadruplos = []
 inner = 0
 
-#Método que carga todos los datos de scanner en la memoria de ejecución
+#Metodo que carga todos los datos de scanner en la memoria de ejecucion
 #guarda las funciones en un diccionario de funciones en memoria virtual al igual
 #que guarda constantes y cuadruplos
 def cargaDatosEnMemoria():
@@ -64,9 +65,9 @@ def cargaDatosEnMemoria():
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
     if inner == 1:
-        cont = -2
-    else:
         cont = -1
+    else:
+        cont = 0
     if (memoria < 0):
         memoria *= -1
         memoria = getMemoryValue(memoria)
@@ -79,13 +80,13 @@ def getMemoryValue(memoria):
     else:
         return memoriaEjecucion[3][memoria]['valor']
 
-#Guarda un valor a una memoria, generalmente es cuando se desea guardar una memoria dentro de ejecución
+#Guarda un valor a una memoria, generalmente es cuando se desea guardar una memoria dentro de ejecucion
 def saveValueMemory(result, memoria):
     global memoriaEjecucion, inner
     if inner == 1:
-        cont = -2
-    else:
         cont = -1
+    else:
+        cont = 0
     if (memoria < 0):
         memoria *= -1
         memoria = getMemoryValue(memoria)
@@ -106,7 +107,6 @@ def operacion(cuadruplo):
     oper1 = getMemoryValue(oper1)
     oper2 = cuadruplo[2]
     oper2 = getMemoryValue(oper2)
-
     if(cuadruplo[0] == 0):
         saveValueMemory(int(oper1)+int(oper2),cuadruplo[3])
     elif(cuadruplo[0] == 1):
@@ -184,7 +184,7 @@ def run():
         elif(instruccion == 12):
             saveValueMemory(getMemoryValue(cuadruploActual[1]), cuadruploActual[3])
         elif(instruccion == 13):
-            currentPointer = cuadruploActual[3] -1
+            currentPointer = int(cuadruploActual[3]) -1
         elif(instruccion == 14):
             if(getMemoryValue(cuadruploActual[1]) == False):
                 currentPointer = cuadruploActual[3] - 1
@@ -192,16 +192,16 @@ def run():
             print "PRINT: ", getMemoryValue(cuadruploActual[3])
         elif(instruccion == 16):
             turtle.setheading(90)
-            turtle.fd(cuadruploActual[3])
+            turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 17):
             turtle.setheading(270)
-            turtle.fd(cuadruploActual[3])
-        elif(instruccion == 19):
+            turtle.fd(int(getMemoryValue(cuadruploActual[3])))
+        elif(instruccion == 18):
             turtle.setheading(180)
-            turtle.fd(cuadruploActual[3])
+            turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 19):
             turtle.setheading(0)
-            turtle.fd(cuadruploActual[3])
+            turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 20):
             reiniciaEra()
             currentPointer = memoriesStack.pop()
@@ -232,7 +232,6 @@ def run():
                 break;
         cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
-    print scanner.cuadruplos
     turtle.getscreen()._root.mainloop()
 
 

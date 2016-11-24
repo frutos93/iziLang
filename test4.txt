@@ -1,20 +1,16 @@
 PROGRAMA example2:
-    ENTERO b;
-    FUNCION ENTERO imprimir(ENTERO n)
-    {
-        ENTERO x;
-        ENTERO y;
-        x = 5;
-        y = 10;
-        n = x + y;
-        RETURN imprimir(n - 1);
+    FUNCION ENTERO prueba(ENTERO n){
+        ENTERO a;
+        SI(n == 1){
+            RETURN 1;
+        }SINO{
+            RETURN n;
+        };
     }
     MAIN()
     {
         ENTERO z;
-        z = 5 + 6;
-        imprimir(5);
-        ARRIBA(10);
-        CUADRADO(20 + z);
+        z = prueba(2);
+        IMPRIME(z);
     }
 FIN

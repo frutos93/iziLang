@@ -1,19 +1,18 @@
-PROGRAMA example2:
-    ENTERO b;
-    FUNCION ENTERO imprimir(ENTERO n)
-    {
-        ENTERO x;
-        ENTERO y;
-        x = 5;
-        y = 10;
-        n = x + y;
-        RETURN imprimir(n - 1);
+PROGRAMA factorial:
+    MAIN(){
+        ENTERO i;
+        ENTERO fact;
+        ENTERO num;
+
+        i = 1;
+        fact = 1;
+        num = 8;
+
+        MIENTRAS (i < (num + 1)){
+            fact =  fact * i;
+            i = i+1;
+        };
+        IMPRIME(fact);
     }
-    MAIN()
-    {
-        ENTERO z;
-        z = 5 + 6;
-        imprimir(5);
-        ARRIBA(10.5);
-    }
+
 FIN

@@ -1,15 +1,28 @@
-PROGRAMA example2:
-    ENTERO b;
-    FUNCION ENTERO imprimir(ENTERO n)
+PROGRAMA fib:
+     MAIN()
     {
-        ENTERO x;
-        x = 5 + 0;
-        RETURN imprimir(n - 1);
-    }
-    MAIN()
-    {
-        ENTERO z;
-        z = 5 + 6;
-        imprimir(5);
+       ENTERO n;
+       ENTERO first;
+       ENTERO second;
+       ENTERO next;
+       ENTERO c;
+
+       n = 5;
+       first = 0;
+       second = 1;
+       c = 0;
+
+       MIENTRAS (c < n){
+        SI (c < 2){
+            next = c;
+        }
+        SINO{
+            next = first + second;
+            first = second;
+            second = next;
+        };
+        IMPRIME (next);
+        c = c + 1;
+       };
     }
 FIN

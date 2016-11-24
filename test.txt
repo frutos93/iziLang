@@ -1,7 +1,22 @@
 PROGRAMA example2:
 
+    FUNCION ENTERO factorial(ENTERO n){
+        ENTERO i;
+        ENTERO fact;
+
+        i = 1;
+        fact = 1;
+
+        MIENTRAS (i < (n + 1)){
+            fact =  fact * i;
+            i = i+1;
+        };
+        IMPRIME(fact);
+    }
+
     MAIN()
     {
-        ARRIBA(30);
+        ENTERO a;
+        a =factorial();
     }
 FIN

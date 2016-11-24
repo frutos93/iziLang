@@ -710,7 +710,7 @@ def p_parametros(p):
 #parametro individual. Si ya existe la variable marca error.
 #Guarda parametros con sus atributos en diccionario de variables.
 
-def p_parametro(p):1
+def p_parametro(p):
     """
     parametro : tipo ID
     """
@@ -896,10 +896,8 @@ def p_validar_parametros(p):
     cuadruplos.append([oper2Code('='),
                       dirFunciones[goSub]['memoria'], -1,
                       memoriaCompilacion[2][dirFunciones[goSub]['return']]])
-    print ("cuadruplo raro:")
 
-    pilaOp.append(memoriaCompilacion[2][dirFunciones[goSub]['return'
-                  ]])
+    pilaOp.append(memoriaCompilacion[2][dirFunciones[goSub]['return']])
     pilaTipos.append(dirFunciones[goSub]['return'])
     memoriaCompilacion[2][dirFunciones[goSub]['return']] += 1
 

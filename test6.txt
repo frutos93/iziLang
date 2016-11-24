@@ -1,0 +1,15 @@
+PROGRAMA grafico:
+    MAIN()
+    {
+        ENTERO dist;
+        dist = 30;
+        MIENTRAS( dist < 100){
+        ARRIBA(dist);
+        IZQUIERDA(dist);
+        ABAJO(dist);
+        DERECHA(dist);
+        dist = dist +5;
+        };
+    }
+
+FIN

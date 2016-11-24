@@ -1,0 +1,26 @@
+PROGRAMA grafico:
+    MAIN()
+    {
+        ENTERO a[10];
+        ENTERO aux;
+        ENTERO aux2;
+        aux2 = 10;
+        aux = 0;
+
+        MIENTRAS(aux < 10){
+            a[aux] = aux2;
+            aux = aux + 1;
+            aux2 = aux2 - 1;
+        };
+        aux = 0;
+        MIENTRAS(aux < 10){
+            SI(a[aux] == 4){
+                IMPRIME(aux);
+            };
+            aux = aux+1;
+        };
+
+
+    }
+
+FIN
