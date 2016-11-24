@@ -1029,18 +1029,22 @@ def p_gotoF_condicion(p):
     condicion = pilaOp.pop()
     pilaSaltos.append(len(cuadruplos))
     cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
-    
+
 
 #Actualiza cuadruplp con salto
 
 def p_fin_condicion(p):
     """
-    fin_condicion : 
+    fin_condicion :
     """
 
     global pilaSaltos, cuadruplos
     finSalto = pilaSaltos.pop()
-    cuadruplos[finSalto][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    print("fin_condicion")
+    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
+    cuadruplos[finSalto-1][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    print (cuadruplos[finSalto])
+    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
 
 
 #SINO
@@ -1056,15 +1060,16 @@ def p_else_condicion(p):
 
 def p_goto_else(p):
     """
-    goto_else : 
+    goto_else :
     """
 
     global pilaSaltos, cuadruplos
+    print()
     cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
     saltoF = pilaSaltos.pop()
     pilaSaltos.append(len(cuadruplos))
     cuadruplos[saltoF][3] = len(cuadruplos) + 1
-    
+
 #La instrucción base para un ciclo  while, dentro de expresion va a ser la condición que deberia de ser verdadera.
 
 def p_mientras(p):
@@ -1084,7 +1089,7 @@ def p_actualiza_pilaSaltos(p):
 
 #Se crea la instrucción para cuando la condición del ciclo sea falso.
 #Dentro de esta se genera una comparación de que la condición tiene que regresar un booleano,
-#y si si la pila de Operaciones se le hace el pop correspondiente y se agrega el cuádruplo 
+#y si si la pila de Operaciones se le hace el pop correspondiente y se agrega el cuádruplo
 #generado junto con su salto correspondiente.
 
 
@@ -1100,9 +1105,9 @@ def p_gotoF_while(p):
                              + code2Type(condicionTipo))
     condicion = pilaOp.pop()
     cuadruplos.append([oper2Code('gotoF'), condicion, -1, 'espera'])
-    pilaSaltos.append(len(cuadruplos) - 1) 
+    pilaSaltos.append(len(cuadruplos) - 1)
 
-#Se marca la instrucción para el fin del ciclo de while(Cuando) generando los saltos para cuando sea Verdadero 
+#Se marca la instrucción para el fin del ciclo de while(Cuando) generando los saltos para cuando sea Verdadero
 #y para cuando sea Falso al igual que el fin de este. Se agrega el cuádruplo correspondiente a la lista de cuádruplos.
 
 def p_fin_while(p):
@@ -1141,7 +1146,7 @@ def p_return(p):
 
 def p_accion(p):
     """
-    accion : DIRECCION LPAREN expresion RPAREN 
+    accion : DIRECCION LPAREN expresion RPAREN
 
     """
 
@@ -1153,8 +1158,8 @@ def p_accion(p):
                             + code2Type(opTipo))
     cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
-#Dentro de esta instrucción se encuentran los comandos para agregar 
-#instrucciones de cuadrado, círculo, rectángulo, triángulo lo cual agrega un cuadruplo, 
+#Dentro de esta instrucción se encuentran los comandos para agregar
+#instrucciones de cuadrado, círculo, rectángulo, triángulo lo cual agrega un cuadruplo,
 #dependiendo de la instrucción, con sus respectivos valores para que esto sea interpretado después y ejecutado también.
 
 def p_dibujo(p):
@@ -1173,6 +1178,35 @@ def p_dibujo(p):
             raise SemanticError('Se esperaba un entero. Se recibio: '
                                 + code2Type(opTipo))
         cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
+
+    if p[1] == 'RECTANGULO':
+        expresion1 = pilaOp.pop()
+        op1Tipo = pilaTipos.pop()
+        expresion2 = pilaOp.pop()
+        op2Tipo = pilaTipos.pop()
+
+        if op1Tipo != 101 or op2Tipo != 101:
+            raise SemanticError('Se esperaban enteros. Se recibio: '
+                                + code2Type(op2Tipo)
+                                + code2Type(op1Tipo))
+        cuadruplos.append([oper2Code(p[1]), -1, expresion2, expresion1])
+
+    if p[1] == 'Triangulo':
+        expresion1 = pilaOp.pop()
+        op1Tipo = pilaTipos.pop()
+        expresion2 = pilaOp.pop()
+        op2Tipo = pilaTipos.pop()
+        expresion3 = pilaOp.pop()
+        op3Tipo = pilaTipos.pop()
+
+        if op1Tipo != 101 or op2Tipo != 101 or op3Tipo != 101:
+            raise SemanticError('Se esperaban enteros. Se recibio: '
+                                + code2Type(op2Tipo)
+                                + code2Type(op1Tipo)
+                                + code3Type(op3Tipo))
+        cuadruplos.append([oper2Code(p[1]), expresion3, expresion2, expresion1])
+
+
 
 #Van a agregarse diferentes estatutos a la pila de acciones y cada uno va a tener sus respectivas acciones y cuadruplos.
 
@@ -1223,7 +1257,7 @@ def p_big_exp(p):
     big_exp : medium_exp and_exp checa_pila_and
     """
 
-#Si el último operador es un and, crear cuádruplo.   
+#Si el último operador es un and, crear cuádruplo.
 
 def p_checa_pila_and(p):
     """
@@ -1357,7 +1391,7 @@ def p_factor_md(p):
               |
     """
 
-#Agrega a la pila de operadores, la multiplicacion o division.  
+#Agrega a la pila de operadores, la multiplicacion o division.
 
 def p_actualiza_pilaOper_md(p):
     """
@@ -1538,7 +1572,7 @@ def parse():
         pilaOp, actualiza_pilaSaltos,pilaSaltos
 
     #Lee nombre de archivo
-    
+
     try:
         s = raw_input('izilang > ')
     except EOFError:
@@ -1587,6 +1621,7 @@ def parse():
             string += line
         try:
             parser.parse(string)
+            print("cuadruplos", cuadruplos)
             print ('El programa se ejecuto correctamente')
         except EOFError:
             return
