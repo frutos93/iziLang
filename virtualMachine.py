@@ -65,9 +65,9 @@ def cargaDatosEnMemoria():
 def getMemoryValue(memoria):
     global memoriaEjecucion, inner
     if inner == 1:
-        cont = -1
+        cont = -2
     else:
-        cont = 0
+        cont = -1
     if (memoria < 0):
         memoria *= -1
         memoria = getMemoryValue(memoria)
@@ -84,9 +84,9 @@ def getMemoryValue(memoria):
 def saveValueMemory(result, memoria):
     global memoriaEjecucion, inner
     if inner == 1:
-        cont = -1
+        cont = -2
     else:
-        cont = 0
+        cont = -1
     if (memoria < 0):
         memoria *= -1
         memoria = getMemoryValue(memoria)
@@ -177,7 +177,14 @@ def run():
     memoriaEjecucion[3] = constantes
     cuadruploActual = cuadruplos[currentPointer-1]
     currentPointer += 1
+    print "Cuadruplos", cuadruplos
+    print "Funciones: ", funcionesDir
+    print "Funciones Scanner", scanner.dirFunciones
     while cuadruploActual[0] != 'FIN':
+        print "Cuadruplos: ", cuadruploActual
+        print "Memoria: ", memoriaEjecucion
+        print "Offset: ", inner
+        print "Pointer", currentPointer
         instruccion = cuadruploActual[0]
         if(instruccion < 12):
             operacion(cuadruploActual)
@@ -212,8 +219,8 @@ def run():
             tipoFuncion.append(cuadruploActual[3])
             inner = 1
         elif(instruccion == 22):
-
             memoriesStack.append(currentPointer)
+            inner = 0
             currentPointer = funcionesDir[cuadruploActual[3]]['cuadruplo'] - 1
             memoriaParametros()
         elif(instruccion == 23):
