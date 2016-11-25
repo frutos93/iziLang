@@ -45,6 +45,7 @@ funcionId = ''
 contParams = 0
 goSub = ''
 temporalStamp = {}
+elseFlag = 0;
 
 #Manejo de errores
 
@@ -640,7 +641,7 @@ def p_funciones(p):
 
 def p_guarda_funcion(p):
     """
-    guarda_funcion : 
+    guarda_funcion :
     """
 
     global dirFunciones, variables, parametros, funcionId, tipo, memoriaCompilacion, cuadruplos
@@ -672,7 +673,7 @@ def p_funcion(p):
 
 def p_fin_funcion(p):
     """
-    fin_funcion : 
+    fin_funcion :
     """
 
     global dirFunciones, funcionId, memoriaCompilacion, cuadruplos, \
@@ -759,7 +760,7 @@ def p_bloque_main(p):
 
 def p_set_main_id(p):
     """
-    set_main_id : 
+    set_main_id :
     """
 
     global cuadruplos, pilaSaltos, memoriaCompilacion, dirFunciones, \
@@ -825,7 +826,7 @@ def p_estatuto(p):
 
 def p_checa_pila_a(p):
     """
-    checa_pila_a : 
+    checa_pila_a :
     """
 
     global pilaOp, cuadruplos, pilaOper, pilaTipos
@@ -864,7 +865,7 @@ def p_validar_funcion(p):
     goSub = p[1]
 
 #Esta instrucción revisa que los parámetros insertados en una llamada a función
-#sean correspondientes a los tipos que se esperan así como el número de argumentos 
+#sean correspondientes a los tipos que se esperan así como el número de argumentos
 #que se esperan
 
 def p_add_parametro(p):
@@ -885,12 +886,12 @@ def p_add_parametro(p):
     contParams += 1
     cuadruplos.append([oper2Code('param'), operando, -1, contParams])
 
-#Revisa que no hayan menos parámetros de lo esperado. También se realiza 
+#Revisa que no hayan menos parámetros de lo esperado. También se realiza
 #el cuádruplo de gosub con el nombre de la función.
 
 def p_validar_parametros(p):
     """
-    validar_parametros : 
+    validar_parametros :
     """
 
     global contParams, memoriaCompilacion, pilaOp, pilaTipos, \
@@ -938,7 +939,7 @@ def p_actualiza_pilaOper_a(p):
 
 #Value_list revisa que el valor que se recibe al intentar acceder a una lista sea entero.
 #Confirma que sea, en realidad una lista, y se obtiene el tipo del tope para ver que sea compatible,
-#al igual que el operador de la pila de operadores. Con estos datos se genera el 
+#al igual que el operador de la pila de operadores. Con estos datos se genera el
 #cuádruplo del acceso de la lista y se guarda en una dirección negativa la cual indica que
 #se realizará un offset para indicar que es una lista.
 
@@ -1010,7 +1011,7 @@ def p_imprimir_mas(p):
     cuadruplos.append([oper2Code('IMPRIME'), -1, -1, expresion])
 
 #Primero valida que en la condición, el tipo sea un booleano.
-#Después genera el cuádruplo con la instrucción gotoF, 
+#Después genera el cuádruplo con la instrucción gotoF,
 #la dirección de memoria en donde se guardará el resultado booleano
 # y el valor del gotoF queda en espera. Se actualiza la pila de saltos.
 
@@ -1020,13 +1021,13 @@ def p_condicion(p):
     condicion : SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
     """
 #Primero valida que en la condición, el tipo sea un booleano.
-#Después genera el cuádruplo con la instrucción gotoF, 
-#la dirección de memoria en donde se guardará el resultado booleano y 
+#Después genera el cuádruplo con la instrucción gotoF,
+#la dirección de memoria en donde se guardará el resultado booleano y
 #el valor del gotoF queda en espera. Se actualiza la pila de saltos.
 
 def p_gotoF_condicion(p):
     """
-    gotoF_condicion : 
+    gotoF_condicion :
     """
 
     global pilaOper, pilaSaltos, cuadruplos, pilaOp, pilaTipos
@@ -1046,9 +1047,9 @@ def p_fin_condicion(p):
     fin_condicion :
     """
 
-    global pilaSaltos, cuadruplos
+    global pilaSaltos, cuadruplos,elseFlag
     finSalto = pilaSaltos.pop()
-    cuadruplos[finSalto-1][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
+    cuadruplos[finSalto-elseFlag][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
 #SINO
 
 def p_else_condicion(p):
@@ -1056,7 +1057,9 @@ def p_else_condicion(p):
     else_condicion : SINO LCURLY goto_else estatutos RCURLY
                    |
     """
-
+    global elseFlag
+    if(len(p) > 2):
+        elseFlag = 1
 #Se crea un cuádruplo con un goto.
 #Se actualiza cuádruplo que estaba en espera con valor del salto.
 
