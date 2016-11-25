@@ -1,0 +1,10 @@
+PROGRAMA dibujaPrueba:
+
+
+    MAIN()
+    {
+        TRIANGULO(30,30,30);
+
+    }
+
+FIN

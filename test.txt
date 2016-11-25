@@ -1,16 +1,22 @@
 PROGRAMA example2:
 
     FUNCION ENTERO factorial(ENTERO n){
-        ENTERO i;
-        ENTERO fact;
+        ENTERO b;
+        IMPRIME(n);
+        SI(n == 0){
+            RETURN 1;
+        }SINO{
+            b = factorial(n - 1) * n;
+            RETURN b;
+        };
 
-       
+
      }
 
     MAIN()
     {
         ENTERO a;
-        a = factorial(6);
+        a = factorial(3);
         IMPRIME(a);
     }
 

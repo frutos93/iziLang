@@ -167,6 +167,14 @@ def oper2Code(oper):
         return 24
     elif oper == 'lista':
         return 25
+    elif oper == 'CUADRADO':
+        return 26
+    elif oper == 'CIRCULO':
+        return 27
+    elif oper == 'RECTANGULO':
+        return 28
+    elif oper == 'TRIANGULO':
+        return 29
 
 def code2Oper(code):
     if code == '+':
@@ -1040,13 +1048,7 @@ def p_fin_condicion(p):
 
     global pilaSaltos, cuadruplos
     finSalto = pilaSaltos.pop()
-    print("fin_condicion")
-    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
     cuadruplos[finSalto-1][3] = len(cuadruplos) + 1  # Apuntar a la siguiente
-    print (cuadruplos[finSalto])
-    print ("cuadruplos[finSalto: ", cuadruplos[finSalto])
-
-
 #SINO
 
 def p_else_condicion(p):
@@ -1064,7 +1066,6 @@ def p_goto_else(p):
     """
 
     global pilaSaltos, cuadruplos
-    print()
     cuadruplos.append([oper2Code('goto'), -1, -1, 'espera'])
     saltoF = pilaSaltos.pop()
     pilaSaltos.append(len(cuadruplos))
@@ -1191,7 +1192,7 @@ def p_dibujo(p):
                                 + code2Type(op1Tipo))
         cuadruplos.append([oper2Code(p[1]), -1, expresion2, expresion1])
 
-    if p[1] == 'Triangulo':
+    if p[1] == 'TRIANGULO':
         expresion1 = pilaOp.pop()
         op1Tipo = pilaTipos.pop()
         expresion2 = pilaOp.pop()
@@ -1203,7 +1204,7 @@ def p_dibujo(p):
             raise SemanticError('Se esperaban enteros. Se recibio: '
                                 + code2Type(op2Tipo)
                                 + code2Type(op1Tipo)
-                                + code3Type(op3Tipo))
+                                + code2Type(op3Tipo))
         cuadruplos.append([oper2Code(p[1]), expresion3, expresion2, expresion1])
 
 
@@ -1621,7 +1622,6 @@ def parse():
             string += line
         try:
             parser.parse(string)
-            print("cuadruplos", cuadruplos)
             print ('El programa se ejecuto correctamente')
         except EOFError:
             return
