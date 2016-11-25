@@ -2,7 +2,6 @@ PROGRAMA example2:
 
     FUNCION ENTERO factorial(ENTERO n){
         ENTERO b;
-        IMPRIME(n);
         SI(n == 0){
             RETURN 1;
         }SINO{

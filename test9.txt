@@ -1,10 +1,9 @@
 PROGRAMA dibujaPrueba:
 
-
     MAIN()
     {
-        TRIANGULO(30,30,30);
-
+        ROTA(45);
+        DERECHA(100);
     }
 
 FIN

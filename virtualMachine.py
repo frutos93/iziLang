@@ -194,16 +194,16 @@ def run():
         elif(instruccion == 15):
             print "PRINT: ", getMemoryValue(cuadruploActual[3])
         elif(instruccion == 16):
-            turtle.setheading(90)
+            turtle.right(90)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 17):
-            turtle.setheading(270)
+            turtle.right(270)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 18):
-            turtle.setheading(180)
+            turtle.right(180)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 19):
-            turtle.setheading(0)
+            turtle.right(0)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 20):
             reiniciaEra()
@@ -295,63 +295,66 @@ def run():
             turtle.penup()
             turtle.back(offset1)
             turtle.pendown()
-
         elif(instruccion == 29):
-            side1=int(getMemoryValue(cuadruploActual[1]))
-            side2=int(getMemoryValue(cuadruploActual[2]))
-            side3=int(getMemoryValue(cuadruploActual[3]))
-            if((side1+side2>side3) and (side1+side3 > side2) and (side2 + side3 > side1)):
-                cos3 = -((side3*side3) - (side1*side1) - (side2*side2))/(2*side1*side2)
-                ang3 = math.acos(cos3)
-                cos2 = -((side2*side2) - (side1*side1) - (side3*side3))/(2*side1*side3)
-                ang2 = math.acos(cos2)
-                ang2 = (ang2 * 180) / math.pi
-                ang3 = (ang3 * 180) / math.pi
-                ang1 = 180 - ang2 - ang3
-                direccion = turtle.heading()
-                s = (side1 + side2 + side3)/2
-                area = math.sqrt(s*(s-side1)*(s-side2)*(s-side3))
-                base = max(side1,side2,side3)
-                h = (area*2)/base
-                turtle.penup()
-                turtle.fd(h/2)
-                turtle.pendown()
-                if(base != side1 and base != side2):
-                    print ang1,ang2,ang3
-                    turtle.left(180 - (ang3/2))
-                    turtle.fd(side1)
-                    turtle.left(180-ang2)
-                    turtle.fd(side3)
-                    turtle.left(180 - ang1)
-                    turtle.fd(side2)
-                    turtle.left(180 - (ang3 / 2))
-
-                elif(base != side2 and base != side3):
-                    print ang1, ang2, ang3
-                    turtle.left(180 - (ang3 / 2))
-                    turtle.fd(side2)
-                    turtle.left(180 - ang1)
-                    turtle.fd(side3)
-                    turtle.left(180 - ang2)
-                    turtle.fd(side1)
-                    turtle.left(180 - (ang3 / 2))
-                else:
-                    print ang1, ang2, ang3
-                    turtle.left(180 - (ang3 / 2))
-                    turtle.fd(side1)
-                    turtle.left(180 - ang2)
-                    turtle.fd(side3)
-                    turtle.left(180 - ang1)
-                    turtle.fd(side2)
-                    turtle.left(180 - (ang3 / 2))
-                turtle.setheading(direccion)
-                turtle.back(h/2)
-
-            else:
-                turtle.penup()
-                turtle.back(250)
-                turtle.pendown()
-                turtle.write("GIVEN SIDES OF THE TRIANGLE ARE WRONG", font=("Arial", 16, "normal"))
+            print int(getMemoryValue(cuadruploActual[3]))
+            turtle.right(int(getMemoryValue(cuadruploActual[3])))
+        #
+        # elif(instruccion == 29):
+        #     side1=int(getMemoryValue(cuadruploActual[1]))
+        #     side2=int(getMemoryValue(cuadruploActual[2]))
+        #     side3=int(getMemoryValue(cuadruploActual[3]))
+        #     if((side1+side2>side3) and (side1+side3 > side2) and (side2 + side3 > side1)):
+        #         cos3 = -((side3*side3) - (side1*side1) - (side2*side2))/(2*side1*side2)
+        #         ang3 = math.acos(cos3)
+        #         cos2 = -((side2*side2) - (side1*side1) - (side3*side3))/(2*side1*side3)
+        #         ang2 = math.acos(cos2)
+        #         ang2 = (ang2 * 180) / math.pi
+        #         ang3 = (ang3 * 180) / math.pi
+        #         ang1 = 180 - ang2 - ang3
+        #         direccion = turtle.heading()
+        #         s = (side1 + side2 + side3)/2
+        #         area = math.sqrt(s*(s-side1)*(s-side2)*(s-side3))
+        #         base = max(side1,side2,side3)
+        #         h = (area*2)/base
+        #         turtle.penup()
+        #         turtle.fd(h/2)
+        #         turtle.pendown()
+        #         if(base != side1 and base != side2):
+        #             print ang1,ang2,ang3
+        #             turtle.left(180 - (ang3/2))
+        #             turtle.fd(side1)
+        #             turtle.left(180-ang2)
+        #             turtle.fd(side3)
+        #             turtle.left(180 - ang1)
+        #             turtle.fd(side2)
+        #             turtle.left(180 - (ang3 / 2))
+        #
+        #         elif(base != side2 and base != side3):
+        #             print ang1, ang2, ang3
+        #             turtle.left(180 - (ang3 / 2))
+        #             turtle.fd(side2)
+        #             turtle.left(180 - ang1)
+        #             turtle.fd(side3)
+        #             turtle.left(180 - ang2)
+        #             turtle.fd(side1)
+        #             turtle.left(180 - (ang3 / 2))
+        #         else:
+        #             print ang1, ang2, ang3
+        #             turtle.left(180 - (ang3 / 2))
+        #             turtle.fd(side1)
+        #             turtle.left(180 - ang2)
+        #             turtle.fd(side3)
+        #             turtle.left(180 - ang1)
+        #             turtle.fd(side2)
+        #             turtle.left(180 - (ang3 / 2))
+        #        turtle.setheading(direccion)
+        #        turtle.back(h/2)
+        #
+        #     else:
+        #         turtle.penup()
+        #         turtle.back(250)
+        #         turtle.pendown()
+        #         turtle.write("GIVEN SIDES OF THE TRIANGLE ARE WRONG", font=("Arial", 16, "normal"))
         cuadruploActual = cuadruplos[currentPointer]
         currentPointer += 1
     turtle.getscreen()._root.mainloop()

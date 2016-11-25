@@ -174,7 +174,7 @@ def oper2Code(oper):
         return 27
     elif oper == 'RECTANGULO':
         return 28
-    elif oper == 'TRIANGULO':
+    elif oper == 'ROTA':
         return 29
 
 def code2Oper(code):
@@ -276,7 +276,7 @@ tokens = (
     'CTE_B',
     'CUADRADO',
     'RECTANGULO',
-    'TRIANGULO',
+    'ROTA',
     'CIRCULO'
     )
 
@@ -481,8 +481,8 @@ def t_RECTANGULO(t):
     return t
 
 
-def t_TRIANGULO(t):
-    r'''TRIANGULO'''
+def t_ROTA(t):
+    r'''ROTA'''
     return t
 
 
@@ -1170,12 +1170,12 @@ def p_dibujo(p):
     """
     dibujo : CUADRADO LPAREN expresion RPAREN
            | RECTANGULO LPAREN expresion COMMA expresion RPAREN
-           | TRIANGULO LPAREN expresion COMMA expresion COMMA expresion RPAREN
            | CIRCULO LPAREN expresion RPAREN
+           | ROTA LPAREN expresion RPAREN
     """
 
     global pilaTipos, cuadruplos, pilaOp
-    if p[1] == 'CUADRADO' or p[1] == 'CIRCULO':
+    if p[1] == 'CUADRADO' or p[1] == 'CIRCULO' or 'ROTA':
         expresion = pilaOp.pop()
         opTipo = pilaTipos.pop()
         if opTipo != 101:
@@ -1194,21 +1194,6 @@ def p_dibujo(p):
                                 + code2Type(op2Tipo)
                                 + code2Type(op1Tipo))
         cuadruplos.append([oper2Code(p[1]), -1, expresion2, expresion1])
-
-    if p[1] == 'TRIANGULO':
-        expresion1 = pilaOp.pop()
-        op1Tipo = pilaTipos.pop()
-        expresion2 = pilaOp.pop()
-        op2Tipo = pilaTipos.pop()
-        expresion3 = pilaOp.pop()
-        op3Tipo = pilaTipos.pop()
-
-        if op1Tipo != 101 or op2Tipo != 101 or op3Tipo != 101:
-            raise SemanticError('Se esperaban enteros. Se recibio: '
-                                + code2Type(op2Tipo)
-                                + code2Type(op1Tipo)
-                                + code2Type(op3Tipo))
-        cuadruplos.append([oper2Code(p[1]), expresion3, expresion2, expresion1])
 
 
 
