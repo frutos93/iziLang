@@ -296,7 +296,6 @@ def run():
             turtle.back(offset1)
             turtle.pendown()
         elif(instruccion == 29):
-            print int(getMemoryValue(cuadruploActual[3]))
             turtle.right(int(getMemoryValue(cuadruploActual[3])))
         #
         # elif(instruccion == 29):

@@ -1,9 +1,0 @@
-PROGRAMA dibujaPrueba:
-
-    MAIN()
-    {
-        ROTA(45);
-        DERECHA(100);
-    }
-
-FIN

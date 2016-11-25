@@ -1,0 +1,22 @@
+PROGRAMA fibIterativo:
+
+    FUNCION ENTERO fibo(ENTERO n){
+
+        ENTERO b;
+        ENTERO c;
+        SI( n < 2){
+            RETURN n;
+        }
+        SINO{
+            c = fibo(n-2);
+            RETURN fibo(n-1) + c;
+        };
+
+    }
+     MAIN()
+    {
+        ENTERO a;
+        a = fibo(10);
+        IMPRIME(a);
+    }
+FIN

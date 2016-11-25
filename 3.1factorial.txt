@@ -1,4 +1,4 @@
-PROGRAMA factorial:
+PROGRAMA factorialItera:
     MAIN(){
         ENTERO i;
         ENTERO fact;

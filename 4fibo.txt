@@ -1,4 +1,4 @@
-PROGRAMA fib:
+PROGRAMA fibIterativo:
      MAIN()
     {
        ENTERO n;
@@ -7,7 +7,7 @@ PROGRAMA fib:
        ENTERO next;
        ENTERO c;
 
-       n = 5;
+       n = 10;
        first = 0;
        second = 1;
        c = 0;

@@ -14,9 +14,11 @@ PROGRAMA example2:
 
     MAIN()
     {
+        ENTERO c;
         ENTERO a;
         a = factorial(3);
-        IMPRIME(a);
+        c = factorial(a);
+        IMPRIME(c);
     }
 
 FIN
