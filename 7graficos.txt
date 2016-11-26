@@ -1,0 +1,10 @@
+PROGRAMA grafico:
+    MAIN()
+    {
+
+        DERECHA(20);
+        CIRCULO(10);
+        CUADRADO(50);
+    }
+
+FIN

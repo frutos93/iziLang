@@ -1,0 +1,20 @@
+PROGRAMA example2:
+
+    FUNCION ENTERO factorial(ENTERO n){
+        SI(n == 1){
+            RETURN 1;
+        }
+        SINO{
+            RETURN factorial(n-1) * n;
+        };
+     }
+
+    MAIN()
+    {
+        ENTERO a;
+        ENTERO b;
+        a = factorial(4);
+        IMPRIME(a);
+    }
+
+FIN

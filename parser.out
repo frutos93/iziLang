@@ -1,0 +1,3722 @@
+Created by PLY version 3.9 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AMPERSAND
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> PROGRAMA goto_main ID COLON bloque FIN
+Rule 2     goto_main -> <empty>
+Rule 3     bloque -> vars guarda_variables_global funciones bloque_main
+Rule 4     guarda_variables_global -> <empty>
+Rule 5     vars -> var SEMI vars
+Rule 6     vars -> <empty>
+Rule 7     var -> tipo ID
+Rule 8     var -> tipo ID LBRACKET CTE_E RBRACKET
+Rule 9     tipo -> ENTERO
+Rule 10    tipo -> DECIMAL
+Rule 11    tipo -> PALABRA
+Rule 12    tipo -> BOOLEANO
+Rule 13    funciones -> funcion funciones
+Rule 14    funciones -> <empty>
+Rule 15    guarda_funcion -> <empty>
+Rule 16    funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+Rule 17    fin_funcion -> <empty>
+Rule 18    guarda_funcion_id -> ID
+Rule 19    parametros -> parametro mas_parametros
+Rule 20    parametros -> <empty>
+Rule 21    parametro -> tipo ID
+Rule 22    mas_parametros -> COMMA parametro mas_parametros
+Rule 23    mas_parametros -> <empty>
+Rule 24    bloque_main -> MAIN LPAREN RPAREN set_main_id codigo_bloque
+Rule 25    set_main_id -> <empty>
+Rule 26    codigo_bloque -> LCURLY vars guarda_variables_local estatutos RCURLY
+Rule 27    guarda_variables_local -> <empty>
+Rule 28    estatuto -> assignation checa_pila_a
+Rule 29    estatuto -> condicion
+Rule 30    estatuto -> imprime
+Rule 31    estatuto -> mientras
+Rule 32    estatuto -> function_use
+Rule 33    estatuto -> return
+Rule 34    estatuto -> accion
+Rule 35    estatuto -> dibujo
+Rule 36    checa_pila_a -> <empty>
+Rule 37    function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+Rule 38    function_use -> validar_funcion LPAREN RPAREN validar_parametros
+Rule 39    validar_funcion -> ID
+Rule 40    add_parametro -> expresion
+Rule 41    validar_parametros -> <empty>
+Rule 42    more_ids -> COMMA add_parametro more_ids
+Rule 43    more_ids -> <empty>
+Rule 44    assignation -> id_aux value_list actualiza_pilaOper_a expresion
+Rule 45    actualiza_pilaOper_a -> EQUAL
+Rule 46    value_list -> value_list_aux LBRACKET expresion RBRACKET
+Rule 47    value_list -> <empty>
+Rule 48    value_list_aux -> <empty>
+Rule 49    imprime -> IMPRIME LPAREN imprimir RPAREN
+Rule 50    imprimir -> expresion imprimir_mas
+Rule 51    imprimir_mas -> COMMA imprimir
+Rule 52    imprimir_mas -> <empty>
+Rule 53    condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+Rule 54    gotoF_condicion -> <empty>
+Rule 55    fin_condicion -> <empty>
+Rule 56    else_condicion -> SINO LCURLY goto_else estatutos RCURLY
+Rule 57    else_condicion -> <empty>
+Rule 58    goto_else -> <empty>
+Rule 59    mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+Rule 60    actualiza_pilaSaltos -> <empty>
+Rule 61    gotoF_while -> <empty>
+Rule 62    fin_while -> <empty>
+Rule 63    return -> RETURN expresion
+Rule 64    accion -> DIRECCION LPAREN expresion RPAREN
+Rule 65    dibujo -> CUADRADO LPAREN expresion RPAREN
+Rule 66    dibujo -> RECTANGULO LPAREN expresion COMMA expresion RPAREN
+Rule 67    dibujo -> CIRCULO LPAREN expresion RPAREN
+Rule 68    dibujo -> ROTA LPAREN expresion RPAREN
+Rule 69    estatutos -> estatuto SEMI estatutos
+Rule 70    estatutos -> <empty>
+Rule 71    expresion -> big_exp or_exp checa_pila_or
+Rule 72    checa_pila_or -> <empty>
+Rule 73    or_exp -> OR expresion
+Rule 74    or_exp -> <empty>
+Rule 75    big_exp -> medium_exp and_exp checa_pila_and
+Rule 76    checa_pila_and -> <empty>
+Rule 77    and_exp -> AND big_exp
+Rule 78    and_exp -> <empty>
+Rule 79    medium_exp -> exp comp_exp checa_pila_comp
+Rule 80    checa_pila_comp -> <empty>
+Rule 81    comp_exp -> GT exp
+Rule 82    comp_exp -> LT exp
+Rule 83    comp_exp -> GE exp
+Rule 84    comp_exp -> LE exp
+Rule 85    comp_exp -> NE exp
+Rule 86    comp_exp -> EQUALC exp
+Rule 87    comp_exp -> <empty>
+Rule 88    exp -> termino checa_pila_mm termino_mm
+Rule 89    checa_pila_mm -> <empty>
+Rule 90    termino_mm -> actualiza_pilaOper_mm exp
+Rule 91    termino_mm -> <empty>
+Rule 92    actualiza_pilaOper_mm -> PLUS
+Rule 93    actualiza_pilaOper_mm -> MINUS
+Rule 94    termino -> factor checa_pila_md factor_md
+Rule 95    checa_pila_md -> <empty>
+Rule 96    factor_md -> actualiza_pilaOper_md termino
+Rule 97    factor_md -> <empty>
+Rule 98    actualiza_pilaOper_md -> TIMES
+Rule 99    actualiza_pilaOper_md -> DIVIDE
+Rule 100   factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+Rule 101   factor -> constante
+Rule 102   actualiza_pilaOper_lparen -> LPAREN
+Rule 103   actualiza_pilaOper_rparen -> RPAREN
+Rule 104   constante -> id_aux value_list
+Rule 105   constante -> cte_e_aux
+Rule 106   constante -> cte_f_aux
+Rule 107   constante -> cte_b_aux
+Rule 108   constante -> cte_s_aux
+Rule 109   constante -> function_use
+Rule 110   id_aux -> ID
+Rule 111   cte_e_aux -> CTE_E
+Rule 112   cte_f_aux -> CTE_F
+Rule 113   cte_s_aux -> CTE_S
+Rule 114   cte_b_aux -> CTE_B
+
+Terminals, with rules where they appear
+
+AMPERSAND            : 
+AND                  : 77
+BOOLEANO             : 12
+CIRCULO              : 67
+COLON                : 1
+COMMA                : 22 42 51 66
+CTE_B                : 114
+CTE_E                : 8 111
+CTE_F                : 112
+CTE_S                : 113
+CUADRADO             : 65
+DECIMAL              : 10
+DIRECCION            : 64
+DIVIDE               : 99
+ENTERO               : 9
+EQUAL                : 45
+EQUALC               : 86
+FIN                  : 1
+FUNCION              : 16
+GE                   : 83
+GT                   : 81
+ID                   : 1 7 8 18 21 39 110
+IMPRIME              : 49
+LBRACKET             : 8 46
+LCURLY               : 26 53 56 59
+LE                   : 84
+LPAREN               : 16 24 37 38 49 53 59 64 65 66 67 68 102
+LT                   : 82
+MAIN                 : 24
+MIENTRAS             : 59
+MINUS                : 93
+NE                   : 85
+OR                   : 73
+PALABRA              : 11
+PLUS                 : 92
+PROGRAMA             : 1
+RBRACKET             : 8 46
+RCURLY               : 26 53 56 59
+RECTANGULO           : 66
+RETURN               : 63
+ROTA                 : 68
+RPAREN               : 16 24 37 38 49 53 59 64 65 66 67 68 103
+SEMI                 : 5 69
+SI                   : 53
+SINO                 : 56
+TIMES                : 98
+error                : 
+
+Nonterminals, with rules where they appear
+
+accion               : 34
+actualiza_pilaOper_a : 44
+actualiza_pilaOper_lparen : 100
+actualiza_pilaOper_md : 96
+actualiza_pilaOper_mm : 90
+actualiza_pilaOper_rparen : 100
+actualiza_pilaSaltos : 59
+add_parametro        : 37 42
+and_exp              : 75
+assignation          : 28
+big_exp              : 71 77
+bloque               : 1
+bloque_main          : 3
+checa_pila_a         : 28
+checa_pila_and       : 75
+checa_pila_comp      : 79
+checa_pila_md        : 94
+checa_pila_mm        : 88
+checa_pila_or        : 71
+codigo_bloque        : 16 24
+comp_exp             : 79
+condicion            : 29
+constante            : 101
+cte_b_aux            : 107
+cte_e_aux            : 105
+cte_f_aux            : 106
+cte_s_aux            : 108
+dibujo               : 35
+else_condicion       : 53
+estatuto             : 69
+estatutos            : 26 53 56 59 69
+exp                  : 79 81 82 83 84 85 86 90
+expresion            : 40 44 46 50 53 59 63 64 65 66 66 67 68 73 100
+factor               : 94
+factor_md            : 94
+fin_condicion        : 53
+fin_funcion          : 16
+fin_while            : 59
+funcion              : 13
+funciones            : 3 13
+function_use         : 32 109
+gotoF_condicion      : 53
+gotoF_while          : 59
+goto_else            : 56
+goto_main            : 1
+guarda_funcion       : 16
+guarda_funcion_id    : 16
+guarda_variables_global : 3
+guarda_variables_local : 26
+id_aux               : 44 104
+imprime              : 30
+imprimir             : 49 51
+imprimir_mas         : 50
+mas_parametros       : 19 22
+medium_exp           : 75
+mientras             : 31
+more_ids             : 37 42
+or_exp               : 71
+parametro            : 19 22
+parametros           : 16
+programa             : 0
+return               : 33
+set_main_id          : 24
+termino              : 88 96
+termino_mm           : 88
+tipo                 : 7 8 16 21
+validar_funcion      : 37 38
+validar_parametros   : 37 38
+value_list           : 44 104
+value_list_aux       : 46
+var                  : 5
+vars                 : 3 5 26
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . PROGRAMA goto_main ID COLON bloque FIN
+
+    PROGRAMA        shift and go to state 2
+
+    programa                       shift and go to state 1
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> PROGRAMA . goto_main ID COLON bloque FIN
+    (2) goto_main -> .
+
+    ID              reduce using rule 2 (goto_main -> .)
+
+    goto_main                      shift and go to state 3
+
+state 3
+
+    (1) programa -> PROGRAMA goto_main . ID COLON bloque FIN
+
+    ID              shift and go to state 4
+
+
+state 4
+
+    (1) programa -> PROGRAMA goto_main ID . COLON bloque FIN
+
+    COLON           shift and go to state 5
+
+
+state 5
+
+    (1) programa -> PROGRAMA goto_main ID COLON . bloque FIN
+    (3) bloque -> . vars guarda_variables_global funciones bloque_main
+    (5) vars -> . var SEMI vars
+    (6) vars -> .
+    (7) var -> . tipo ID
+    (8) var -> . tipo ID LBRACKET CTE_E RBRACKET
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    FUNCION         reduce using rule 6 (vars -> .)
+    MAIN            reduce using rule 6 (vars -> .)
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    tipo                           shift and go to state 13
+    vars                           shift and go to state 7
+    var                            shift and go to state 11
+    bloque                         shift and go to state 12
+
+state 6
+
+    (12) tipo -> BOOLEANO .
+
+    ID              reduce using rule 12 (tipo -> BOOLEANO .)
+
+
+state 7
+
+    (3) bloque -> vars . guarda_variables_global funciones bloque_main
+    (4) guarda_variables_global -> .
+
+    FUNCION         reduce using rule 4 (guarda_variables_global -> .)
+    MAIN            reduce using rule 4 (guarda_variables_global -> .)
+
+    guarda_variables_global        shift and go to state 14
+
+state 8
+
+    (10) tipo -> DECIMAL .
+
+    ID              reduce using rule 10 (tipo -> DECIMAL .)
+
+
+state 9
+
+    (9) tipo -> ENTERO .
+
+    ID              reduce using rule 9 (tipo -> ENTERO .)
+
+
+state 10
+
+    (11) tipo -> PALABRA .
+
+    ID              reduce using rule 11 (tipo -> PALABRA .)
+
+
+state 11
+
+    (5) vars -> var . SEMI vars
+
+    SEMI            shift and go to state 15
+
+
+state 12
+
+    (1) programa -> PROGRAMA goto_main ID COLON bloque . FIN
+
+    FIN             shift and go to state 16
+
+
+state 13
+
+    (7) var -> tipo . ID
+    (8) var -> tipo . ID LBRACKET CTE_E RBRACKET
+
+    ID              shift and go to state 17
+
+
+state 14
+
+    (3) bloque -> vars guarda_variables_global . funciones bloque_main
+    (13) funciones -> . funcion funciones
+    (14) funciones -> .
+    (16) funcion -> . FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+
+    MAIN            reduce using rule 14 (funciones -> .)
+    FUNCION         shift and go to state 20
+
+    funciones                      shift and go to state 19
+    funcion                        shift and go to state 18
+
+state 15
+
+    (5) vars -> var SEMI . vars
+    (5) vars -> . var SEMI vars
+    (6) vars -> .
+    (7) var -> . tipo ID
+    (8) var -> . tipo ID LBRACKET CTE_E RBRACKET
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    FUNCION         reduce using rule 6 (vars -> .)
+    MAIN            reduce using rule 6 (vars -> .)
+    SI              reduce using rule 6 (vars -> .)
+    IMPRIME         reduce using rule 6 (vars -> .)
+    MIENTRAS        reduce using rule 6 (vars -> .)
+    RETURN          reduce using rule 6 (vars -> .)
+    DIRECCION       reduce using rule 6 (vars -> .)
+    CUADRADO        reduce using rule 6 (vars -> .)
+    RECTANGULO      reduce using rule 6 (vars -> .)
+    CIRCULO         reduce using rule 6 (vars -> .)
+    ROTA            reduce using rule 6 (vars -> .)
+    ID              reduce using rule 6 (vars -> .)
+    RCURLY          reduce using rule 6 (vars -> .)
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    var                            shift and go to state 11
+    tipo                           shift and go to state 13
+    vars                           shift and go to state 21
+
+state 16
+
+    (1) programa -> PROGRAMA goto_main ID COLON bloque FIN .
+
+    $end            reduce using rule 1 (programa -> PROGRAMA goto_main ID COLON bloque FIN .)
+
+
+state 17
+
+    (7) var -> tipo ID .
+    (8) var -> tipo ID . LBRACKET CTE_E RBRACKET
+
+    SEMI            reduce using rule 7 (var -> tipo ID .)
+    LBRACKET        shift and go to state 22
+
+
+state 18
+
+    (13) funciones -> funcion . funciones
+    (13) funciones -> . funcion funciones
+    (14) funciones -> .
+    (16) funcion -> . FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+
+    MAIN            reduce using rule 14 (funciones -> .)
+    FUNCION         shift and go to state 20
+
+    funciones                      shift and go to state 23
+    funcion                        shift and go to state 18
+
+state 19
+
+    (3) bloque -> vars guarda_variables_global funciones . bloque_main
+    (24) bloque_main -> . MAIN LPAREN RPAREN set_main_id codigo_bloque
+
+    MAIN            shift and go to state 25
+
+    bloque_main                    shift and go to state 24
+
+state 20
+
+    (16) funcion -> FUNCION . tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    tipo                           shift and go to state 26
+
+state 21
+
+    (5) vars -> var SEMI vars .
+
+    SI              reduce using rule 5 (vars -> var SEMI vars .)
+    IMPRIME         reduce using rule 5 (vars -> var SEMI vars .)
+    MIENTRAS        reduce using rule 5 (vars -> var SEMI vars .)
+    RETURN          reduce using rule 5 (vars -> var SEMI vars .)
+    DIRECCION       reduce using rule 5 (vars -> var SEMI vars .)
+    CUADRADO        reduce using rule 5 (vars -> var SEMI vars .)
+    RECTANGULO      reduce using rule 5 (vars -> var SEMI vars .)
+    CIRCULO         reduce using rule 5 (vars -> var SEMI vars .)
+    ROTA            reduce using rule 5 (vars -> var SEMI vars .)
+    ID              reduce using rule 5 (vars -> var SEMI vars .)
+    RCURLY          reduce using rule 5 (vars -> var SEMI vars .)
+    FUNCION         reduce using rule 5 (vars -> var SEMI vars .)
+    MAIN            reduce using rule 5 (vars -> var SEMI vars .)
+
+
+state 22
+
+    (8) var -> tipo ID LBRACKET . CTE_E RBRACKET
+
+    CTE_E           shift and go to state 27
+
+
+state 23
+
+    (13) funciones -> funcion funciones .
+
+    MAIN            reduce using rule 13 (funciones -> funcion funciones .)
+
+
+state 24
+
+    (3) bloque -> vars guarda_variables_global funciones bloque_main .
+
+    FIN             reduce using rule 3 (bloque -> vars guarda_variables_global funciones bloque_main .)
+
+
+state 25
+
+    (24) bloque_main -> MAIN . LPAREN RPAREN set_main_id codigo_bloque
+
+    LPAREN          shift and go to state 28
+
+
+state 26
+
+    (16) funcion -> FUNCION tipo . guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+    (18) guarda_funcion_id -> . ID
+
+    ID              shift and go to state 30
+
+    guarda_funcion_id              shift and go to state 29
+
+state 27
+
+    (8) var -> tipo ID LBRACKET CTE_E . RBRACKET
+
+    RBRACKET        shift and go to state 31
+
+
+state 28
+
+    (24) bloque_main -> MAIN LPAREN . RPAREN set_main_id codigo_bloque
+
+    RPAREN          shift and go to state 32
+
+
+state 29
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id . LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+
+    LPAREN          shift and go to state 33
+
+
+state 30
+
+    (18) guarda_funcion_id -> ID .
+
+    LPAREN          reduce using rule 18 (guarda_funcion_id -> ID .)
+
+
+state 31
+
+    (8) var -> tipo ID LBRACKET CTE_E RBRACKET .
+
+    SEMI            reduce using rule 8 (var -> tipo ID LBRACKET CTE_E RBRACKET .)
+
+
+state 32
+
+    (24) bloque_main -> MAIN LPAREN RPAREN . set_main_id codigo_bloque
+    (25) set_main_id -> .
+
+    LCURLY          reduce using rule 25 (set_main_id -> .)
+
+    set_main_id                    shift and go to state 34
+
+state 33
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN . parametros RPAREN guarda_funcion codigo_bloque fin_funcion
+    (19) parametros -> . parametro mas_parametros
+    (20) parametros -> .
+    (21) parametro -> . tipo ID
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    RPAREN          reduce using rule 20 (parametros -> .)
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    tipo                           shift and go to state 35
+    parametro                      shift and go to state 36
+    parametros                     shift and go to state 37
+
+state 34
+
+    (24) bloque_main -> MAIN LPAREN RPAREN set_main_id . codigo_bloque
+    (26) codigo_bloque -> . LCURLY vars guarda_variables_local estatutos RCURLY
+
+    LCURLY          shift and go to state 39
+
+    codigo_bloque                  shift and go to state 38
+
+state 35
+
+    (21) parametro -> tipo . ID
+
+    ID              shift and go to state 40
+
+
+state 36
+
+    (19) parametros -> parametro . mas_parametros
+    (22) mas_parametros -> . COMMA parametro mas_parametros
+    (23) mas_parametros -> .
+
+    COMMA           shift and go to state 42
+    RPAREN          reduce using rule 23 (mas_parametros -> .)
+
+    mas_parametros                 shift and go to state 41
+
+state 37
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros . RPAREN guarda_funcion codigo_bloque fin_funcion
+
+    RPAREN          shift and go to state 43
+
+
+state 38
+
+    (24) bloque_main -> MAIN LPAREN RPAREN set_main_id codigo_bloque .
+
+    FIN             reduce using rule 24 (bloque_main -> MAIN LPAREN RPAREN set_main_id codigo_bloque .)
+
+
+state 39
+
+    (26) codigo_bloque -> LCURLY . vars guarda_variables_local estatutos RCURLY
+    (5) vars -> . var SEMI vars
+    (6) vars -> .
+    (7) var -> . tipo ID
+    (8) var -> . tipo ID LBRACKET CTE_E RBRACKET
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    SI              reduce using rule 6 (vars -> .)
+    IMPRIME         reduce using rule 6 (vars -> .)
+    MIENTRAS        reduce using rule 6 (vars -> .)
+    RETURN          reduce using rule 6 (vars -> .)
+    DIRECCION       reduce using rule 6 (vars -> .)
+    CUADRADO        reduce using rule 6 (vars -> .)
+    RECTANGULO      reduce using rule 6 (vars -> .)
+    CIRCULO         reduce using rule 6 (vars -> .)
+    ROTA            reduce using rule 6 (vars -> .)
+    ID              reduce using rule 6 (vars -> .)
+    RCURLY          reduce using rule 6 (vars -> .)
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    var                            shift and go to state 11
+    tipo                           shift and go to state 13
+    vars                           shift and go to state 44
+
+state 40
+
+    (21) parametro -> tipo ID .
+
+    COMMA           reduce using rule 21 (parametro -> tipo ID .)
+    RPAREN          reduce using rule 21 (parametro -> tipo ID .)
+
+
+state 41
+
+    (19) parametros -> parametro mas_parametros .
+
+    RPAREN          reduce using rule 19 (parametros -> parametro mas_parametros .)
+
+
+state 42
+
+    (22) mas_parametros -> COMMA . parametro mas_parametros
+    (21) parametro -> . tipo ID
+    (9) tipo -> . ENTERO
+    (10) tipo -> . DECIMAL
+    (11) tipo -> . PALABRA
+    (12) tipo -> . BOOLEANO
+
+    ENTERO          shift and go to state 9
+    DECIMAL         shift and go to state 8
+    PALABRA         shift and go to state 10
+    BOOLEANO        shift and go to state 6
+
+    parametro                      shift and go to state 45
+    tipo                           shift and go to state 35
+
+state 43
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN . guarda_funcion codigo_bloque fin_funcion
+    (15) guarda_funcion -> .
+
+    LCURLY          reduce using rule 15 (guarda_funcion -> .)
+
+    guarda_funcion                 shift and go to state 46
+
+state 44
+
+    (26) codigo_bloque -> LCURLY vars . guarda_variables_local estatutos RCURLY
+    (27) guarda_variables_local -> .
+
+    SI              reduce using rule 27 (guarda_variables_local -> .)
+    IMPRIME         reduce using rule 27 (guarda_variables_local -> .)
+    MIENTRAS        reduce using rule 27 (guarda_variables_local -> .)
+    RETURN          reduce using rule 27 (guarda_variables_local -> .)
+    DIRECCION       reduce using rule 27 (guarda_variables_local -> .)
+    CUADRADO        reduce using rule 27 (guarda_variables_local -> .)
+    RECTANGULO      reduce using rule 27 (guarda_variables_local -> .)
+    CIRCULO         reduce using rule 27 (guarda_variables_local -> .)
+    ROTA            reduce using rule 27 (guarda_variables_local -> .)
+    ID              reduce using rule 27 (guarda_variables_local -> .)
+    RCURLY          reduce using rule 27 (guarda_variables_local -> .)
+
+    guarda_variables_local         shift and go to state 47
+
+state 45
+
+    (22) mas_parametros -> COMMA parametro . mas_parametros
+    (22) mas_parametros -> . COMMA parametro mas_parametros
+    (23) mas_parametros -> .
+
+    COMMA           shift and go to state 42
+    RPAREN          reduce using rule 23 (mas_parametros -> .)
+
+    mas_parametros                 shift and go to state 48
+
+state 46
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion . codigo_bloque fin_funcion
+    (26) codigo_bloque -> . LCURLY vars guarda_variables_local estatutos RCURLY
+
+    LCURLY          shift and go to state 39
+
+    codigo_bloque                  shift and go to state 49
+
+state 47
+
+    (26) codigo_bloque -> LCURLY vars guarda_variables_local . estatutos RCURLY
+    (69) estatutos -> . estatuto SEMI estatutos
+    (70) estatutos -> .
+    (28) estatuto -> . assignation checa_pila_a
+    (29) estatuto -> . condicion
+    (30) estatuto -> . imprime
+    (31) estatuto -> . mientras
+    (32) estatuto -> . function_use
+    (33) estatuto -> . return
+    (34) estatuto -> . accion
+    (35) estatuto -> . dibujo
+    (44) assignation -> . id_aux value_list actualiza_pilaOper_a expresion
+    (53) condicion -> . SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (49) imprime -> . IMPRIME LPAREN imprimir RPAREN
+    (59) mientras -> . MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (63) return -> . RETURN expresion
+    (64) accion -> . DIRECCION LPAREN expresion RPAREN
+    (65) dibujo -> . CUADRADO LPAREN expresion RPAREN
+    (66) dibujo -> . RECTANGULO LPAREN expresion COMMA expresion RPAREN
+    (67) dibujo -> . CIRCULO LPAREN expresion RPAREN
+    (68) dibujo -> . ROTA LPAREN expresion RPAREN
+    (110) id_aux -> . ID
+    (39) validar_funcion -> . ID
+
+    RCURLY          reduce using rule 70 (estatutos -> .)
+    SI              shift and go to state 68
+    IMPRIME         shift and go to state 65
+    MIENTRAS        shift and go to state 59
+    RETURN          shift and go to state 50
+    DIRECCION       shift and go to state 58
+    CUADRADO        shift and go to state 69
+    RECTANGULO      shift and go to state 70
+    CIRCULO         shift and go to state 71
+    ROTA            shift and go to state 64
+    ID              shift and go to state 61
+
+    function_use                   shift and go to state 51
+    mientras                       shift and go to state 67
+    return                         shift and go to state 52
+    estatuto                       shift and go to state 53
+    dibujo                         shift and go to state 62
+    condicion                      shift and go to state 54
+    id_aux                         shift and go to state 55
+    imprime                        shift and go to state 57
+    accion                         shift and go to state 66
+    validar_funcion                shift and go to state 56
+    estatutos                      shift and go to state 60
+    assignation                    shift and go to state 63
+
+state 48
+
+    (22) mas_parametros -> COMMA parametro mas_parametros .
+
+    RPAREN          reduce using rule 22 (mas_parametros -> COMMA parametro mas_parametros .)
+
+
+state 49
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque . fin_funcion
+    (17) fin_funcion -> .
+
+    FUNCION         reduce using rule 17 (fin_funcion -> .)
+    MAIN            reduce using rule 17 (fin_funcion -> .)
+
+    fin_funcion                    shift and go to state 72
+
+state 50
+
+    (63) return -> RETURN . expresion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 90
+    big_exp                        shift and go to state 91
+
+state 51
+
+    (32) estatuto -> function_use .
+
+    SEMI            reduce using rule 32 (estatuto -> function_use .)
+
+
+state 52
+
+    (33) estatuto -> return .
+
+    SEMI            reduce using rule 33 (estatuto -> return .)
+
+
+state 53
+
+    (69) estatutos -> estatuto . SEMI estatutos
+
+    SEMI            shift and go to state 92
+
+
+state 54
+
+    (29) estatuto -> condicion .
+
+    SEMI            reduce using rule 29 (estatuto -> condicion .)
+
+
+state 55
+
+    (44) assignation -> id_aux . value_list actualiza_pilaOper_a expresion
+    (46) value_list -> . value_list_aux LBRACKET expresion RBRACKET
+    (47) value_list -> .
+    (48) value_list_aux -> .
+
+    EQUAL           reduce using rule 47 (value_list -> .)
+    LBRACKET        reduce using rule 48 (value_list_aux -> .)
+
+    value_list                     shift and go to state 93
+    value_list_aux                 shift and go to state 94
+
+state 56
+
+    (37) function_use -> validar_funcion . LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> validar_funcion . LPAREN RPAREN validar_parametros
+
+    LPAREN          shift and go to state 95
+
+
+state 57
+
+    (30) estatuto -> imprime .
+
+    SEMI            reduce using rule 30 (estatuto -> imprime .)
+
+
+state 58
+
+    (64) accion -> DIRECCION . LPAREN expresion RPAREN
+
+    LPAREN          shift and go to state 96
+
+
+state 59
+
+    (59) mientras -> MIENTRAS . actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (60) actualiza_pilaSaltos -> .
+
+    LPAREN          reduce using rule 60 (actualiza_pilaSaltos -> .)
+
+    actualiza_pilaSaltos           shift and go to state 97
+
+state 60
+
+    (26) codigo_bloque -> LCURLY vars guarda_variables_local estatutos . RCURLY
+
+    RCURLY          shift and go to state 98
+
+
+state 61
+
+    (110) id_aux -> ID .
+    (39) validar_funcion -> ID .
+
+    LBRACKET        reduce using rule 110 (id_aux -> ID .)
+    TIMES           reduce using rule 110 (id_aux -> ID .)
+    DIVIDE          reduce using rule 110 (id_aux -> ID .)
+    PLUS            reduce using rule 110 (id_aux -> ID .)
+    MINUS           reduce using rule 110 (id_aux -> ID .)
+    AND             reduce using rule 110 (id_aux -> ID .)
+    OR              reduce using rule 110 (id_aux -> ID .)
+    SEMI            reduce using rule 110 (id_aux -> ID .)
+    RPAREN          reduce using rule 110 (id_aux -> ID .)
+    COMMA           reduce using rule 110 (id_aux -> ID .)
+    RBRACKET        reduce using rule 110 (id_aux -> ID .)
+    GT              reduce using rule 110 (id_aux -> ID .)
+    LT              reduce using rule 110 (id_aux -> ID .)
+    GE              reduce using rule 110 (id_aux -> ID .)
+    LE              reduce using rule 110 (id_aux -> ID .)
+    NE              reduce using rule 110 (id_aux -> ID .)
+    EQUALC          reduce using rule 110 (id_aux -> ID .)
+    EQUAL           reduce using rule 110 (id_aux -> ID .)
+    LPAREN          reduce using rule 39 (validar_funcion -> ID .)
+
+
+state 62
+
+    (35) estatuto -> dibujo .
+
+    SEMI            reduce using rule 35 (estatuto -> dibujo .)
+
+
+state 63
+
+    (28) estatuto -> assignation . checa_pila_a
+    (36) checa_pila_a -> .
+
+    SEMI            reduce using rule 36 (checa_pila_a -> .)
+
+    checa_pila_a                   shift and go to state 99
+
+state 64
+
+    (68) dibujo -> ROTA . LPAREN expresion RPAREN
+
+    LPAREN          shift and go to state 100
+
+
+state 65
+
+    (49) imprime -> IMPRIME . LPAREN imprimir RPAREN
+
+    LPAREN          shift and go to state 101
+
+
+state 66
+
+    (34) estatuto -> accion .
+
+    SEMI            reduce using rule 34 (estatuto -> accion .)
+
+
+state 67
+
+    (31) estatuto -> mientras .
+
+    SEMI            reduce using rule 31 (estatuto -> mientras .)
+
+
+state 68
+
+    (53) condicion -> SI . LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+
+    LPAREN          shift and go to state 102
+
+
+state 69
+
+    (65) dibujo -> CUADRADO . LPAREN expresion RPAREN
+
+    LPAREN          shift and go to state 103
+
+
+state 70
+
+    (66) dibujo -> RECTANGULO . LPAREN expresion COMMA expresion RPAREN
+
+    LPAREN          shift and go to state 104
+
+
+state 71
+
+    (67) dibujo -> CIRCULO . LPAREN expresion RPAREN
+
+    LPAREN          shift and go to state 105
+
+
+state 72
+
+    (16) funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion .
+
+    FUNCION         reduce using rule 16 (funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion .)
+    MAIN            reduce using rule 16 (funcion -> FUNCION tipo guarda_funcion_id LPAREN parametros RPAREN guarda_funcion codigo_bloque fin_funcion .)
+
+
+state 73
+
+    (106) constante -> cte_f_aux .
+
+    TIMES           reduce using rule 106 (constante -> cte_f_aux .)
+    DIVIDE          reduce using rule 106 (constante -> cte_f_aux .)
+    PLUS            reduce using rule 106 (constante -> cte_f_aux .)
+    MINUS           reduce using rule 106 (constante -> cte_f_aux .)
+    GT              reduce using rule 106 (constante -> cte_f_aux .)
+    LT              reduce using rule 106 (constante -> cte_f_aux .)
+    GE              reduce using rule 106 (constante -> cte_f_aux .)
+    LE              reduce using rule 106 (constante -> cte_f_aux .)
+    NE              reduce using rule 106 (constante -> cte_f_aux .)
+    EQUALC          reduce using rule 106 (constante -> cte_f_aux .)
+    AND             reduce using rule 106 (constante -> cte_f_aux .)
+    OR              reduce using rule 106 (constante -> cte_f_aux .)
+    COMMA           reduce using rule 106 (constante -> cte_f_aux .)
+    RPAREN          reduce using rule 106 (constante -> cte_f_aux .)
+    SEMI            reduce using rule 106 (constante -> cte_f_aux .)
+    RBRACKET        reduce using rule 106 (constante -> cte_f_aux .)
+
+
+state 74
+
+    (109) constante -> function_use .
+
+    TIMES           reduce using rule 109 (constante -> function_use .)
+    DIVIDE          reduce using rule 109 (constante -> function_use .)
+    PLUS            reduce using rule 109 (constante -> function_use .)
+    MINUS           reduce using rule 109 (constante -> function_use .)
+    GT              reduce using rule 109 (constante -> function_use .)
+    LT              reduce using rule 109 (constante -> function_use .)
+    GE              reduce using rule 109 (constante -> function_use .)
+    LE              reduce using rule 109 (constante -> function_use .)
+    NE              reduce using rule 109 (constante -> function_use .)
+    EQUALC          reduce using rule 109 (constante -> function_use .)
+    AND             reduce using rule 109 (constante -> function_use .)
+    OR              reduce using rule 109 (constante -> function_use .)
+    COMMA           reduce using rule 109 (constante -> function_use .)
+    RPAREN          reduce using rule 109 (constante -> function_use .)
+    SEMI            reduce using rule 109 (constante -> function_use .)
+    RBRACKET        reduce using rule 109 (constante -> function_use .)
+
+
+state 75
+
+    (88) exp -> termino . checa_pila_mm termino_mm
+    (89) checa_pila_mm -> .
+
+    PLUS            reduce using rule 89 (checa_pila_mm -> .)
+    MINUS           reduce using rule 89 (checa_pila_mm -> .)
+    GT              reduce using rule 89 (checa_pila_mm -> .)
+    LT              reduce using rule 89 (checa_pila_mm -> .)
+    GE              reduce using rule 89 (checa_pila_mm -> .)
+    LE              reduce using rule 89 (checa_pila_mm -> .)
+    NE              reduce using rule 89 (checa_pila_mm -> .)
+    EQUALC          reduce using rule 89 (checa_pila_mm -> .)
+    AND             reduce using rule 89 (checa_pila_mm -> .)
+    OR              reduce using rule 89 (checa_pila_mm -> .)
+    SEMI            reduce using rule 89 (checa_pila_mm -> .)
+    RPAREN          reduce using rule 89 (checa_pila_mm -> .)
+    COMMA           reduce using rule 89 (checa_pila_mm -> .)
+    RBRACKET        reduce using rule 89 (checa_pila_mm -> .)
+
+    checa_pila_mm                  shift and go to state 106
+
+state 76
+
+    (108) constante -> cte_s_aux .
+
+    TIMES           reduce using rule 108 (constante -> cte_s_aux .)
+    DIVIDE          reduce using rule 108 (constante -> cte_s_aux .)
+    PLUS            reduce using rule 108 (constante -> cte_s_aux .)
+    MINUS           reduce using rule 108 (constante -> cte_s_aux .)
+    GT              reduce using rule 108 (constante -> cte_s_aux .)
+    LT              reduce using rule 108 (constante -> cte_s_aux .)
+    GE              reduce using rule 108 (constante -> cte_s_aux .)
+    LE              reduce using rule 108 (constante -> cte_s_aux .)
+    NE              reduce using rule 108 (constante -> cte_s_aux .)
+    EQUALC          reduce using rule 108 (constante -> cte_s_aux .)
+    AND             reduce using rule 108 (constante -> cte_s_aux .)
+    OR              reduce using rule 108 (constante -> cte_s_aux .)
+    COMMA           reduce using rule 108 (constante -> cte_s_aux .)
+    RPAREN          reduce using rule 108 (constante -> cte_s_aux .)
+    SEMI            reduce using rule 108 (constante -> cte_s_aux .)
+    RBRACKET        reduce using rule 108 (constante -> cte_s_aux .)
+
+
+state 77
+
+    (105) constante -> cte_e_aux .
+
+    TIMES           reduce using rule 105 (constante -> cte_e_aux .)
+    DIVIDE          reduce using rule 105 (constante -> cte_e_aux .)
+    PLUS            reduce using rule 105 (constante -> cte_e_aux .)
+    MINUS           reduce using rule 105 (constante -> cte_e_aux .)
+    GT              reduce using rule 105 (constante -> cte_e_aux .)
+    LT              reduce using rule 105 (constante -> cte_e_aux .)
+    GE              reduce using rule 105 (constante -> cte_e_aux .)
+    LE              reduce using rule 105 (constante -> cte_e_aux .)
+    NE              reduce using rule 105 (constante -> cte_e_aux .)
+    EQUALC          reduce using rule 105 (constante -> cte_e_aux .)
+    AND             reduce using rule 105 (constante -> cte_e_aux .)
+    OR              reduce using rule 105 (constante -> cte_e_aux .)
+    COMMA           reduce using rule 105 (constante -> cte_e_aux .)
+    RPAREN          reduce using rule 105 (constante -> cte_e_aux .)
+    SEMI            reduce using rule 105 (constante -> cte_e_aux .)
+    RBRACKET        reduce using rule 105 (constante -> cte_e_aux .)
+
+
+state 78
+
+    (113) cte_s_aux -> CTE_S .
+
+    TIMES           reduce using rule 113 (cte_s_aux -> CTE_S .)
+    DIVIDE          reduce using rule 113 (cte_s_aux -> CTE_S .)
+    PLUS            reduce using rule 113 (cte_s_aux -> CTE_S .)
+    MINUS           reduce using rule 113 (cte_s_aux -> CTE_S .)
+    AND             reduce using rule 113 (cte_s_aux -> CTE_S .)
+    OR              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    SEMI            reduce using rule 113 (cte_s_aux -> CTE_S .)
+    RPAREN          reduce using rule 113 (cte_s_aux -> CTE_S .)
+    COMMA           reduce using rule 113 (cte_s_aux -> CTE_S .)
+    RBRACKET        reduce using rule 113 (cte_s_aux -> CTE_S .)
+    GT              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    LT              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    GE              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    LE              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    NE              reduce using rule 113 (cte_s_aux -> CTE_S .)
+    EQUALC          reduce using rule 113 (cte_s_aux -> CTE_S .)
+
+
+state 79
+
+    (75) big_exp -> medium_exp . and_exp checa_pila_and
+    (77) and_exp -> . AND big_exp
+    (78) and_exp -> .
+
+    AND             shift and go to state 108
+    OR              reduce using rule 78 (and_exp -> .)
+    SEMI            reduce using rule 78 (and_exp -> .)
+    RPAREN          reduce using rule 78 (and_exp -> .)
+    COMMA           reduce using rule 78 (and_exp -> .)
+    RBRACKET        reduce using rule 78 (and_exp -> .)
+
+    and_exp                        shift and go to state 107
+
+state 80
+
+    (94) termino -> factor . checa_pila_md factor_md
+    (95) checa_pila_md -> .
+
+    TIMES           reduce using rule 95 (checa_pila_md -> .)
+    DIVIDE          reduce using rule 95 (checa_pila_md -> .)
+    PLUS            reduce using rule 95 (checa_pila_md -> .)
+    MINUS           reduce using rule 95 (checa_pila_md -> .)
+    GT              reduce using rule 95 (checa_pila_md -> .)
+    LT              reduce using rule 95 (checa_pila_md -> .)
+    GE              reduce using rule 95 (checa_pila_md -> .)
+    LE              reduce using rule 95 (checa_pila_md -> .)
+    NE              reduce using rule 95 (checa_pila_md -> .)
+    EQUALC          reduce using rule 95 (checa_pila_md -> .)
+    AND             reduce using rule 95 (checa_pila_md -> .)
+    OR              reduce using rule 95 (checa_pila_md -> .)
+    SEMI            reduce using rule 95 (checa_pila_md -> .)
+    RPAREN          reduce using rule 95 (checa_pila_md -> .)
+    COMMA           reduce using rule 95 (checa_pila_md -> .)
+    RBRACKET        reduce using rule 95 (checa_pila_md -> .)
+
+    checa_pila_md                  shift and go to state 109
+
+state 81
+
+    (112) cte_f_aux -> CTE_F .
+
+    TIMES           reduce using rule 112 (cte_f_aux -> CTE_F .)
+    DIVIDE          reduce using rule 112 (cte_f_aux -> CTE_F .)
+    PLUS            reduce using rule 112 (cte_f_aux -> CTE_F .)
+    MINUS           reduce using rule 112 (cte_f_aux -> CTE_F .)
+    GT              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    LT              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    GE              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    LE              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    NE              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    EQUALC          reduce using rule 112 (cte_f_aux -> CTE_F .)
+    AND             reduce using rule 112 (cte_f_aux -> CTE_F .)
+    OR              reduce using rule 112 (cte_f_aux -> CTE_F .)
+    SEMI            reduce using rule 112 (cte_f_aux -> CTE_F .)
+    RPAREN          reduce using rule 112 (cte_f_aux -> CTE_F .)
+    COMMA           reduce using rule 112 (cte_f_aux -> CTE_F .)
+    RBRACKET        reduce using rule 112 (cte_f_aux -> CTE_F .)
+
+
+state 82
+
+    (111) cte_e_aux -> CTE_E .
+
+    TIMES           reduce using rule 111 (cte_e_aux -> CTE_E .)
+    DIVIDE          reduce using rule 111 (cte_e_aux -> CTE_E .)
+    PLUS            reduce using rule 111 (cte_e_aux -> CTE_E .)
+    MINUS           reduce using rule 111 (cte_e_aux -> CTE_E .)
+    GT              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    LT              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    GE              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    LE              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    NE              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    EQUALC          reduce using rule 111 (cte_e_aux -> CTE_E .)
+    AND             reduce using rule 111 (cte_e_aux -> CTE_E .)
+    OR              reduce using rule 111 (cte_e_aux -> CTE_E .)
+    RPAREN          reduce using rule 111 (cte_e_aux -> CTE_E .)
+    COMMA           reduce using rule 111 (cte_e_aux -> CTE_E .)
+    SEMI            reduce using rule 111 (cte_e_aux -> CTE_E .)
+    RBRACKET        reduce using rule 111 (cte_e_aux -> CTE_E .)
+
+
+state 83
+
+    (114) cte_b_aux -> CTE_B .
+
+    TIMES           reduce using rule 114 (cte_b_aux -> CTE_B .)
+    DIVIDE          reduce using rule 114 (cte_b_aux -> CTE_B .)
+    PLUS            reduce using rule 114 (cte_b_aux -> CTE_B .)
+    MINUS           reduce using rule 114 (cte_b_aux -> CTE_B .)
+    GT              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    LT              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    GE              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    LE              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    NE              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    EQUALC          reduce using rule 114 (cte_b_aux -> CTE_B .)
+    AND             reduce using rule 114 (cte_b_aux -> CTE_B .)
+    OR              reduce using rule 114 (cte_b_aux -> CTE_B .)
+    SEMI            reduce using rule 114 (cte_b_aux -> CTE_B .)
+    RPAREN          reduce using rule 114 (cte_b_aux -> CTE_B .)
+    COMMA           reduce using rule 114 (cte_b_aux -> CTE_B .)
+    RBRACKET        reduce using rule 114 (cte_b_aux -> CTE_B .)
+
+
+state 84
+
+    (104) constante -> id_aux . value_list
+    (46) value_list -> . value_list_aux LBRACKET expresion RBRACKET
+    (47) value_list -> .
+    (48) value_list_aux -> .
+
+    TIMES           reduce using rule 47 (value_list -> .)
+    DIVIDE          reduce using rule 47 (value_list -> .)
+    PLUS            reduce using rule 47 (value_list -> .)
+    MINUS           reduce using rule 47 (value_list -> .)
+    GT              reduce using rule 47 (value_list -> .)
+    LT              reduce using rule 47 (value_list -> .)
+    GE              reduce using rule 47 (value_list -> .)
+    LE              reduce using rule 47 (value_list -> .)
+    NE              reduce using rule 47 (value_list -> .)
+    EQUALC          reduce using rule 47 (value_list -> .)
+    AND             reduce using rule 47 (value_list -> .)
+    OR              reduce using rule 47 (value_list -> .)
+    SEMI            reduce using rule 47 (value_list -> .)
+    RPAREN          reduce using rule 47 (value_list -> .)
+    COMMA           reduce using rule 47 (value_list -> .)
+    RBRACKET        reduce using rule 47 (value_list -> .)
+    LBRACKET        reduce using rule 48 (value_list_aux -> .)
+
+    value_list                     shift and go to state 110
+    value_list_aux                 shift and go to state 94
+
+state 85
+
+    (79) medium_exp -> exp . comp_exp checa_pila_comp
+    (81) comp_exp -> . GT exp
+    (82) comp_exp -> . LT exp
+    (83) comp_exp -> . GE exp
+    (84) comp_exp -> . LE exp
+    (85) comp_exp -> . NE exp
+    (86) comp_exp -> . EQUALC exp
+    (87) comp_exp -> .
+
+    GT              shift and go to state 111
+    LT              shift and go to state 113
+    GE              shift and go to state 115
+    LE              shift and go to state 116
+    NE              shift and go to state 114
+    EQUALC          shift and go to state 117
+    AND             reduce using rule 87 (comp_exp -> .)
+    OR              reduce using rule 87 (comp_exp -> .)
+    SEMI            reduce using rule 87 (comp_exp -> .)
+    RPAREN          reduce using rule 87 (comp_exp -> .)
+    COMMA           reduce using rule 87 (comp_exp -> .)
+    RBRACKET        reduce using rule 87 (comp_exp -> .)
+
+    comp_exp                       shift and go to state 112
+
+state 86
+
+    (101) factor -> constante .
+
+    TIMES           reduce using rule 101 (factor -> constante .)
+    DIVIDE          reduce using rule 101 (factor -> constante .)
+    PLUS            reduce using rule 101 (factor -> constante .)
+    MINUS           reduce using rule 101 (factor -> constante .)
+    GT              reduce using rule 101 (factor -> constante .)
+    LT              reduce using rule 101 (factor -> constante .)
+    GE              reduce using rule 101 (factor -> constante .)
+    LE              reduce using rule 101 (factor -> constante .)
+    NE              reduce using rule 101 (factor -> constante .)
+    EQUALC          reduce using rule 101 (factor -> constante .)
+    AND             reduce using rule 101 (factor -> constante .)
+    OR              reduce using rule 101 (factor -> constante .)
+    RBRACKET        reduce using rule 101 (factor -> constante .)
+    SEMI            reduce using rule 101 (factor -> constante .)
+    RPAREN          reduce using rule 101 (factor -> constante .)
+    COMMA           reduce using rule 101 (factor -> constante .)
+
+
+state 87
+
+    (107) constante -> cte_b_aux .
+
+    TIMES           reduce using rule 107 (constante -> cte_b_aux .)
+    DIVIDE          reduce using rule 107 (constante -> cte_b_aux .)
+    PLUS            reduce using rule 107 (constante -> cte_b_aux .)
+    MINUS           reduce using rule 107 (constante -> cte_b_aux .)
+    GT              reduce using rule 107 (constante -> cte_b_aux .)
+    LT              reduce using rule 107 (constante -> cte_b_aux .)
+    GE              reduce using rule 107 (constante -> cte_b_aux .)
+    LE              reduce using rule 107 (constante -> cte_b_aux .)
+    NE              reduce using rule 107 (constante -> cte_b_aux .)
+    EQUALC          reduce using rule 107 (constante -> cte_b_aux .)
+    AND             reduce using rule 107 (constante -> cte_b_aux .)
+    OR              reduce using rule 107 (constante -> cte_b_aux .)
+    COMMA           reduce using rule 107 (constante -> cte_b_aux .)
+    RPAREN          reduce using rule 107 (constante -> cte_b_aux .)
+    SEMI            reduce using rule 107 (constante -> cte_b_aux .)
+    RBRACKET        reduce using rule 107 (constante -> cte_b_aux .)
+
+
+state 88
+
+    (102) actualiza_pilaOper_lparen -> LPAREN .
+
+    LPAREN          reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+    ID              reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+    CTE_E           reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+    CTE_F           reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+    CTE_B           reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+    CTE_S           reduce using rule 102 (actualiza_pilaOper_lparen -> LPAREN .)
+
+
+state 89
+
+    (100) factor -> actualiza_pilaOper_lparen . expresion actualiza_pilaOper_rparen
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 118
+    big_exp                        shift and go to state 91
+
+state 90
+
+    (63) return -> RETURN expresion .
+
+    SEMI            reduce using rule 63 (return -> RETURN expresion .)
+
+
+state 91
+
+    (71) expresion -> big_exp . or_exp checa_pila_or
+    (73) or_exp -> . OR expresion
+    (74) or_exp -> .
+
+    OR              shift and go to state 120
+    SEMI            reduce using rule 74 (or_exp -> .)
+    RPAREN          reduce using rule 74 (or_exp -> .)
+    COMMA           reduce using rule 74 (or_exp -> .)
+    RBRACKET        reduce using rule 74 (or_exp -> .)
+
+    or_exp                         shift and go to state 119
+
+state 92
+
+    (69) estatutos -> estatuto SEMI . estatutos
+    (69) estatutos -> . estatuto SEMI estatutos
+    (70) estatutos -> .
+    (28) estatuto -> . assignation checa_pila_a
+    (29) estatuto -> . condicion
+    (30) estatuto -> . imprime
+    (31) estatuto -> . mientras
+    (32) estatuto -> . function_use
+    (33) estatuto -> . return
+    (34) estatuto -> . accion
+    (35) estatuto -> . dibujo
+    (44) assignation -> . id_aux value_list actualiza_pilaOper_a expresion
+    (53) condicion -> . SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (49) imprime -> . IMPRIME LPAREN imprimir RPAREN
+    (59) mientras -> . MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (63) return -> . RETURN expresion
+    (64) accion -> . DIRECCION LPAREN expresion RPAREN
+    (65) dibujo -> . CUADRADO LPAREN expresion RPAREN
+    (66) dibujo -> . RECTANGULO LPAREN expresion COMMA expresion RPAREN
+    (67) dibujo -> . CIRCULO LPAREN expresion RPAREN
+    (68) dibujo -> . ROTA LPAREN expresion RPAREN
+    (110) id_aux -> . ID
+    (39) validar_funcion -> . ID
+
+    RCURLY          reduce using rule 70 (estatutos -> .)
+    SI              shift and go to state 68
+    IMPRIME         shift and go to state 65
+    MIENTRAS        shift and go to state 59
+    RETURN          shift and go to state 50
+    DIRECCION       shift and go to state 58
+    CUADRADO        shift and go to state 69
+    RECTANGULO      shift and go to state 70
+    CIRCULO         shift and go to state 71
+    ROTA            shift and go to state 64
+    ID              shift and go to state 61
+
+    function_use                   shift and go to state 51
+    mientras                       shift and go to state 67
+    return                         shift and go to state 52
+    estatuto                       shift and go to state 53
+    dibujo                         shift and go to state 62
+    condicion                      shift and go to state 54
+    id_aux                         shift and go to state 55
+    imprime                        shift and go to state 57
+    validar_funcion                shift and go to state 56
+    estatutos                      shift and go to state 121
+    accion                         shift and go to state 66
+    assignation                    shift and go to state 63
+
+state 93
+
+    (44) assignation -> id_aux value_list . actualiza_pilaOper_a expresion
+    (45) actualiza_pilaOper_a -> . EQUAL
+
+    EQUAL           shift and go to state 123
+
+    actualiza_pilaOper_a           shift and go to state 122
+
+state 94
+
+    (46) value_list -> value_list_aux . LBRACKET expresion RBRACKET
+
+    LBRACKET        shift and go to state 124
+
+
+state 95
+
+    (37) function_use -> validar_funcion LPAREN . add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> validar_funcion LPAREN . RPAREN validar_parametros
+    (40) add_parametro -> . expresion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    RPAREN          shift and go to state 125
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    add_parametro                  shift and go to state 126
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 127
+    big_exp                        shift and go to state 91
+
+state 96
+
+    (64) accion -> DIRECCION LPAREN . expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 128
+    big_exp                        shift and go to state 91
+
+state 97
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos . LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+
+    LPAREN          shift and go to state 129
+
+
+state 98
+
+    (26) codigo_bloque -> LCURLY vars guarda_variables_local estatutos RCURLY .
+
+    FIN             reduce using rule 26 (codigo_bloque -> LCURLY vars guarda_variables_local estatutos RCURLY .)
+    FUNCION         reduce using rule 26 (codigo_bloque -> LCURLY vars guarda_variables_local estatutos RCURLY .)
+    MAIN            reduce using rule 26 (codigo_bloque -> LCURLY vars guarda_variables_local estatutos RCURLY .)
+
+
+state 99
+
+    (28) estatuto -> assignation checa_pila_a .
+
+    SEMI            reduce using rule 28 (estatuto -> assignation checa_pila_a .)
+
+
+state 100
+
+    (68) dibujo -> ROTA LPAREN . expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 130
+    big_exp                        shift and go to state 91
+
+state 101
+
+    (49) imprime -> IMPRIME LPAREN . imprimir RPAREN
+    (50) imprimir -> . expresion imprimir_mas
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    imprimir                       shift and go to state 131
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 132
+    big_exp                        shift and go to state 91
+
+state 102
+
+    (53) condicion -> SI LPAREN . expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 133
+    big_exp                        shift and go to state 91
+
+state 103
+
+    (65) dibujo -> CUADRADO LPAREN . expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 134
+    big_exp                        shift and go to state 91
+
+state 104
+
+    (66) dibujo -> RECTANGULO LPAREN . expresion COMMA expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 135
+    big_exp                        shift and go to state 91
+
+state 105
+
+    (67) dibujo -> CIRCULO LPAREN . expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 136
+    big_exp                        shift and go to state 91
+
+state 106
+
+    (88) exp -> termino checa_pila_mm . termino_mm
+    (90) termino_mm -> . actualiza_pilaOper_mm exp
+    (91) termino_mm -> .
+    (92) actualiza_pilaOper_mm -> . PLUS
+    (93) actualiza_pilaOper_mm -> . MINUS
+
+    GT              reduce using rule 91 (termino_mm -> .)
+    LT              reduce using rule 91 (termino_mm -> .)
+    GE              reduce using rule 91 (termino_mm -> .)
+    LE              reduce using rule 91 (termino_mm -> .)
+    NE              reduce using rule 91 (termino_mm -> .)
+    EQUALC          reduce using rule 91 (termino_mm -> .)
+    AND             reduce using rule 91 (termino_mm -> .)
+    OR              reduce using rule 91 (termino_mm -> .)
+    SEMI            reduce using rule 91 (termino_mm -> .)
+    RPAREN          reduce using rule 91 (termino_mm -> .)
+    COMMA           reduce using rule 91 (termino_mm -> .)
+    RBRACKET        reduce using rule 91 (termino_mm -> .)
+    PLUS            shift and go to state 139
+    MINUS           shift and go to state 140
+
+    actualiza_pilaOper_mm          shift and go to state 137
+    termino_mm                     shift and go to state 138
+
+state 107
+
+    (75) big_exp -> medium_exp and_exp . checa_pila_and
+    (76) checa_pila_and -> .
+
+    OR              reduce using rule 76 (checa_pila_and -> .)
+    SEMI            reduce using rule 76 (checa_pila_and -> .)
+    RPAREN          reduce using rule 76 (checa_pila_and -> .)
+    COMMA           reduce using rule 76 (checa_pila_and -> .)
+    RBRACKET        reduce using rule 76 (checa_pila_and -> .)
+
+    checa_pila_and                 shift and go to state 141
+
+state 108
+
+    (77) and_exp -> AND . big_exp
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    big_exp                        shift and go to state 142
+
+state 109
+
+    (94) termino -> factor checa_pila_md . factor_md
+    (96) factor_md -> . actualiza_pilaOper_md termino
+    (97) factor_md -> .
+    (98) actualiza_pilaOper_md -> . TIMES
+    (99) actualiza_pilaOper_md -> . DIVIDE
+
+    PLUS            reduce using rule 97 (factor_md -> .)
+    MINUS           reduce using rule 97 (factor_md -> .)
+    GT              reduce using rule 97 (factor_md -> .)
+    LT              reduce using rule 97 (factor_md -> .)
+    GE              reduce using rule 97 (factor_md -> .)
+    LE              reduce using rule 97 (factor_md -> .)
+    NE              reduce using rule 97 (factor_md -> .)
+    EQUALC          reduce using rule 97 (factor_md -> .)
+    AND             reduce using rule 97 (factor_md -> .)
+    OR              reduce using rule 97 (factor_md -> .)
+    SEMI            reduce using rule 97 (factor_md -> .)
+    RPAREN          reduce using rule 97 (factor_md -> .)
+    COMMA           reduce using rule 97 (factor_md -> .)
+    RBRACKET        reduce using rule 97 (factor_md -> .)
+    TIMES           shift and go to state 144
+    DIVIDE          shift and go to state 146
+
+    actualiza_pilaOper_md          shift and go to state 143
+    factor_md                      shift and go to state 145
+
+state 110
+
+    (104) constante -> id_aux value_list .
+
+    TIMES           reduce using rule 104 (constante -> id_aux value_list .)
+    DIVIDE          reduce using rule 104 (constante -> id_aux value_list .)
+    PLUS            reduce using rule 104 (constante -> id_aux value_list .)
+    MINUS           reduce using rule 104 (constante -> id_aux value_list .)
+    GT              reduce using rule 104 (constante -> id_aux value_list .)
+    LT              reduce using rule 104 (constante -> id_aux value_list .)
+    GE              reduce using rule 104 (constante -> id_aux value_list .)
+    LE              reduce using rule 104 (constante -> id_aux value_list .)
+    NE              reduce using rule 104 (constante -> id_aux value_list .)
+    EQUALC          reduce using rule 104 (constante -> id_aux value_list .)
+    AND             reduce using rule 104 (constante -> id_aux value_list .)
+    OR              reduce using rule 104 (constante -> id_aux value_list .)
+    COMMA           reduce using rule 104 (constante -> id_aux value_list .)
+    RPAREN          reduce using rule 104 (constante -> id_aux value_list .)
+    SEMI            reduce using rule 104 (constante -> id_aux value_list .)
+    RBRACKET        reduce using rule 104 (constante -> id_aux value_list .)
+
+
+state 111
+
+    (81) comp_exp -> GT . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 147
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 112
+
+    (79) medium_exp -> exp comp_exp . checa_pila_comp
+    (80) checa_pila_comp -> .
+
+    AND             reduce using rule 80 (checa_pila_comp -> .)
+    OR              reduce using rule 80 (checa_pila_comp -> .)
+    SEMI            reduce using rule 80 (checa_pila_comp -> .)
+    RPAREN          reduce using rule 80 (checa_pila_comp -> .)
+    COMMA           reduce using rule 80 (checa_pila_comp -> .)
+    RBRACKET        reduce using rule 80 (checa_pila_comp -> .)
+
+    checa_pila_comp                shift and go to state 148
+
+state 113
+
+    (82) comp_exp -> LT . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 149
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 114
+
+    (85) comp_exp -> NE . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 150
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 115
+
+    (83) comp_exp -> GE . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 151
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 116
+
+    (84) comp_exp -> LE . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 152
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 117
+
+    (86) comp_exp -> EQUALC . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 153
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 118
+
+    (100) factor -> actualiza_pilaOper_lparen expresion . actualiza_pilaOper_rparen
+    (103) actualiza_pilaOper_rparen -> . RPAREN
+
+    RPAREN          shift and go to state 155
+
+    actualiza_pilaOper_rparen      shift and go to state 154
+
+state 119
+
+    (71) expresion -> big_exp or_exp . checa_pila_or
+    (72) checa_pila_or -> .
+
+    SEMI            reduce using rule 72 (checa_pila_or -> .)
+    RPAREN          reduce using rule 72 (checa_pila_or -> .)
+    COMMA           reduce using rule 72 (checa_pila_or -> .)
+    RBRACKET        reduce using rule 72 (checa_pila_or -> .)
+
+    checa_pila_or                  shift and go to state 156
+
+state 120
+
+    (73) or_exp -> OR . expresion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 157
+    big_exp                        shift and go to state 91
+
+state 121
+
+    (69) estatutos -> estatuto SEMI estatutos .
+
+    RCURLY          reduce using rule 69 (estatutos -> estatuto SEMI estatutos .)
+
+
+state 122
+
+    (44) assignation -> id_aux value_list actualiza_pilaOper_a . expresion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    constante                      shift and go to state 86
+    factor                         shift and go to state 80
+    cte_b_aux                      shift and go to state 87
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 158
+    big_exp                        shift and go to state 91
+
+state 123
+
+    (45) actualiza_pilaOper_a -> EQUAL .
+
+    LPAREN          reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+    ID              reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+    CTE_E           reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+    CTE_F           reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+    CTE_B           reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+    CTE_S           reduce using rule 45 (actualiza_pilaOper_a -> EQUAL .)
+
+
+state 124
+
+    (46) value_list -> value_list_aux LBRACKET . expresion RBRACKET
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 159
+    big_exp                        shift and go to state 91
+
+state 125
+
+    (38) function_use -> validar_funcion LPAREN RPAREN . validar_parametros
+    (41) validar_parametros -> .
+
+    SEMI            reduce using rule 41 (validar_parametros -> .)
+    TIMES           reduce using rule 41 (validar_parametros -> .)
+    DIVIDE          reduce using rule 41 (validar_parametros -> .)
+    PLUS            reduce using rule 41 (validar_parametros -> .)
+    MINUS           reduce using rule 41 (validar_parametros -> .)
+    GT              reduce using rule 41 (validar_parametros -> .)
+    LT              reduce using rule 41 (validar_parametros -> .)
+    GE              reduce using rule 41 (validar_parametros -> .)
+    LE              reduce using rule 41 (validar_parametros -> .)
+    NE              reduce using rule 41 (validar_parametros -> .)
+    EQUALC          reduce using rule 41 (validar_parametros -> .)
+    AND             reduce using rule 41 (validar_parametros -> .)
+    OR              reduce using rule 41 (validar_parametros -> .)
+    RPAREN          reduce using rule 41 (validar_parametros -> .)
+    COMMA           reduce using rule 41 (validar_parametros -> .)
+    RBRACKET        reduce using rule 41 (validar_parametros -> .)
+
+    validar_parametros             shift and go to state 160
+
+state 126
+
+    (37) function_use -> validar_funcion LPAREN add_parametro . more_ids RPAREN validar_parametros
+    (42) more_ids -> . COMMA add_parametro more_ids
+    (43) more_ids -> .
+
+    COMMA           shift and go to state 161
+    RPAREN          reduce using rule 43 (more_ids -> .)
+
+    more_ids                       shift and go to state 162
+
+state 127
+
+    (40) add_parametro -> expresion .
+
+    COMMA           reduce using rule 40 (add_parametro -> expresion .)
+    RPAREN          reduce using rule 40 (add_parametro -> expresion .)
+
+
+state 128
+
+    (64) accion -> DIRECCION LPAREN expresion . RPAREN
+
+    RPAREN          shift and go to state 163
+
+
+state 129
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN . expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 164
+    big_exp                        shift and go to state 91
+
+state 130
+
+    (68) dibujo -> ROTA LPAREN expresion . RPAREN
+
+    RPAREN          shift and go to state 165
+
+
+state 131
+
+    (49) imprime -> IMPRIME LPAREN imprimir . RPAREN
+
+    RPAREN          shift and go to state 166
+
+
+state 132
+
+    (50) imprimir -> expresion . imprimir_mas
+    (51) imprimir_mas -> . COMMA imprimir
+    (52) imprimir_mas -> .
+
+    COMMA           shift and go to state 167
+    RPAREN          reduce using rule 52 (imprimir_mas -> .)
+
+    imprimir_mas                   shift and go to state 168
+
+state 133
+
+    (53) condicion -> SI LPAREN expresion . RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+
+    RPAREN          shift and go to state 169
+
+
+state 134
+
+    (65) dibujo -> CUADRADO LPAREN expresion . RPAREN
+
+    RPAREN          shift and go to state 170
+
+
+state 135
+
+    (66) dibujo -> RECTANGULO LPAREN expresion . COMMA expresion RPAREN
+
+    COMMA           shift and go to state 171
+
+
+state 136
+
+    (67) dibujo -> CIRCULO LPAREN expresion . RPAREN
+
+    RPAREN          shift and go to state 172
+
+
+state 137
+
+    (90) termino_mm -> actualiza_pilaOper_mm . exp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 173
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+
+state 138
+
+    (88) exp -> termino checa_pila_mm termino_mm .
+
+    GT              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    LT              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    GE              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    LE              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    NE              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    EQUALC          reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    AND             reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    OR              reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    RPAREN          reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    SEMI            reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    COMMA           reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+    RBRACKET        reduce using rule 88 (exp -> termino checa_pila_mm termino_mm .)
+
+
+state 139
+
+    (92) actualiza_pilaOper_mm -> PLUS .
+
+    LPAREN          reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+    ID              reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+    CTE_E           reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+    CTE_F           reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+    CTE_B           reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+    CTE_S           reduce using rule 92 (actualiza_pilaOper_mm -> PLUS .)
+
+
+state 140
+
+    (93) actualiza_pilaOper_mm -> MINUS .
+
+    LPAREN          reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+    ID              reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+    CTE_E           reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+    CTE_F           reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+    CTE_B           reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+    CTE_S           reduce using rule 93 (actualiza_pilaOper_mm -> MINUS .)
+
+
+state 141
+
+    (75) big_exp -> medium_exp and_exp checa_pila_and .
+
+    OR              reduce using rule 75 (big_exp -> medium_exp and_exp checa_pila_and .)
+    RPAREN          reduce using rule 75 (big_exp -> medium_exp and_exp checa_pila_and .)
+    COMMA           reduce using rule 75 (big_exp -> medium_exp and_exp checa_pila_and .)
+    RBRACKET        reduce using rule 75 (big_exp -> medium_exp and_exp checa_pila_and .)
+    SEMI            reduce using rule 75 (big_exp -> medium_exp and_exp checa_pila_and .)
+
+
+state 142
+
+    (77) and_exp -> AND big_exp .
+
+    OR              reduce using rule 77 (and_exp -> AND big_exp .)
+    SEMI            reduce using rule 77 (and_exp -> AND big_exp .)
+    RPAREN          reduce using rule 77 (and_exp -> AND big_exp .)
+    COMMA           reduce using rule 77 (and_exp -> AND big_exp .)
+    RBRACKET        reduce using rule 77 (and_exp -> AND big_exp .)
+
+
+state 143
+
+    (96) factor_md -> actualiza_pilaOper_md . termino
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    function_use                   shift and go to state 74
+    validar_funcion                shift and go to state 56
+    cte_s_aux                      shift and go to state 76
+    cte_f_aux                      shift and go to state 73
+    cte_e_aux                      shift and go to state 77
+    constante                      shift and go to state 86
+    termino                        shift and go to state 174
+    factor                         shift and go to state 80
+    actualiza_pilaOper_lparen      shift and go to state 89
+    cte_b_aux                      shift and go to state 87
+    id_aux                         shift and go to state 84
+
+state 144
+
+    (98) actualiza_pilaOper_md -> TIMES .
+
+    LPAREN          reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+    ID              reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+    CTE_E           reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+    CTE_F           reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+    CTE_B           reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+    CTE_S           reduce using rule 98 (actualiza_pilaOper_md -> TIMES .)
+
+
+state 145
+
+    (94) termino -> factor checa_pila_md factor_md .
+
+    PLUS            reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    MINUS           reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    GT              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    LT              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    GE              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    LE              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    NE              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    EQUALC          reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    AND             reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    OR              reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    COMMA           reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    RPAREN          reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    SEMI            reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+    RBRACKET        reduce using rule 94 (termino -> factor checa_pila_md factor_md .)
+
+
+state 146
+
+    (99) actualiza_pilaOper_md -> DIVIDE .
+
+    LPAREN          reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+    ID              reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+    CTE_E           reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+    CTE_F           reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+    CTE_B           reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+    CTE_S           reduce using rule 99 (actualiza_pilaOper_md -> DIVIDE .)
+
+
+state 147
+
+    (81) comp_exp -> GT exp .
+
+    AND             reduce using rule 81 (comp_exp -> GT exp .)
+    OR              reduce using rule 81 (comp_exp -> GT exp .)
+    SEMI            reduce using rule 81 (comp_exp -> GT exp .)
+    RPAREN          reduce using rule 81 (comp_exp -> GT exp .)
+    COMMA           reduce using rule 81 (comp_exp -> GT exp .)
+    RBRACKET        reduce using rule 81 (comp_exp -> GT exp .)
+
+
+state 148
+
+    (79) medium_exp -> exp comp_exp checa_pila_comp .
+
+    AND             reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+    OR              reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+    RPAREN          reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+    COMMA           reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+    SEMI            reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+    RBRACKET        reduce using rule 79 (medium_exp -> exp comp_exp checa_pila_comp .)
+
+
+state 149
+
+    (82) comp_exp -> LT exp .
+
+    AND             reduce using rule 82 (comp_exp -> LT exp .)
+    OR              reduce using rule 82 (comp_exp -> LT exp .)
+    SEMI            reduce using rule 82 (comp_exp -> LT exp .)
+    RPAREN          reduce using rule 82 (comp_exp -> LT exp .)
+    COMMA           reduce using rule 82 (comp_exp -> LT exp .)
+    RBRACKET        reduce using rule 82 (comp_exp -> LT exp .)
+
+
+state 150
+
+    (85) comp_exp -> NE exp .
+
+    AND             reduce using rule 85 (comp_exp -> NE exp .)
+    OR              reduce using rule 85 (comp_exp -> NE exp .)
+    SEMI            reduce using rule 85 (comp_exp -> NE exp .)
+    RPAREN          reduce using rule 85 (comp_exp -> NE exp .)
+    COMMA           reduce using rule 85 (comp_exp -> NE exp .)
+    RBRACKET        reduce using rule 85 (comp_exp -> NE exp .)
+
+
+state 151
+
+    (83) comp_exp -> GE exp .
+
+    AND             reduce using rule 83 (comp_exp -> GE exp .)
+    OR              reduce using rule 83 (comp_exp -> GE exp .)
+    SEMI            reduce using rule 83 (comp_exp -> GE exp .)
+    RPAREN          reduce using rule 83 (comp_exp -> GE exp .)
+    COMMA           reduce using rule 83 (comp_exp -> GE exp .)
+    RBRACKET        reduce using rule 83 (comp_exp -> GE exp .)
+
+
+state 152
+
+    (84) comp_exp -> LE exp .
+
+    AND             reduce using rule 84 (comp_exp -> LE exp .)
+    OR              reduce using rule 84 (comp_exp -> LE exp .)
+    SEMI            reduce using rule 84 (comp_exp -> LE exp .)
+    RPAREN          reduce using rule 84 (comp_exp -> LE exp .)
+    COMMA           reduce using rule 84 (comp_exp -> LE exp .)
+    RBRACKET        reduce using rule 84 (comp_exp -> LE exp .)
+
+
+state 153
+
+    (86) comp_exp -> EQUALC exp .
+
+    AND             reduce using rule 86 (comp_exp -> EQUALC exp .)
+    OR              reduce using rule 86 (comp_exp -> EQUALC exp .)
+    SEMI            reduce using rule 86 (comp_exp -> EQUALC exp .)
+    RPAREN          reduce using rule 86 (comp_exp -> EQUALC exp .)
+    COMMA           reduce using rule 86 (comp_exp -> EQUALC exp .)
+    RBRACKET        reduce using rule 86 (comp_exp -> EQUALC exp .)
+
+
+state 154
+
+    (100) factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .
+
+    TIMES           reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    DIVIDE          reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    PLUS            reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    MINUS           reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    GT              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    LT              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    GE              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    LE              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    NE              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    EQUALC          reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    AND             reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    OR              reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    RBRACKET        reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    SEMI            reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    RPAREN          reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+    COMMA           reduce using rule 100 (factor -> actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen .)
+
+
+state 155
+
+    (103) actualiza_pilaOper_rparen -> RPAREN .
+
+    TIMES           reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    DIVIDE          reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    PLUS            reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    MINUS           reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    GT              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    LT              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    GE              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    LE              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    NE              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    EQUALC          reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    AND             reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    OR              reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    SEMI            reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    RPAREN          reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    COMMA           reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+    RBRACKET        reduce using rule 103 (actualiza_pilaOper_rparen -> RPAREN .)
+
+
+state 156
+
+    (71) expresion -> big_exp or_exp checa_pila_or .
+
+    RPAREN          reduce using rule 71 (expresion -> big_exp or_exp checa_pila_or .)
+    SEMI            reduce using rule 71 (expresion -> big_exp or_exp checa_pila_or .)
+    COMMA           reduce using rule 71 (expresion -> big_exp or_exp checa_pila_or .)
+    RBRACKET        reduce using rule 71 (expresion -> big_exp or_exp checa_pila_or .)
+
+
+state 157
+
+    (73) or_exp -> OR expresion .
+
+    SEMI            reduce using rule 73 (or_exp -> OR expresion .)
+    RPAREN          reduce using rule 73 (or_exp -> OR expresion .)
+    COMMA           reduce using rule 73 (or_exp -> OR expresion .)
+    RBRACKET        reduce using rule 73 (or_exp -> OR expresion .)
+
+
+state 158
+
+    (44) assignation -> id_aux value_list actualiza_pilaOper_a expresion .
+
+    SEMI            reduce using rule 44 (assignation -> id_aux value_list actualiza_pilaOper_a expresion .)
+
+
+state 159
+
+    (46) value_list -> value_list_aux LBRACKET expresion . RBRACKET
+
+    RBRACKET        shift and go to state 175
+
+
+state 160
+
+    (38) function_use -> validar_funcion LPAREN RPAREN validar_parametros .
+
+    TIMES           reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    DIVIDE          reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    PLUS            reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    MINUS           reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    GT              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    LT              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    GE              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    LE              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    NE              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    EQUALC          reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    AND             reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    OR              reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    COMMA           reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    RPAREN          reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    SEMI            reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+    RBRACKET        reduce using rule 38 (function_use -> validar_funcion LPAREN RPAREN validar_parametros .)
+
+
+state 161
+
+    (42) more_ids -> COMMA . add_parametro more_ids
+    (40) add_parametro -> . expresion
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    add_parametro                  shift and go to state 176
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 127
+    big_exp                        shift and go to state 91
+
+state 162
+
+    (37) function_use -> validar_funcion LPAREN add_parametro more_ids . RPAREN validar_parametros
+
+    RPAREN          shift and go to state 177
+
+
+state 163
+
+    (64) accion -> DIRECCION LPAREN expresion RPAREN .
+
+    SEMI            reduce using rule 64 (accion -> DIRECCION LPAREN expresion RPAREN .)
+
+
+state 164
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion . RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+
+    RPAREN          shift and go to state 178
+
+
+state 165
+
+    (68) dibujo -> ROTA LPAREN expresion RPAREN .
+
+    SEMI            reduce using rule 68 (dibujo -> ROTA LPAREN expresion RPAREN .)
+
+
+state 166
+
+    (49) imprime -> IMPRIME LPAREN imprimir RPAREN .
+
+    SEMI            reduce using rule 49 (imprime -> IMPRIME LPAREN imprimir RPAREN .)
+
+
+state 167
+
+    (51) imprimir_mas -> COMMA . imprimir
+    (50) imprimir -> . expresion imprimir_mas
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    imprimir                       shift and go to state 179
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 132
+    big_exp                        shift and go to state 91
+
+state 168
+
+    (50) imprimir -> expresion imprimir_mas .
+
+    RPAREN          reduce using rule 50 (imprimir -> expresion imprimir_mas .)
+
+
+state 169
+
+    (53) condicion -> SI LPAREN expresion RPAREN . gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (54) gotoF_condicion -> .
+
+    LCURLY          reduce using rule 54 (gotoF_condicion -> .)
+
+    gotoF_condicion                shift and go to state 180
+
+state 170
+
+    (65) dibujo -> CUADRADO LPAREN expresion RPAREN .
+
+    SEMI            reduce using rule 65 (dibujo -> CUADRADO LPAREN expresion RPAREN .)
+
+
+state 171
+
+    (66) dibujo -> RECTANGULO LPAREN expresion COMMA . expresion RPAREN
+    (71) expresion -> . big_exp or_exp checa_pila_or
+    (75) big_exp -> . medium_exp and_exp checa_pila_and
+    (79) medium_exp -> . exp comp_exp checa_pila_comp
+    (88) exp -> . termino checa_pila_mm termino_mm
+    (94) termino -> . factor checa_pila_md factor_md
+    (100) factor -> . actualiza_pilaOper_lparen expresion actualiza_pilaOper_rparen
+    (101) factor -> . constante
+    (102) actualiza_pilaOper_lparen -> . LPAREN
+    (104) constante -> . id_aux value_list
+    (105) constante -> . cte_e_aux
+    (106) constante -> . cte_f_aux
+    (107) constante -> . cte_b_aux
+    (108) constante -> . cte_s_aux
+    (109) constante -> . function_use
+    (110) id_aux -> . ID
+    (111) cte_e_aux -> . CTE_E
+    (112) cte_f_aux -> . CTE_F
+    (114) cte_b_aux -> . CTE_B
+    (113) cte_s_aux -> . CTE_S
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (39) validar_funcion -> . ID
+
+    LPAREN          shift and go to state 88
+    ID              shift and go to state 61
+    CTE_E           shift and go to state 82
+    CTE_F           shift and go to state 81
+    CTE_B           shift and go to state 83
+    CTE_S           shift and go to state 78
+
+    cte_f_aux                      shift and go to state 73
+    function_use                   shift and go to state 74
+    termino                        shift and go to state 75
+    cte_s_aux                      shift and go to state 76
+    cte_e_aux                      shift and go to state 77
+    medium_exp                     shift and go to state 79
+    factor                         shift and go to state 80
+    id_aux                         shift and go to state 84
+    exp                            shift and go to state 85
+    constante                      shift and go to state 86
+    cte_b_aux                      shift and go to state 87
+    validar_funcion                shift and go to state 56
+    actualiza_pilaOper_lparen      shift and go to state 89
+    expresion                      shift and go to state 181
+    big_exp                        shift and go to state 91
+
+state 172
+
+    (67) dibujo -> CIRCULO LPAREN expresion RPAREN .
+
+    SEMI            reduce using rule 67 (dibujo -> CIRCULO LPAREN expresion RPAREN .)
+
+
+state 173
+
+    (90) termino_mm -> actualiza_pilaOper_mm exp .
+
+    GT              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    LT              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    GE              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    LE              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    NE              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    EQUALC          reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    AND             reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    OR              reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    SEMI            reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    RPAREN          reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    COMMA           reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+    RBRACKET        reduce using rule 90 (termino_mm -> actualiza_pilaOper_mm exp .)
+
+
+state 174
+
+    (96) factor_md -> actualiza_pilaOper_md termino .
+
+    PLUS            reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    MINUS           reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    GT              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    LT              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    GE              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    LE              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    NE              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    EQUALC          reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    AND             reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    OR              reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    SEMI            reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    RPAREN          reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    COMMA           reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+    RBRACKET        reduce using rule 96 (factor_md -> actualiza_pilaOper_md termino .)
+
+
+state 175
+
+    (46) value_list -> value_list_aux LBRACKET expresion RBRACKET .
+
+    TIMES           reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    DIVIDE          reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    PLUS            reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    MINUS           reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    GT              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    LT              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    GE              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    LE              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    NE              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    EQUALC          reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    AND             reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    OR              reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    SEMI            reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    RPAREN          reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    COMMA           reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    RBRACKET        reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+    EQUAL           reduce using rule 46 (value_list -> value_list_aux LBRACKET expresion RBRACKET .)
+
+
+state 176
+
+    (42) more_ids -> COMMA add_parametro . more_ids
+    (42) more_ids -> . COMMA add_parametro more_ids
+    (43) more_ids -> .
+
+    COMMA           shift and go to state 161
+    RPAREN          reduce using rule 43 (more_ids -> .)
+
+    more_ids                       shift and go to state 182
+
+state 177
+
+    (37) function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN . validar_parametros
+    (41) validar_parametros -> .
+
+    SEMI            reduce using rule 41 (validar_parametros -> .)
+    TIMES           reduce using rule 41 (validar_parametros -> .)
+    DIVIDE          reduce using rule 41 (validar_parametros -> .)
+    PLUS            reduce using rule 41 (validar_parametros -> .)
+    MINUS           reduce using rule 41 (validar_parametros -> .)
+    GT              reduce using rule 41 (validar_parametros -> .)
+    LT              reduce using rule 41 (validar_parametros -> .)
+    GE              reduce using rule 41 (validar_parametros -> .)
+    LE              reduce using rule 41 (validar_parametros -> .)
+    NE              reduce using rule 41 (validar_parametros -> .)
+    EQUALC          reduce using rule 41 (validar_parametros -> .)
+    AND             reduce using rule 41 (validar_parametros -> .)
+    OR              reduce using rule 41 (validar_parametros -> .)
+    RPAREN          reduce using rule 41 (validar_parametros -> .)
+    COMMA           reduce using rule 41 (validar_parametros -> .)
+    RBRACKET        reduce using rule 41 (validar_parametros -> .)
+
+    validar_parametros             shift and go to state 183
+
+state 178
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN . gotoF_while LCURLY estatutos RCURLY fin_while
+    (61) gotoF_while -> .
+
+    LCURLY          reduce using rule 61 (gotoF_while -> .)
+
+    gotoF_while                    shift and go to state 184
+
+state 179
+
+    (51) imprimir_mas -> COMMA imprimir .
+
+    RPAREN          reduce using rule 51 (imprimir_mas -> COMMA imprimir .)
+
+
+state 180
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion . LCURLY estatutos RCURLY else_condicion fin_condicion
+
+    LCURLY          shift and go to state 185
+
+
+state 181
+
+    (66) dibujo -> RECTANGULO LPAREN expresion COMMA expresion . RPAREN
+
+    RPAREN          shift and go to state 186
+
+
+state 182
+
+    (42) more_ids -> COMMA add_parametro more_ids .
+
+    RPAREN          reduce using rule 42 (more_ids -> COMMA add_parametro more_ids .)
+
+
+state 183
+
+    (37) function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .
+
+    TIMES           reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    DIVIDE          reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    PLUS            reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    MINUS           reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    GT              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    LT              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    GE              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    LE              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    NE              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    EQUALC          reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    AND             reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    OR              reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    COMMA           reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    RPAREN          reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    SEMI            reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+    RBRACKET        reduce using rule 37 (function_use -> validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros .)
+
+
+state 184
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while . LCURLY estatutos RCURLY fin_while
+
+    LCURLY          shift and go to state 187
+
+
+state 185
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY . estatutos RCURLY else_condicion fin_condicion
+    (69) estatutos -> . estatuto SEMI estatutos
+    (70) estatutos -> .
+    (28) estatuto -> . assignation checa_pila_a
+    (29) estatuto -> . condicion
+    (30) estatuto -> . imprime
+    (31) estatuto -> . mientras
+    (32) estatuto -> . function_use
+    (33) estatuto -> . return
+    (34) estatuto -> . accion
+    (35) estatuto -> . dibujo
+    (44) assignation -> . id_aux value_list actualiza_pilaOper_a expresion
+    (53) condicion -> . SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (49) imprime -> . IMPRIME LPAREN imprimir RPAREN
+    (59) mientras -> . MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (63) return -> . RETURN expresion
+    (64) accion -> . DIRECCION LPAREN expresion RPAREN
+    (65) dibujo -> . CUADRADO LPAREN expresion RPAREN
+    (66) dibujo -> . RECTANGULO LPAREN expresion COMMA expresion RPAREN
+    (67) dibujo -> . CIRCULO LPAREN expresion RPAREN
+    (68) dibujo -> . ROTA LPAREN expresion RPAREN
+    (110) id_aux -> . ID
+    (39) validar_funcion -> . ID
+
+    RCURLY          reduce using rule 70 (estatutos -> .)
+    SI              shift and go to state 68
+    IMPRIME         shift and go to state 65
+    MIENTRAS        shift and go to state 59
+    RETURN          shift and go to state 50
+    DIRECCION       shift and go to state 58
+    CUADRADO        shift and go to state 69
+    RECTANGULO      shift and go to state 70
+    CIRCULO         shift and go to state 71
+    ROTA            shift and go to state 64
+    ID              shift and go to state 61
+
+    function_use                   shift and go to state 51
+    mientras                       shift and go to state 67
+    return                         shift and go to state 52
+    estatuto                       shift and go to state 53
+    condicion                      shift and go to state 54
+    id_aux                         shift and go to state 55
+    assignation                    shift and go to state 63
+    imprime                        shift and go to state 57
+    validar_funcion                shift and go to state 56
+    estatutos                      shift and go to state 188
+    dibujo                         shift and go to state 62
+    accion                         shift and go to state 66
+
+state 186
+
+    (66) dibujo -> RECTANGULO LPAREN expresion COMMA expresion RPAREN .
+
+    SEMI            reduce using rule 66 (dibujo -> RECTANGULO LPAREN expresion COMMA expresion RPAREN .)
+
+
+state 187
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY . estatutos RCURLY fin_while
+    (69) estatutos -> . estatuto SEMI estatutos
+    (70) estatutos -> .
+    (28) estatuto -> . assignation checa_pila_a
+    (29) estatuto -> . condicion
+    (30) estatuto -> . imprime
+    (31) estatuto -> . mientras
+    (32) estatuto -> . function_use
+    (33) estatuto -> . return
+    (34) estatuto -> . accion
+    (35) estatuto -> . dibujo
+    (44) assignation -> . id_aux value_list actualiza_pilaOper_a expresion
+    (53) condicion -> . SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (49) imprime -> . IMPRIME LPAREN imprimir RPAREN
+    (59) mientras -> . MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (63) return -> . RETURN expresion
+    (64) accion -> . DIRECCION LPAREN expresion RPAREN
+    (65) dibujo -> . CUADRADO LPAREN expresion RPAREN
+    (66) dibujo -> . RECTANGULO LPAREN expresion COMMA expresion RPAREN
+    (67) dibujo -> . CIRCULO LPAREN expresion RPAREN
+    (68) dibujo -> . ROTA LPAREN expresion RPAREN
+    (110) id_aux -> . ID
+    (39) validar_funcion -> . ID
+
+    RCURLY          reduce using rule 70 (estatutos -> .)
+    SI              shift and go to state 68
+    IMPRIME         shift and go to state 65
+    MIENTRAS        shift and go to state 59
+    RETURN          shift and go to state 50
+    DIRECCION       shift and go to state 58
+    CUADRADO        shift and go to state 69
+    RECTANGULO      shift and go to state 70
+    CIRCULO         shift and go to state 71
+    ROTA            shift and go to state 64
+    ID              shift and go to state 61
+
+    function_use                   shift and go to state 51
+    mientras                       shift and go to state 67
+    return                         shift and go to state 52
+    estatuto                       shift and go to state 53
+    dibujo                         shift and go to state 62
+    condicion                      shift and go to state 54
+    id_aux                         shift and go to state 55
+    imprime                        shift and go to state 57
+    validar_funcion                shift and go to state 56
+    estatutos                      shift and go to state 189
+    accion                         shift and go to state 66
+    assignation                    shift and go to state 63
+
+state 188
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos . RCURLY else_condicion fin_condicion
+
+    RCURLY          shift and go to state 190
+
+
+state 189
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos . RCURLY fin_while
+
+    RCURLY          shift and go to state 191
+
+
+state 190
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY . else_condicion fin_condicion
+    (56) else_condicion -> . SINO LCURLY goto_else estatutos RCURLY
+    (57) else_condicion -> .
+
+    SINO            shift and go to state 193
+    SEMI            reduce using rule 57 (else_condicion -> .)
+
+    else_condicion                 shift and go to state 192
+
+state 191
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY . fin_while
+    (62) fin_while -> .
+
+    SEMI            reduce using rule 62 (fin_while -> .)
+
+    fin_while                      shift and go to state 194
+
+state 192
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion . fin_condicion
+    (55) fin_condicion -> .
+
+    SEMI            reduce using rule 55 (fin_condicion -> .)
+
+    fin_condicion                  shift and go to state 195
+
+state 193
+
+    (56) else_condicion -> SINO . LCURLY goto_else estatutos RCURLY
+
+    LCURLY          shift and go to state 196
+
+
+state 194
+
+    (59) mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while .
+
+    SEMI            reduce using rule 59 (mientras -> MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while .)
+
+
+state 195
+
+    (53) condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion .
+
+    SEMI            reduce using rule 53 (condicion -> SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion .)
+
+
+state 196
+
+    (56) else_condicion -> SINO LCURLY . goto_else estatutos RCURLY
+    (58) goto_else -> .
+
+    SI              reduce using rule 58 (goto_else -> .)
+    IMPRIME         reduce using rule 58 (goto_else -> .)
+    MIENTRAS        reduce using rule 58 (goto_else -> .)
+    RETURN          reduce using rule 58 (goto_else -> .)
+    DIRECCION       reduce using rule 58 (goto_else -> .)
+    CUADRADO        reduce using rule 58 (goto_else -> .)
+    RECTANGULO      reduce using rule 58 (goto_else -> .)
+    CIRCULO         reduce using rule 58 (goto_else -> .)
+    ROTA            reduce using rule 58 (goto_else -> .)
+    ID              reduce using rule 58 (goto_else -> .)
+    RCURLY          reduce using rule 58 (goto_else -> .)
+
+    goto_else                      shift and go to state 197
+
+state 197
+
+    (56) else_condicion -> SINO LCURLY goto_else . estatutos RCURLY
+    (69) estatutos -> . estatuto SEMI estatutos
+    (70) estatutos -> .
+    (28) estatuto -> . assignation checa_pila_a
+    (29) estatuto -> . condicion
+    (30) estatuto -> . imprime
+    (31) estatuto -> . mientras
+    (32) estatuto -> . function_use
+    (33) estatuto -> . return
+    (34) estatuto -> . accion
+    (35) estatuto -> . dibujo
+    (44) assignation -> . id_aux value_list actualiza_pilaOper_a expresion
+    (53) condicion -> . SI LPAREN expresion RPAREN gotoF_condicion LCURLY estatutos RCURLY else_condicion fin_condicion
+    (49) imprime -> . IMPRIME LPAREN imprimir RPAREN
+    (59) mientras -> . MIENTRAS actualiza_pilaSaltos LPAREN expresion RPAREN gotoF_while LCURLY estatutos RCURLY fin_while
+    (37) function_use -> . validar_funcion LPAREN add_parametro more_ids RPAREN validar_parametros
+    (38) function_use -> . validar_funcion LPAREN RPAREN validar_parametros
+    (63) return -> . RETURN expresion
+    (64) accion -> . DIRECCION LPAREN expresion RPAREN
+    (65) dibujo -> . CUADRADO LPAREN expresion RPAREN
+    (66) dibujo -> . RECTANGULO LPAREN expresion COMMA expresion RPAREN
+    (67) dibujo -> . CIRCULO LPAREN expresion RPAREN
+    (68) dibujo -> . ROTA LPAREN expresion RPAREN
+    (110) id_aux -> . ID
+    (39) validar_funcion -> . ID
+
+    RCURLY          reduce using rule 70 (estatutos -> .)
+    SI              shift and go to state 68
+    IMPRIME         shift and go to state 65
+    MIENTRAS        shift and go to state 59
+    RETURN          shift and go to state 50
+    DIRECCION       shift and go to state 58
+    CUADRADO        shift and go to state 69
+    RECTANGULO      shift and go to state 70
+    CIRCULO         shift and go to state 71
+    ROTA            shift and go to state 64
+    ID              shift and go to state 61
+
+    function_use                   shift and go to state 51
+    mientras                       shift and go to state 67
+    return                         shift and go to state 52
+    estatuto                       shift and go to state 53
+    dibujo                         shift and go to state 62
+    condicion                      shift and go to state 54
+    id_aux                         shift and go to state 55
+    imprime                        shift and go to state 57
+    validar_funcion                shift and go to state 56
+    estatutos                      shift and go to state 198
+    accion                         shift and go to state 66
+    assignation                    shift and go to state 63
+
+state 198
+
+    (56) else_condicion -> SINO LCURLY goto_else estatutos . RCURLY
+
+    RCURLY          shift and go to state 199
+
+
+state 199
+
+    (56) else_condicion -> SINO LCURLY goto_else estatutos RCURLY .
+
+    SEMI            reduce using rule 56 (else_condicion -> SINO LCURLY goto_else estatutos RCURLY .)
+

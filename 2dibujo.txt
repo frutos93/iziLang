@@ -1,0 +1,17 @@
+PROGRAMA dibujoRecursivo:
+
+    FUNCION ENTERO drawSpiral(ENTERO linea){
+        SI(linea > 0){
+            DERECHA(linea);
+            ROTA(90);
+            dibujoRecursivo(linea - 5);
+        };
+        RETURN 0;
+    }
+    MAIN()
+    {
+        ENTERO a;
+        a=dibujoRecursivo(200);
+    }
+
+FIN

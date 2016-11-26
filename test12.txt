@@ -1,0 +1,15 @@
+PROGRAMA sino:
+    MAIN(){
+        ENTERO i;
+        ENTERO fact;
+        ENTERO num;
+
+        i = 9;
+        SI(i>9){
+            IMPRIME(i);
+        }SINO
+        {
+            IMPRIME(10000);
+        };
+    }
+FIN

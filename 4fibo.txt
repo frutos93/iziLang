@@ -1,0 +1,28 @@
+PROGRAMA fibIterativo:
+     MAIN()
+    {
+       ENTERO n;
+       ENTERO first;
+       ENTERO second;
+       ENTERO next;
+       ENTERO c;
+
+       n = 10;
+       first = 0;
+       second = 1;
+       c = 0;
+
+       MIENTRAS (c < n){
+        SI (c < 2){
+            next = c;
+        }
+        SINO{
+            next = first + second;
+            first = second;
+            second = next;
+        };
+        IMPRIME (next);
+        c = c + 1;
+       };
+    }
+FIN

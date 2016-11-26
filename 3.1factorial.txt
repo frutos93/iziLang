@@ -1,0 +1,18 @@
+PROGRAMA factorialItera:
+    MAIN(){
+        ENTERO i;
+        ENTERO fact;
+        ENTERO num;
+
+        i = 1;
+        fact = 1;
+        num = 8;
+
+        MIENTRAS (i < (num + 1)){
+            fact =  fact * i;
+            i = i+1;
+        };
+        IMPRIME(fact);
+    }
+
+FIN
