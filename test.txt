@@ -1,0 +1,9 @@
+PROGRAMA pepe:
+    MAIN()
+    {
+
+        ROTA(45);
+        CUADRADO(100);
+    }
+
+FIN
