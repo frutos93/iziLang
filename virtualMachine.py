@@ -192,12 +192,12 @@ def run():
             if(getMemoryValue(cuadruploActual[1]) == False):
                 currentPointer = cuadruploActual[3] - 1
         elif(instruccion == 15):
-            print "PRINT: ", getMemoryValue(cuadruploActual[3])
+            print "IMPRIME: ", getMemoryValue(cuadruploActual[3])
         elif(instruccion == 16):
-            turtle.right(90)
+            turtle.right(270)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 17):
-            turtle.right(270)
+            turtle.right(90)
             turtle.fd(int(getMemoryValue(cuadruploActual[3])))
         elif(instruccion == 18):
             turtle.right(180)
@@ -296,7 +296,7 @@ def run():
             turtle.back(offset1)
             turtle.pendown()
         elif(instruccion == 29):
-            turtle.right(int(getMemoryValue(cuadruploActual[3])))
+            turtle.left(int(getMemoryValue(cuadruploActual[3])))
         #
         # elif(instruccion == 29):
         #     side1=int(getMemoryValue(cuadruploActual[1]))

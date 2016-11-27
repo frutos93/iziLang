@@ -1175,7 +1175,7 @@ def p_dibujo(p):
     """
 
     global pilaTipos, cuadruplos, pilaOp
-    if p[1] == 'CUADRADO' or p[1] == 'CIRCULO' or 'ROTA':
+    if p[1] == 'CUADRADO' or p[1] == 'CIRCULO' or p[1] == 'ROTA':
         expresion = pilaOp.pop()
         opTipo = pilaTipos.pop()
         if opTipo != 101:
@@ -1184,6 +1184,7 @@ def p_dibujo(p):
         cuadruplos.append([oper2Code(p[1]), -1, -1, expresion])
 
     if p[1] == 'RECTANGULO':
+        print pilaOp
         expresion1 = pilaOp.pop()
         op1Tipo = pilaTipos.pop()
         expresion2 = pilaOp.pop()
